@@ -46,3 +46,6 @@ app.*.map.json
 
 # Remove the unity project
 /unity
+
+# Hide firebase information
+/lib/firebase_options.dart
