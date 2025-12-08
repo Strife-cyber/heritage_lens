@@ -1,80 +1,43 @@
-// Model pour les utilisateurs 
 class UserModel {
   final String uid;
   final String email;
-  final String? displayName;
-  final String? photoUrl;
+  final String displayName;
+  final String? photoURL;
   final DateTime createdAt;
   final List<String> spaces;
+  final String provider;
 
   UserModel({
     required this.uid,
     required this.email,
-    this.displayName,
-    this.photoUrl,
+    required this.displayName,
+    this.photoURL,
     required this.createdAt,
-    this.spaces = const [],
+    required this.spaces,
+    required this.provider,
   });
 
-  // Convertir en Map pour Firestore
   Map<String, dynamic> toMap() {
     return {
       'uid': uid,
       'email': email,
       'displayName': displayName,
-      'photoUrl': photoUrl,
+      'photoURL': photoURL,
       'createdAt': createdAt.toIso8601String(),
       'spaces': spaces,
+      'provider': provider,
     };
   }
 
-  // Créer depuis un Map (depuis Firestore)
   factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
-      uid: map['uid']?.toString() ?? '',
-      email: map['email']?.toString() ?? '',
-      displayName: map['displayName']?.toString(),
-      photoUrl: map['photoUrl']?.toString(),
-      createdAt: map['createdAt'] != null 
-          ? DateTime.tryParse(map['createdAt'].toString()) ?? DateTime.now()
-          : DateTime.now(),
-      spaces: map['spaces'] is List 
-          ? List<String>.from(map['spaces'].map((x) => x.toString()))
-          : [],
+      uid: map['uid'] ?? '',
+      email: map['email'] ?? '',
+      displayName: map['displayName'] ?? '',
+      photoURL: map['photoURL'],
+      createdAt: DateTime.parse(map['createdAt'] ?? DateTime.now().toIso8601String()),
+      spaces: List<String>.from(map['spaces'] ?? []),
+      provider: map['provider'] ?? 'email',
     );
-  }
-
-  // Méthode pour copier avec modifications
-  UserModel copyWith({
-    String? uid,
-    String? email,
-    String? displayName,
-    String? photoUrl,
-    DateTime? createdAt,
-    List<String>? spaces,
-  }) {
-    return UserModel(
-      uid: uid ?? this.uid,
-      email: email ?? this.email,
-      displayName: displayName ?? this.displayName,
-      photoUrl: photoUrl ?? this.photoUrl,
-      createdAt: createdAt ?? this.createdAt,
-      spaces: spaces ?? this.spaces,
-    );
-  }
-
-  // Vérifie si l'utilisateur appartient à un espace
-  bool isMemberOfSpace(String spaceId) {
-    return spaces.contains(spaceId);
-  }
-
-  // Ajouter un espace
-  UserModel addSpace(String spaceId) {
-    return copyWith(spaces: [...spaces, spaceId]);
-  }
-
-  // Retirer un espace
-  UserModel removeSpace(String spaceId) {
-    return copyWith(spaces: spaces.where((id) => id != spaceId).toList());
   }
 }
