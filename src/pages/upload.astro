@@ -32,7 +32,7 @@ import Layout from '../layouts/Layout.astro';
                   <p class="upload-label">Image</p>
                   <p class="upload-hint">Cliquez ou glissez-déposez</p>
                   <div class="file-preview" id="image-preview"></div>
-                </div>
+              </div>
                 <!-- Prévisualisation image générée -->
                 <div id="generated-image-preview" class="generated-preview" style="display: none;">
                   <div class="preview-header">
@@ -44,16 +44,16 @@ import Layout from '../layouts/Layout.astro';
                   </div>
                   <img id="generated-image" class="preview-media" alt="Image générée" />
                 </div>
-              </div>
+          </div>
 
               <div class="file-upload-area video-upload" id="video-upload-area">
-                <input type="file" id="video" name="video" accept="video/*" class="file-input" />
+              <input type="file" id="video" name="video" accept="video/*" class="file-input" />
                 <div class="upload-content">
                   <div class="upload-icon">🎬</div>
                   <p class="upload-label">Vidéo</p>
                   <p class="upload-hint">Cliquez ou glissez-déposez</p>
                   <div class="file-preview" id="video-preview"></div>
-                </div>
+              </div>
                 <!-- Prévisualisation vidéo générée -->
                 <div id="generated-video-preview" class="generated-preview" style="display: none;">
                   <div class="preview-header">
@@ -66,7 +66,7 @@ import Layout from '../layouts/Layout.astro';
                   <video id="generated-video" class="preview-media" controls></video>
                 </div>
               </div>
-            </div>
+          </div>
 
             <!-- Côté droit: Modèle 3D -->
             <div class="files-column">
@@ -81,7 +81,7 @@ import Layout from '../layouts/Layout.astro';
                   <div class="file-preview" id="model-preview">
                     <div class="model-viewer-placeholder">
                       <span>Aperçu du modèle</span>
-                    </div>
+              </div>
                   </div>
                 </div>
               </div>
@@ -94,40 +94,40 @@ import Layout from '../layouts/Layout.astro';
           <h2 class="section-title">Métadonnées</h2>
           
           <div class="metadata-grid">
-            <div class="form-group">
-              <label for="title">Titre *</label>
+          <div class="form-group">
+            <label for="title">Titre *</label>
               <input type="text" id="title" name="title" required class="form-input" placeholder="Nom de l'artefact" />
-            </div>
+          </div>
 
-            <div class="form-group">
+          <div class="form-group">
               <label for="category">Catégorie</label>
               <input type="text" id="category" name="category" class="form-input" placeholder="Ex: Architecture, Art, etc." />
-            </div>
+          </div>
 
             <div class="form-group full-width">
               <label for="description">Description</label>
               <textarea id="description" name="description" rows="4" class="form-textarea" placeholder="Décrivez votre artefact..."></textarea>
-            </div>
+          </div>
 
             <div class="form-group full-width">
-              <label for="tags">Tags (séparés par des virgules)</label>
+            <label for="tags">Tags (séparés par des virgules)</label>
               <input type="text" id="tags" name="tags" class="form-input" placeholder="tag1, tag2, tag3" />
-            </div>
+          </div>
 
-            <div class="form-group">
-              <label for="status">Statut</label>
-              <select id="status" name="status" class="form-select">
-                <option value="draft">Brouillon</option>
-                <option value="published">Publié</option>
-                <option value="archived">Archivé</option>
-              </select>
-            </div>
+          <div class="form-group">
+            <label for="status">Statut</label>
+            <select id="status" name="status" class="form-select">
+              <option value="draft">Brouillon</option>
+              <option value="published">Publié</option>
+              <option value="archived">Archivé</option>
+            </select>
+          </div>
 
-            <div class="form-group checkbox-group">
-              <label class="checkbox-label">
-                <input type="checkbox" id="isPublic" name="isPublic" value="true" />
-                <span>Rendre public</span>
-              </label>
+          <div class="form-group checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="isPublic" name="isPublic" value="true" />
+              <span>Rendre public</span>
+            </label>
             </div>
           </div>
         </section>
@@ -575,26 +575,38 @@ import Layout from '../layouts/Layout.astro';
   }
 
   .generated-preview {
-    margin-top: 1rem;
-    padding: 1.5rem;
-    background: rgba(139, 92, 246, 0.1);
-    border: 2px solid #8b5cf6;
-    border-radius: 8px;
+    margin-top: 0;
+    padding: 2rem;
+    background: rgba(26, 32, 44, 0.98);
+    border: 3px solid #8b5cf6;
+    border-radius: 16px;
+    box-shadow: 
+      0 0 40px rgba(139, 92, 246, 0.5),
+      inset 0 0 30px rgba(139, 92, 246, 0.1);
+    width: 100%;
+    min-height: 500px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    z-index: 10;
   }
 
   .preview-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
     flex-wrap: wrap;
     gap: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(139, 92, 246, 0.3);
   }
 
   .preview-label {
-    font-weight: 600;
+    font-weight: 700;
     color: #ffffff;
-    font-size: 0.95rem;
+    font-size: 1.1rem;
+    text-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
   }
 
   .preview-actions {
@@ -605,29 +617,35 @@ import Layout from '../layouts/Layout.astro';
 
   .btn-preview-use,
   .btn-preview-upload {
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 6px;
-    font-size: 0.875rem;
-    font-weight: 500;
+    padding: 0.75rem 1.5rem;
+    border: 2px solid #8b5cf6;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
     background: #8b5cf6;
     color: white;
+    box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
   }
 
   .btn-preview-use:hover {
     background: #7c3aed;
-    transform: translateY(-1px);
+    border-color: #7c3aed;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(139, 92, 246, 0.5);
   }
 
   .btn-preview-upload {
-    background: rgba(255, 255, 255, 0.1);
+    background: transparent;
     color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.3);
   }
 
   .btn-preview-upload:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-2px);
   }
 
   .preview-media {
@@ -638,14 +656,68 @@ import Layout from '../layouts/Layout.astro';
     display: block;
   }
 
+  .preview-media {
+    flex: 1;
+    min-height: 450px;
+    width: 100%;
+    border-radius: 12px;
+    background: #1a202c;
+    display: block;
+    box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.5);
+  }
+
   .preview-media video {
-    max-height: 400px;
+    min-height: 450px;
+    max-height: 700px;
+    width: 100%;
     object-fit: contain;
+    background: #1a202c;
   }
 
   .preview-media img {
-    max-height: 400px;
+    min-height: 450px;
+    max-height: 700px;
+    width: 100%;
     object-fit: contain;
+    background: #1a202c;
+  }
+
+  /* Cacher complètement upload-content quand les assets générés sont affichés */
+  .file-upload-area.has-generated .upload-content {
+    display: none !important;
+  }
+
+  /* Cacher les placeholders quand un fichier est sélectionné */
+  .file-upload-area.has-file .upload-icon,
+  .file-upload-area.has-file .upload-label,
+  .file-upload-area.has-file .upload-hint {
+    display: none !important;
+  }
+
+  /* Ajuster l'affichage quand les prévisualisations générées sont visibles */
+  .file-upload-area.has-generated .generated-preview {
+    display: flex !important;
+    margin-top: 0;
+  }
+
+  /* Améliorer la visibilité des médias générés */
+  .file-upload-area.has-file .file-preview {
+    display: none;
+  }
+
+  .file-upload-area.has-generated .generated-preview {
+    display: flex !important;
+  }
+
+  /* Faire en sorte que le generated-preview prenne tout l'espace */
+  .file-upload-area.has-generated {
+    padding: 0;
+    min-height: auto;
+  }
+
+  .file-upload-area.has-generated .generated-preview {
+    width: 100%;
+    height: 100%;
   }
 
   .generation-status {
@@ -803,21 +875,39 @@ import Layout from '../layouts/Layout.astro';
   function handleFileSelect(file: File, type: string, preview: HTMLElement, area: HTMLElement) {
     area.classList.add('has-file');
 
+    // Cacher les placeholders (icône, label, hint)
+    const uploadContent = area.querySelector('.upload-content');
+    if (uploadContent) {
+      const icon = uploadContent.querySelector('.upload-icon');
+      const label = uploadContent.querySelector('.upload-label');
+      const hint = uploadContent.querySelector('.upload-hint');
+      
+      if (icon) (icon as HTMLElement).style.display = 'none';
+      if (label) (label as HTMLElement).style.display = 'none';
+      if (hint) (hint as HTMLElement).style.display = 'none';
+    }
+
     if (type === 'image') {
       const reader = new FileReader();
       reader.onload = (e) => {
-        preview.innerHTML = `<img src="${e.target?.result}" alt="Preview" />`;
+        preview.innerHTML = `<img src="${e.target?.result}" alt="Preview" style="max-width: 100%; max-height: 400px; object-fit: contain; border-radius: 8px;" />`;
         preview.classList.add('active');
       };
       reader.readAsDataURL(file);
     } else if (type === 'video') {
       const reader = new FileReader();
       reader.onload = (e) => {
-        preview.innerHTML = `<video src="${e.target?.result}" controls></video>`;
+        preview.innerHTML = `<video src="${e.target?.result}" controls style="max-width: 100%; max-height: 400px; object-fit: contain; border-radius: 8px;"></video>`;
         preview.classList.add('active');
       };
       reader.readAsDataURL(file);
     } else if (type === 'model3d') {
+      // Cacher complètement upload-content pour le modèle
+      const modelContent = area.querySelector('.upload-content');
+      if (modelContent) {
+        (modelContent as HTMLElement).style.display = 'none';
+      }
+      
       preview.innerHTML = `
         <div class="file-info">
           <strong>${file.name}</strong><br>
@@ -932,12 +1022,12 @@ import Layout from '../layouts/Layout.astro';
             child.geometry.dispose();
             if (Array.isArray(child.material)) {
               child.material.forEach((mat) => mat.dispose());
-            } else {
+        } else {
               child.material.dispose();
             }
-          }
-        });
-      }
+        }
+      });
+    }
 
       model = gltf;
       modelScene.add(model);
@@ -974,6 +1064,26 @@ import Layout from '../layouts/Layout.astro';
       } catch (error) {
         console.error('Erreur lors de la génération:', error);
         throw error;
+      }
+
+      // Cacher complètement upload-content pour la vidéo
+      const videoArea = document.getElementById('video-upload-area');
+      if (videoArea) {
+        videoArea.classList.add('has-generated');
+        const videoContent = videoArea.querySelector('.upload-content');
+        if (videoContent) {
+          (videoContent as HTMLElement).style.display = 'none';
+        }
+      }
+
+      // Cacher complètement upload-content pour l'image
+      const imageArea = document.getElementById('image-upload-area');
+      if (imageArea) {
+        imageArea.classList.add('has-generated');
+        const imageContent = imageArea.querySelector('.upload-content');
+        if (imageContent) {
+          (imageContent as HTMLElement).style.display = 'none';
+        }
       }
 
       // Afficher les prévisualisations avec animation GSAP
@@ -1203,53 +1313,53 @@ import Layout from '../layouts/Layout.astro';
   }
 
   function initFormSubmission() {
-    const form = document.getElementById('upload-form') as HTMLFormElement;
-    const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement;
-    const statusMessage = document.getElementById('status-message') as HTMLElement;
+  const form = document.getElementById('upload-form') as HTMLFormElement;
+  const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement;
+  const statusMessage = document.getElementById('status-message') as HTMLElement;
 
     if (!form || !submitBtn || !statusMessage) return;
 
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      submitBtn.disabled = true;
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    submitBtn.disabled = true;
       submitBtn.innerHTML = '<span class="btn-text">Upload en cours...</span><span class="btn-loader">⏳</span>';
 
-      try {
-        const formData = new FormData(form);
+    try {
+      const formData = new FormData(form);
 
-        const response = await fetch('/api/upload-artefact', {
-          method: 'POST',
-          body: formData,
-        });
+      const response = await fetch('/api/upload-artefact', {
+        method: 'POST',
+        body: formData,
+      });
 
-        const result = await response.json();
+      const result = await response.json();
 
-        if (result.success) {
-          statusMessage.textContent = `✅ ${result.message} (ID: ${result.id})`;
-          statusMessage.className = 'status-message success';
-          statusMessage.style.display = 'block';
-
-          setTimeout(() => {
-            form.reset();
+      if (result.success) {
+        statusMessage.textContent = `✅ ${result.message} (ID: ${result.id})`;
+        statusMessage.className = 'status-message success';
+        statusMessage.style.display = 'block';
+        
+        setTimeout(() => {
+          form.reset();
             document.querySelectorAll('.file-preview').forEach((p) => {
               p.classList.remove('active');
               p.innerHTML = '';
             });
             document.querySelectorAll('.file-upload-area').forEach((a) => {
               a.classList.remove('has-file');
-            });
-            statusMessage.style.display = 'none';
+          });
+          statusMessage.style.display = 'none';
           }, 3000);
-        } else {
-          throw new Error(result.error || 'Erreur lors de l\'upload');
-        }
-      } catch (error) {
-        statusMessage.textContent = `❌ Erreur: ${error instanceof Error ? error.message : 'Erreur inconnue'}`;
-        statusMessage.className = 'status-message error';
-        statusMessage.style.display = 'block';
-      } finally {
-        submitBtn.disabled = false;
+      } else {
+        throw new Error(result.error || 'Erreur lors de l\'upload');
+      }
+    } catch (error) {
+      statusMessage.textContent = `❌ Erreur: ${error instanceof Error ? error.message : 'Erreur inconnue'}`;
+      statusMessage.className = 'status-message error';
+      statusMessage.style.display = 'block';
+    } finally {
+      submitBtn.disabled = false;
         submitBtn.innerHTML = `
           <span class="btn-text">Upload Artefact</span>
           <span class="btn-icon">→</span>
