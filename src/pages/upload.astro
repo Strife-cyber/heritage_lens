@@ -1,0 +1,398 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Upload Artefact">
+  <main class="upload-container">
+    <div class="upload-card">
+      <h1>Upload Artefact</h1>
+      <p class="subtitle">Téléchargez votre modèle 3D, vidéo et image</p>
+
+      <form id="upload-form" class="upload-form">
+        <!-- Section Fichiers -->
+        <section class="form-section">
+          <h2>Fichiers</h2>
+          
+          <div class="file-upload-group">
+            <label for="model3d" class="file-label">
+              <span class="label-text">Modèle 3D (.glb)</span>
+              <input type="file" id="model3d" name="model3d" accept=".glb" class="file-input" />
+              <div class="file-display" id="model3d-display">
+                <span class="file-placeholder">Aucun fichier sélectionné</span>
+              </div>
+            </label>
+          </div>
+
+          <div class="file-upload-group">
+            <label for="video" class="file-label">
+              <span class="label-text">Vidéo</span>
+              <input type="file" id="video" name="video" accept="video/*" class="file-input" />
+              <div class="file-display" id="video-display">
+                <span class="file-placeholder">Aucun fichier sélectionné</span>
+              </div>
+            </label>
+          </div>
+
+          <div class="file-upload-group">
+            <label for="image" class="file-label">
+              <span class="label-text">Image</span>
+              <input type="file" id="image" name="image" accept="image/*" class="file-input" />
+              <div class="file-display" id="image-display">
+                <span class="file-placeholder">Aucun fichier sélectionné</span>
+              </div>
+            </label>
+          </div>
+        </section>
+
+        <!-- Section Métadonnées -->
+        <section class="form-section">
+          <h2>Métadonnées</h2>
+
+          <div class="form-group">
+            <label for="title">Titre *</label>
+            <input type="text" id="title" name="title" required class="form-input" />
+          </div>
+
+          <div class="form-group">
+            <label for="description">Description</label>
+            <textarea id="description" name="description" rows="4" class="form-textarea"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="category">Catégorie</label>
+            <input type="text" id="category" name="category" class="form-input" />
+          </div>
+
+          <div class="form-group">
+            <label for="tags">Tags (séparés par des virgules)</label>
+            <input type="text" id="tags" name="tags" placeholder="tag1, tag2, tag3" class="form-input" />
+          </div>
+        </section>
+
+        <!-- Section Paramètres -->
+        <section class="form-section">
+          <h2>Paramètres</h2>
+
+          <div class="form-group">
+            <label for="status">Statut</label>
+            <select id="status" name="status" class="form-select">
+              <option value="draft">Brouillon</option>
+              <option value="published">Publié</option>
+              <option value="archived">Archivé</option>
+            </select>
+          </div>
+
+          <div class="form-group checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="isPublic" name="isPublic" value="true" />
+              <span>Rendre public</span>
+            </label>
+          </div>
+        </section>
+
+        <!-- Boutons -->
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary" id="submit-btn">
+            <span class="btn-text">Upload Artefact</span>
+            <span class="btn-loader" id="loader" style="display: none;">⏳</span>
+          </button>
+        </div>
+
+        <!-- Message de statut -->
+        <div id="status-message" class="status-message" style="display: none;"></div>
+      </form>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .upload-container {
+    min-height: 100vh;
+    padding: 2rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  .upload-card {
+    background: white;
+    border-radius: 16px;
+    padding: 2.5rem;
+    max-width: 800px;
+    width: 100%;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  }
+
+  h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem 0;
+    color: #1a202c;
+  }
+
+  .subtitle {
+    color: #718096;
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+  }
+
+  .form-section {
+    margin-bottom: 2.5rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  .form-section:last-of-type {
+    border-bottom: none;
+  }
+
+  .form-section h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: #2d3748;
+  }
+
+  .file-upload-group {
+    margin-bottom: 1.5rem;
+  }
+
+  .file-label {
+    display: block;
+    cursor: pointer;
+  }
+
+  .label-text {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: #4a5568;
+  }
+
+  .file-input {
+    display: none;
+  }
+
+  .file-display {
+    border: 2px dashed #cbd5e0;
+    border-radius: 8px;
+    padding: 1.5rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    background: #f7fafc;
+  }
+
+  .file-display:hover {
+    border-color: #667eea;
+    background: #edf2f7;
+  }
+
+  .file-placeholder {
+    color: #a0aec0;
+    font-size: 0.9rem;
+  }
+
+  .file-display.has-file {
+    border-color: #48bb78;
+    background: #f0fff4;
+  }
+
+  .file-display.has-file .file-placeholder {
+    color: #22543d;
+    font-weight: 500;
+  }
+
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+
+  .form-group label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: #4a5568;
+  }
+
+  .form-input,
+  .form-textarea,
+  .form-select {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    font-family: inherit;
+  }
+
+  .form-input:focus,
+  .form-textarea:focus,
+  .form-select:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  }
+
+  .form-textarea {
+    resize: vertical;
+  }
+
+  .checkbox-group {
+    margin-top: 1rem;
+  }
+
+  .checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+  }
+
+  .checkbox-label input[type="checkbox"] {
+    width: 1.25rem;
+    height: 1.25rem;
+    cursor: pointer;
+  }
+
+  .form-actions {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .btn {
+    padding: 0.875rem 2rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+  }
+
+  .btn-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .btn-loader {
+    display: inline-block;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  .status-message {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    border-radius: 8px;
+    font-weight: 500;
+  }
+
+  .status-message.success {
+    background: #f0fff4;
+    color: #22543d;
+    border: 2px solid #48bb78;
+  }
+
+  .status-message.error {
+    background: #fff5f5;
+    color: #742a2a;
+    border: 2px solid #f56565;
+  }
+</style>
+
+<script>
+  // Gérer l'affichage des fichiers sélectionnés
+  const fileInputs = ['model3d', 'video', 'image'];
+  
+  fileInputs.forEach((inputId) => {
+    const input = document.getElementById(inputId) as HTMLInputElement;
+    const display = document.getElementById(`${inputId}-display`) as HTMLElement;
+    
+    if (input && display) {
+      input.addEventListener('change', (e) => {
+        const file = (e.target as HTMLInputElement).files?.[0];
+        if (file) {
+          display.classList.add('has-file');
+          display.querySelector('.file-placeholder')!.textContent = file.name;
+        } else {
+          display.classList.remove('has-file');
+          display.querySelector('.file-placeholder')!.textContent = 'Aucun fichier sélectionné';
+        }
+      });
+    }
+  });
+
+  // Gérer la soumission du formulaire
+  const form = document.getElementById('upload-form') as HTMLFormElement;
+  const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement;
+  const loader = document.getElementById('loader') as HTMLElement;
+  const statusMessage = document.getElementById('status-message') as HTMLElement;
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    // Désactiver le bouton et afficher le loader
+    submitBtn.disabled = true;
+    loader.style.display = 'inline-block';
+    statusMessage.style.display = 'none';
+
+    try {
+      const formData = new FormData(form);
+
+      const response = await fetch('/api/upload-artefact', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        statusMessage.textContent = `✅ ${result.message} (ID: ${result.id})`;
+        statusMessage.className = 'status-message success';
+        statusMessage.style.display = 'block';
+        
+        // Réinitialiser le formulaire après 2 secondes
+        setTimeout(() => {
+          form.reset();
+          fileInputs.forEach((inputId) => {
+            const display = document.getElementById(`${inputId}-display`);
+            if (display) {
+              display.classList.remove('has-file');
+              display.querySelector('.file-placeholder')!.textContent = 'Aucun fichier sélectionné';
+            }
+          });
+          statusMessage.style.display = 'none';
+        }, 2000);
+      } else {
+        throw new Error(result.error || 'Erreur lors de l\'upload');
+      }
+    } catch (error) {
+      statusMessage.textContent = `❌ Erreur: ${error instanceof Error ? error.message : 'Erreur inconnue'}`;
+      statusMessage.className = 'status-message error';
+      statusMessage.style.display = 'block';
+    } finally {
+      submitBtn.disabled = false;
+      loader.style.display = 'none';
+    }
+  });
+</script>
+

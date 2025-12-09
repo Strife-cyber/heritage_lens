@@ -9,8 +9,11 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@types/three": "^0.181.0",
     "appwrite": "^21.5.0",
     "astro": "^5.16.4",
-    "firebase-admin": "^13.6.0"
+    "firebase-admin": "^13.6.0",
+    "gsap": "^3.14.1",
+    "three": "^0.181.2"
   }
 }

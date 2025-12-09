@@ -1,11 +1,488 @@
 ---
-import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
 ---
 
-<Layout>
-	<Welcome />
+<Layout title="HBoard - Artefact Manager">
+  <div id="app">
+    <!-- Canvas pour Three.js -->
+    <canvas id="three-canvas"></canvas>
+    
+    <!-- Contenu principal -->
+    <div class="content">
+      <div class="hero-section">
+        <h1 class="title" data-text="HBoard">HBoard</h1>
+        <p class="subtitle">Gestionnaire d'Artefacts 3D</p>
+        <div class="description">
+          <p>Créez, gérez et explorez vos artefacts 3D</p>
+          <p>Modèles, vidéos et images en un seul endroit</p>
+        </div>
+        
+        <div class="cta-buttons">
+          <a href="/upload" class="btn btn-primary">
+            <span class="btn-text">Créer un Artefact</span>
+            <span class="btn-icon">→</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Stats ou infos -->
+      <div class="info-cards">
+        <div class="info-card">
+          <div class="card-icon">🎨</div>
+          <h3>Modèles 3D</h3>
+          <p>Upload et gestion de fichiers .glb</p>
+        </div>
+        <div class="info-card">
+          <div class="card-icon">🎬</div>
+          <h3>Vidéos</h3>
+          <p>Support pour tous formats vidéo</p>
+        </div>
+        <div class="info-card">
+          <div class="card-icon">🖼️</div>
+          <h3>Images</h3>
+          <p>Prévisualisation et galerie</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Particules flottantes -->
+    <div class="floating-elements">
+      <div class="float-element float-1">✨</div>
+      <div class="float-element float-2">🌟</div>
+      <div class="float-element float-3">💫</div>
+      <div class="float-element float-4">⭐</div>
+      <div class="float-element float-5">✨</div>
+    </div>
+  </div>
 </Layout>
+
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  #app {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+  }
+
+  @keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  #three-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+  }
+
+  .content {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    text-align: center;
+  }
+
+  .hero-section {
+    max-width: 800px;
+    margin-bottom: 4rem;
+  }
+
+  .title {
+    font-size: clamp(3rem, 10vw, 8rem);
+    font-weight: 900;
+    background: linear-gradient(135deg, #fff 0%, #f0f0f0 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 1rem;
+    text-shadow: 0 0 80px rgba(255, 255, 255, 0.5);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+
+  .subtitle {
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 2rem;
+    font-weight: 300;
+    letter-spacing: 0.1em;
+  }
+
+  .description {
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 3rem;
+    line-height: 1.8;
+  }
+
+  .description p {
+    margin-bottom: 0.5rem;
+  }
+
+  .cta-buttons {
+    margin-top: 3rem;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem 3rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-primary {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    color: white;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  }
+
+  .btn-primary:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+  }
+
+  .btn-icon {
+    font-size: 1.5rem;
+    transition: transform 0.3s ease;
+  }
+
+  .btn-primary:hover .btn-icon {
+    transform: translateX(5px);
+  }
+
+  .info-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+    max-width: 900px;
+    width: 100%;
+    margin-top: 4rem;
+  }
+
+  .info-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+
+  .info-card:hover {
+    transform: translateY(-10px);
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  }
+
+  .card-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    display: block;
+  }
+
+  .info-card h3 {
+    color: white;
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+  }
+
+  .info-card p {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
+  .floating-elements {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 5;
+  }
+
+  .float-element {
+    position: absolute;
+    font-size: 2rem;
+    opacity: 0.6;
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .float-1 { top: 20%; left: 10%; animation-delay: 0s; }
+  .float-2 { top: 60%; left: 80%; animation-delay: 1s; }
+  .float-3 { top: 80%; left: 20%; animation-delay: 2s; }
+  .float-4 { top: 30%; left: 70%; animation-delay: 3s; }
+  .float-5 { top: 50%; left: 5%; animation-delay: 4s; }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-30px) rotate(180deg); }
+  }
+
+  @media (max-width: 768px) {
+    .info-cards {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+
+    .hero-section {
+      margin-bottom: 2rem;
+    }
+  }
+</style>
+
+<script>
+  import * as THREE from 'three';
+  import { gsap } from 'gsap';
+
+  // Attendre que le DOM soit chargé
+  if (typeof window !== 'undefined') {
+    window.addEventListener('DOMContentLoaded', () => {
+      initThreeJS();
+      initAnimations();
+    });
+  }
+
+  function initThreeJS() {
+    // Initialiser Three.js
+    const canvas = document.getElementById('three-canvas') as HTMLCanvasElement;
+    if (!canvas) return;
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(
+      75,
+      window.innerWidth / window.innerHeight,
+      0.1,
+      1000
+    );
+    const renderer = new THREE.WebGLRenderer({
+      canvas,
+      alpha: true,
+      antialias: true,
+    });
+
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+    // Position de la caméra
+    camera.position.z = 5;
+
+    // Créer des particules
+    const particlesGeometry = new THREE.BufferGeometry();
+    const particlesCount = 2000;
+    const posArray = new Float32Array(particlesCount * 3);
+
+    for (let i = 0; i < particlesCount * 3; i++) {
+      posArray[i] = (Math.random() - 0.5) * 20;
+    }
+
+    particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+
+    const particlesMaterial = new THREE.PointsMaterial({
+      size: 0.05,
+      color: 0xffffff,
+      transparent: true,
+      opacity: 0.8,
+    });
+
+    const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+    scene.add(particlesMesh);
+
+    // Créer des géométries animées
+    const geometries: THREE.Mesh[] = [];
+
+    // Torus
+    const torusGeometry = new THREE.TorusGeometry(1, 0.3, 16, 100);
+    const torusMaterial = new THREE.MeshStandardMaterial({
+      color: 0xffffff,
+      transparent: true,
+      opacity: 0.3,
+      wireframe: true,
+    });
+    const torus = new THREE.Mesh(torusGeometry, torusMaterial);
+    torus.position.x = -3;
+    scene.add(torus);
+    geometries.push(torus);
+
+    // Icosahedron
+    const icoGeometry = new THREE.IcosahedronGeometry(1, 0);
+    const icoMaterial = new THREE.MeshStandardMaterial({
+      color: 0xffffff,
+      transparent: true,
+      opacity: 0.3,
+      wireframe: true,
+    });
+    const ico = new THREE.Mesh(icoGeometry, icoMaterial);
+    ico.position.x = 3;
+    scene.add(ico);
+    geometries.push(ico);
+
+    // Octahedron
+    const octaGeometry = new THREE.OctahedronGeometry(1, 0);
+    const octaMaterial = new THREE.MeshStandardMaterial({
+      color: 0xffffff,
+      transparent: true,
+      opacity: 0.3,
+      wireframe: true,
+    });
+    const octa = new THREE.Mesh(octaGeometry, octaMaterial);
+    octa.position.y = -2;
+    scene.add(octa);
+    geometries.push(octa);
+
+    // Lumières
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    scene.add(ambientLight);
+
+    const pointLight = new THREE.PointLight(0xffffff, 1);
+    pointLight.position.set(5, 5, 5);
+    scene.add(pointLight);
+
+    // Animation
+    const animate = () => {
+      requestAnimationFrame(animate);
+
+      // Rotation des géométries
+      torus.rotation.x += 0.01;
+      torus.rotation.y += 0.01;
+      ico.rotation.x += 0.01;
+      ico.rotation.y += 0.01;
+      octa.rotation.x += 0.01;
+      octa.rotation.y += 0.01;
+
+      // Animation des particules
+      particlesMesh.rotation.y += 0.001;
+
+      // Animation de la lumière
+      const time = Date.now() * 0.001;
+      pointLight.position.x = Math.sin(time) * 5;
+      pointLight.position.y = Math.cos(time) * 5;
+
+      renderer.render(scene, camera);
+    };
+
+    animate();
+
+    // Gestion du redimensionnement
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+  }
+
+  function initAnimations() {
+    // Animation GSAP pour le contenu
+    gsap.from('.title', {
+      duration: 1.5,
+      y: 100,
+      opacity: 0,
+      ease: 'power4.out',
+    });
+
+    gsap.from('.subtitle', {
+      duration: 1.5,
+      y: 50,
+      opacity: 0,
+      delay: 0.3,
+      ease: 'power4.out',
+    });
+
+    gsap.from('.description', {
+      duration: 1.5,
+      y: 30,
+      opacity: 0,
+      delay: 0.6,
+      ease: 'power4.out',
+    });
+
+    gsap.from('.btn', {
+      duration: 1,
+      scale: 0,
+      opacity: 0,
+      delay: 0.9,
+      ease: 'back.out(1.7)',
+    });
+
+    gsap.from('.info-card', {
+      duration: 1,
+      y: 50,
+      opacity: 0,
+      stagger: 0.2,
+      delay: 1.2,
+      ease: 'power4.out',
+    });
+
+    // Animation hover pour les cartes
+    const cards = document.querySelectorAll('.info-card');
+    cards.forEach((card) => {
+      card.addEventListener('mouseenter', () => {
+        gsap.to(card, {
+          scale: 1.05,
+          duration: 0.3,
+          ease: 'power2.out',
+        });
+      });
+
+      card.addEventListener('mouseleave', () => {
+        gsap.to(card, {
+          scale: 1,
+          duration: 0.3,
+          ease: 'power2.out',
+        });
+      });
+    });
+
+    // Animation du bouton
+    const btn = document.querySelector('.btn-primary');
+    if (btn) {
+      btn.addEventListener('mouseenter', () => {
+        gsap.to('.btn-icon', {
+          x: 5,
+          duration: 0.3,
+          ease: 'power2.out',
+        });
+      });
+
+      btn.addEventListener('mouseleave', () => {
+        gsap.to('.btn-icon', {
+          x: 0,
+          duration: 0.3,
+          ease: 'power2.out',
+        });
+      });
+    }
+  }
+</script>
