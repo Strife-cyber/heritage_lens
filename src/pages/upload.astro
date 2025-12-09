@@ -33,6 +33,17 @@ import Layout from '../layouts/Layout.astro';
                   <p class="upload-hint">Cliquez ou glissez-déposez</p>
                   <div class="file-preview" id="image-preview"></div>
                 </div>
+                <!-- Prévisualisation image générée -->
+                <div id="generated-image-preview" class="generated-preview" style="display: none;">
+                  <div class="preview-header">
+                    <span class="preview-label">✨ Image générée automatiquement</span>
+                    <div class="preview-actions">
+                      <button type="button" class="btn-preview-use" id="use-generated-image">Utiliser</button>
+                      <button type="button" class="btn-preview-upload">Télécharger la mienne</button>
+                    </div>
+                  </div>
+                  <img id="generated-image" class="preview-media" alt="Image générée" />
+                </div>
               </div>
 
               <div class="file-upload-area video-upload" id="video-upload-area">
@@ -42,6 +53,17 @@ import Layout from '../layouts/Layout.astro';
                   <p class="upload-label">Vidéo</p>
                   <p class="upload-hint">Cliquez ou glissez-déposez</p>
                   <div class="file-preview" id="video-preview"></div>
+                </div>
+                <!-- Prévisualisation vidéo générée -->
+                <div id="generated-video-preview" class="generated-preview" style="display: none;">
+                  <div class="preview-header">
+                    <span class="preview-label">✨ Vidéo générée automatiquement</span>
+                    <div class="preview-actions">
+                      <button type="button" class="btn-preview-use" id="use-generated-video">Utiliser</button>
+                      <button type="button" class="btn-preview-upload">Télécharger la mienne</button>
+                    </div>
+                  </div>
+                  <video id="generated-video" class="preview-media" controls></video>
                 </div>
               </div>
             </div>
@@ -122,6 +144,15 @@ import Layout from '../layouts/Layout.astro';
         <!-- Message de statut -->
         <div id="status-message" class="status-message" style="display: none;"></div>
       </form>
+    </div>
+    
+    <!-- Canvas caché pour le rendu Three.js du modèle -->
+    <canvas id="model-canvas" style="display: none;"></canvas>
+    
+    <!-- Indicateur de génération -->
+    <div id="generation-status" class="generation-status" style="display: none;">
+      <div class="generation-spinner"></div>
+      <span>Génération de la vidéo et de l'image...</span>
     </div>
   </div>
 </Layout>
@@ -542,11 +573,121 @@ import Layout from '../layouts/Layout.astro';
       padding: 1.5rem;
     }
   }
+
+  .generated-preview {
+    margin-top: 1rem;
+    padding: 1.5rem;
+    background: rgba(139, 92, 246, 0.1);
+    border: 2px solid #8b5cf6;
+    border-radius: 8px;
+  }
+
+  .preview-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .preview-label {
+    font-weight: 600;
+    color: #ffffff;
+    font-size: 0.95rem;
+  }
+
+  .preview-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .btn-preview-use,
+  .btn-preview-upload {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: #8b5cf6;
+    color: white;
+  }
+
+  .btn-preview-use:hover {
+    background: #7c3aed;
+    transform: translateY(-1px);
+  }
+
+  .btn-preview-upload {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+  }
+
+  .btn-preview-upload:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  .preview-media {
+    width: 100%;
+    max-width: 100%;
+    border-radius: 8px;
+    background: #1a202c;
+    display: block;
+  }
+
+  .preview-media video {
+    max-height: 400px;
+    object-fit: contain;
+  }
+
+  .preview-media img {
+    max-height: 400px;
+    object-fit: contain;
+  }
+
+  .generation-status {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem 2rem;
+    background: rgba(0, 0, 0, 0.9);
+    border: 2px solid #8b5cf6;
+    border-radius: 12px;
+    color: #ffffff;
+    font-weight: 500;
+    z-index: 1000;
+    box-shadow: 0 0 30px rgba(139, 92, 246, 0.5);
+  }
+
+  .generation-spinner {
+    width: 24px;
+    height: 24px;
+    border: 3px solid rgba(139, 92, 246, 0.3);
+    border-top-color: #8b5cf6;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
 </style>
 
 <script>
   import * as THREE from 'three';
   import { gsap } from 'gsap';
+
+  // Variables globales pour Three.js
+  let modelScene: THREE.Scene | null = null;
+  let modelCamera: THREE.PerspectiveCamera | null = null;
+  let modelRenderer: THREE.WebGLRenderer | null = null;
+  let model: THREE.Group | null = null;
+  let generatedVideoBlob: Blob | null = null;
+  let generatedImageBlob: Blob | null = null;
+  let isRecording = false;
 
   // Initialiser Three.js en arrière-plan
   if (typeof window !== 'undefined') {
@@ -684,7 +825,381 @@ import Layout from '../layouts/Layout.astro';
         </div>
       `;
       preview.classList.add('active');
+      
+      // Charger le modèle et générer vidéo/image
+      if (file.name.endsWith('.glb')) {
+        loadModelAndGenerateAssets(file);
+      }
     }
+  }
+
+  // Initialiser la scène Three.js pour le modèle
+  function initModelScene() {
+    const canvas = document.getElementById('model-canvas') as HTMLCanvasElement;
+    if (!canvas) return;
+
+    // Dimensions pour le rendu
+    const width = 1920;
+    const height = 1080;
+    canvas.width = width;
+    canvas.height = height;
+
+    modelScene = new THREE.Scene();
+    modelScene.background = new THREE.Color(0x1a202c); // Fond sombre
+
+    modelCamera = new THREE.PerspectiveCamera(50, width / height, 0.1, 1000);
+    modelCamera.position.set(0, 0, 5);
+
+    modelRenderer = new THREE.WebGLRenderer({
+      canvas,
+      antialias: true,
+      alpha: false,
+    });
+    modelRenderer.setSize(width, height);
+    modelRenderer.setPixelRatio(2);
+    modelRenderer.shadowMap.enabled = true;
+    modelRenderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+    // Éclairage
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+    modelScene.add(ambientLight);
+
+    const directionalLight1 = new THREE.DirectionalLight(0xffffff, 0.8);
+    directionalLight1.position.set(5, 5, 5);
+    directionalLight1.castShadow = true;
+    modelScene.add(directionalLight1);
+
+    const directionalLight2 = new THREE.DirectionalLight(0xffffff, 0.4);
+    directionalLight2.position.set(-5, 3, -5);
+    modelScene.add(directionalLight2);
+  }
+
+  // Charger le modèle et générer les assets
+  async function loadModelAndGenerateAssets(file: File) {
+    const generationStatus = document.getElementById('generation-status') as HTMLElement;
+    const generatedVideoPreview = document.getElementById('generated-video-preview') as HTMLElement;
+    const generatedImagePreview = document.getElementById('generated-image-preview') as HTMLElement;
+
+    try {
+      // Afficher le statut de génération
+      if (generationStatus) generationStatus.style.display = 'flex';
+      if (generatedVideoPreview) generatedVideoPreview.style.display = 'none';
+      if (generatedImagePreview) generatedImagePreview.style.display = 'none';
+
+      // Initialiser la scène si nécessaire
+      if (!modelScene) {
+        initModelScene();
+      }
+
+      if (!modelScene || !modelCamera || !modelRenderer) {
+        throw new Error('Scène non initialisée');
+      }
+
+      // Charger le modèle
+      console.log('Chargement du modèle GLB...');
+      
+      // Importer dynamiquement GLTFLoader
+      const { GLTFLoader } = await import('three/examples/jsm/loaders/GLTFLoader.js');
+      const loader = new GLTFLoader();
+      
+      const url = URL.createObjectURL(file);
+      
+      const gltf = await new Promise<THREE.Group>((resolve, reject) => {
+        loader.load(
+          url,
+          (gltf) => {
+            console.log('Modèle chargé avec succès');
+            resolve(gltf.scene);
+          },
+          (progress) => {
+            if (progress.lengthComputable) {
+              const percent = (progress.loaded / progress.total) * 100;
+              console.log('Progression du chargement:', percent.toFixed(1) + '%');
+            }
+          },
+          (error) => {
+            console.error('Erreur lors du chargement du modèle:', error);
+            reject(error);
+          }
+        );
+      });
+
+      // Nettoyer l'ancien modèle
+      if (model) {
+        modelScene.remove(model);
+        model.traverse((child) => {
+          if (child instanceof THREE.Mesh) {
+            child.geometry.dispose();
+            if (Array.isArray(child.material)) {
+              child.material.forEach((mat) => mat.dispose());
+            } else {
+              child.material.dispose();
+            }
+          }
+        });
+      }
+
+      model = gltf;
+      modelScene.add(model);
+
+      // Calculer la bounding box pour centrer et ajuster la taille
+      const box = new THREE.Box3().setFromObject(model);
+      const center = box.getCenter(new THREE.Vector3());
+      const size = box.getSize(new THREE.Vector3());
+      const maxDim = Math.max(size.x, size.y, size.z);
+      const scale = 2.5 / maxDim; // Ajuster pour que le modèle soit bien visible
+
+      model.scale.multiplyScalar(scale);
+      model.position.sub(center.multiplyScalar(scale));
+
+      // Ajuster la caméra pour cadrer le modèle
+      const distance = maxDim * 1.5;
+      modelCamera.position.set(0, 0, distance);
+      modelCamera.lookAt(0, 0, 0);
+
+      // Générer la vidéo et l'image
+      console.log('Début de la génération de la vidéo et de l\'image...');
+      try {
+        await Promise.all([
+          generateVideo().catch(err => {
+            console.error('Erreur lors de la génération de la vidéo:', err);
+            throw err;
+          }),
+          generateImage().catch(err => {
+            console.error('Erreur lors de la génération de l\'image:', err);
+            throw err;
+          })
+        ]);
+        console.log('Génération terminée avec succès');
+      } catch (error) {
+        console.error('Erreur lors de la génération:', error);
+        throw error;
+      }
+
+      // Afficher les prévisualisations avec animation GSAP
+      if (generatedVideoBlob && generatedVideoPreview) {
+        const videoElement = document.getElementById('generated-video') as HTMLVideoElement;
+        if (videoElement) {
+          videoElement.src = URL.createObjectURL(generatedVideoBlob);
+          generatedVideoPreview.style.display = 'block';
+          gsap.from(generatedVideoPreview, {
+            opacity: 0,
+            y: 20,
+            duration: 0.5,
+            ease: 'power2.out'
+          });
+        }
+      }
+
+      if (generatedImageBlob && generatedImagePreview) {
+        const imageElement = document.getElementById('generated-image') as HTMLImageElement;
+        if (imageElement) {
+          imageElement.src = URL.createObjectURL(generatedImageBlob);
+          generatedImagePreview.style.display = 'block';
+          gsap.from(generatedImagePreview, {
+            opacity: 0,
+            y: 20,
+            duration: 0.5,
+            delay: 0.1,
+            ease: 'power2.out'
+          });
+        }
+      }
+
+      if (generationStatus) generationStatus.style.display = 'none';
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Erreur lors du chargement du modèle:', error);
+      if (generationStatus) generationStatus.style.display = 'none';
+      alert('Erreur lors du chargement du modèle 3D: ' + (error instanceof Error ? error.message : 'Erreur inconnue'));
+    }
+  }
+
+  // Générer la vidéo de rotation 360°
+  async function generateVideo(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      console.log('Début de la génération de la vidéo...');
+      if (!modelScene || !modelCamera || !modelRenderer || !model) {
+        console.error('Scène non initialisée');
+        reject(new Error('Scène non initialisée'));
+        return;
+      }
+
+      if (isRecording) {
+        console.error('Enregistrement déjà en cours');
+        reject(new Error('Enregistrement déjà en cours'));
+        return;
+      }
+
+      isRecording = true;
+      const canvas = modelRenderer.domElement;
+      console.log('Canvas pour enregistrement:', canvas);
+      
+      // Essayer différents codecs
+      const codecs = [
+        'video/webm;codecs=vp9',
+        'video/webm;codecs=vp8',
+        'video/webm'
+      ];
+
+      let mediaRecorder: MediaRecorder | null = null;
+      let stream: MediaStream | null = null;
+
+      // Trouver un codec supporté
+      for (const codec of codecs) {
+        if (MediaRecorder.isTypeSupported(codec)) {
+          try {
+            stream = canvas.captureStream(30); // 30 FPS
+            mediaRecorder = new MediaRecorder(stream, { mimeType: codec });
+            break;
+          } catch (e) {
+            console.warn(`Codec ${codec} non supporté, essai suivant...`);
+          }
+        }
+      }
+
+      if (!mediaRecorder || !stream) {
+        isRecording = false;
+        console.error('Aucun codec vidéo supporté');
+        reject(new Error('Aucun codec vidéo supporté. Votre navigateur ne supporte pas l\'enregistrement vidéo.'));
+        return;
+      }
+
+      console.log('Codec utilisé:', mediaRecorder.mimeType);
+
+      const chunks: Blob[] = [];
+      mediaRecorder.ondataavailable = (e) => {
+        if (e.data && e.data.size > 0) {
+          chunks.push(e.data);
+        }
+      };
+
+      mediaRecorder.onstop = () => {
+        isRecording = false;
+        console.log('Enregistrement vidéo terminé, nombre de chunks:', chunks.length);
+        if (chunks.length > 0) {
+          generatedVideoBlob = new Blob(chunks, { type: mediaRecorder!.mimeType });
+          console.log('Vidéo générée, taille:', (generatedVideoBlob.size / 1024 / 1024).toFixed(2), 'MB');
+        } else {
+          console.warn('Aucun chunk vidéo enregistré');
+        }
+        // Arrêter le stream
+        stream!.getTracks().forEach(track => track.stop());
+        resolve();
+      };
+
+      mediaRecorder.onerror = (e) => {
+        isRecording = false;
+        stream!.getTracks().forEach(track => track.stop());
+        reject(new Error('Erreur lors de l\'enregistrement vidéo'));
+      };
+
+      // Rotation lente sur 10 secondes (360°)
+      const duration = 10000; // 10 secondes
+      const startRotation = model.rotation.y;
+      const targetRotation = startRotation + Math.PI * 2;
+
+      // Démarrer l'enregistrement
+      mediaRecorder.start(100); // Collecter des données toutes les 100ms
+
+      // Animer la rotation avec GSAP et rendre chaque frame
+      gsap.to(model.rotation, {
+        y: targetRotation,
+        duration: duration / 1000,
+        ease: 'none',
+        onUpdate: () => {
+          modelRenderer!.render(modelScene!, modelCamera!);
+        },
+        onComplete: () => {
+          // Attendre un peu pour s'assurer que toutes les frames sont capturées
+          setTimeout(() => {
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+              mediaRecorder.stop();
+            } else {
+              isRecording = false;
+              resolve();
+            }
+          }, 500);
+        }
+      });
+    });
+  }
+
+  // Générer l'image statique
+  async function generateImage(): Promise<void> {
+    return new Promise((resolve) => {
+      console.log('Début de la génération de l\'image...');
+      if (!modelScene || !modelCamera || !modelRenderer || !model) {
+        console.warn('Scène non initialisée pour l\'image');
+        resolve();
+        return;
+      }
+
+      // Réinitialiser la rotation pour l'image
+      model.rotation.y = 0;
+      modelRenderer.render(modelScene, modelCamera);
+      console.log('Rendu de l\'image effectué');
+
+      // Attendre un frame pour s'assurer que le rendu est complet
+      requestAnimationFrame(() => {
+        // Capturer l'image
+        const canvas = modelRenderer!.domElement;
+        canvas.toBlob((blob) => {
+          if (blob) {
+            generatedImageBlob = blob;
+            console.log('Image générée, taille:', (blob.size / 1024).toFixed(2), 'KB');
+          } else {
+            console.warn('Échec de la génération de l\'image');
+          }
+          resolve();
+        }, 'image/png', 1.0);
+      });
+    });
+  }
+
+  // Gérer l'utilisation des assets générés
+  if (typeof window !== 'undefined') {
+    window.addEventListener('DOMContentLoaded', () => {
+      const useGeneratedVideoBtn = document.getElementById('use-generated-video');
+      const useGeneratedImageBtn = document.getElementById('use-generated-image');
+
+      if (useGeneratedVideoBtn) {
+        useGeneratedVideoBtn.addEventListener('click', () => {
+          if (generatedVideoBlob) {
+            const videoInput = document.getElementById('video') as HTMLInputElement;
+            const file = new File([generatedVideoBlob], 'generated-video.webm', { type: generatedVideoBlob.type });
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
+            videoInput.files = dataTransfer.files;
+            videoInput.dispatchEvent(new Event('change', { bubbles: true }));
+          }
+        });
+      }
+
+      if (useGeneratedImageBtn) {
+        useGeneratedImageBtn.addEventListener('click', () => {
+          if (generatedImageBlob) {
+            const imageInput = document.getElementById('image') as HTMLInputElement;
+            const file = new File([generatedImageBlob], 'generated-image.png', { type: 'image/png' });
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
+            imageInput.files = dataTransfer.files;
+            imageInput.dispatchEvent(new Event('change', { bubbles: true }));
+          }
+        });
+      }
+
+      // Gérer les boutons "Télécharger la mienne"
+      document.querySelectorAll('.btn-preview-upload').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const isVideo = btn.closest('#generated-video-preview');
+          const input = isVideo 
+            ? document.getElementById('video') as HTMLInputElement
+            : document.getElementById('image') as HTMLInputElement;
+          input?.click();
+        });
+      });
+    });
   }
 
   function initFormSubmission() {
