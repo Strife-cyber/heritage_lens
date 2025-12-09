@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:heritage_lens/services/auth_service.dart';
-import 'package:heritage_lens/views/auth/register_screen.dart';
+import 'package:heritage_lens/views/auth/login_screen.dart';
 
 import 'package:heritage_lens/views/widgets/standard_toast.dart';
 import 'package:heritage_lens/views/widgets/standard_button.dart';
@@ -11,16 +11,16 @@ import 'package:heritage_lens/views/widgets/standard_text_helpers.dart';
 
 import 'widgets/connect_with_google.dart';
 
-class LoginScreen extends ConsumerStatefulWidget {
-  const LoginScreen({super.key});
+class RegisterScreen extends ConsumerStatefulWidget {
+  const RegisterScreen({super.key});
 
   @override
-  ConsumerState<LoginScreen> createState() => _LoginScreenState();
+  ConsumerState<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _LoginScreenState extends ConsumerState<LoginScreen> {
+class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
-  final List<TextEditingController> controllers = List.generate(2, (_) => TextEditingController());
+  final List<TextEditingController> controllers = List.generate(3, (_) => TextEditingController());
 
   @override
   void dispose() {
@@ -46,15 +46,23 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   const SizedBox(height: 64),
                   Icon(Icons.arrow_back),
                   const SizedBox(height: 80),
-                  Text("Se Connecter", style: AppText.titleL()),
+                  Text("Créer un Compte", style: AppText.titleL()),
                   const SizedBox(height: 8),
-                  Text("Ravi de vous revoir, vous nous avez manqué", style: AppText.bodyM()),
+                  Text("Dites nous en plus sur vous", style: AppText.bodyM()),
                   const SizedBox(height: 64),
+                  Text("Nom d'utilisateur", style: AppText.emphasis()),
+                  const SizedBox(height: 8),
+                  StandardTextField(
+                    label: "Entrez votre nom d'utilisateur",
+                    placeholder: "John Doe", 
+                    controller: controllers[0]
+                  ),
+                  const SizedBox(height: 32),
                   Text("Email", style: AppText.emphasis()),
                   const SizedBox(height: 8),
                   StandardTextField(
                     label: "Entrez votre email...", 
-                    controller: controllers[0],
+                    controller: controllers[1],
                     placeholder: "john.doe@gmail.com",
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
@@ -78,7 +86,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   const SizedBox(height: 8),
                   StandardTextField(
                     label: "Entrez votre mot de passe...", 
-                    controller: controllers[1],
+                    controller: controllers[2],
                     placeholder: "********",
                     obscureText: true,
                     validator: (value) {
@@ -109,23 +117,24 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   const SizedBox(height: 64),
                   Row(
                     children: [
-                      Text("Vous n'avez pas de compte ?", style: AppText.bodyS()),
+                      Text("Vous avez déja un compte ?", style: AppText.bodyS()),
                       const SizedBox(width: 8),
                       GestureDetector(
                         onTap: () => Navigator.pushReplacement(
                           context, 
-                          MaterialPageRoute(builder: (context) => RegisterScreen())
+                          MaterialPageRoute(builder: (_) => LoginScreen())
                         ),
-                        child: Text("Créer un compte", style: AppText.emphasis().copyWith(fontSize: 14))
+                        child: Text(" Se connecter", style: AppText.emphasis().copyWith(fontSize: 14))
                       )
                     ],
                   ),
                   const SizedBox(height: 32),
                   StandardButton(
                     width: double.infinity,
-                    onPressed: _handleLogin,
+                    onPressed: _handleRegister,
                     child: Text("Soumettre")
-                  )
+                  ),
+                  const SizedBox(height: 24)
                 ],
               ),
             ),
@@ -136,7 +145,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   
-  Future<void> _handleLogin() async {
+  Future<void> _handleRegister() async {
     // A. Validate the Form using the Key
     if (!_formKey.currentState!.validate()) {
       return; // Stop if regex fails
@@ -144,13 +153,18 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
     try {
       // B. Attempt Login
-      await ref.read(authServiceProvider).signInWithEmailAndPassword(
-        email: controllers[0].text.trim(),
-        password: controllers[1].text.trim(),
+      await ref.read(authServiceProvider).signUpWithEmailAndPassword(
+        email: controllers[1].text.trim(),
+        password: controllers[2].text.trim(),
       );
+
+      await ref.read(authServiceProvider).updateProfile(
+        displayName: controllers[0].text.trim()
+      );
+
       
       if (mounted) {
-         StandardToast.show(context, "Connexion réussie", type: ToastType.success);
+         StandardToast.show(context, "Creation de compte réussie", type: ToastType.success);
          // Navigate to Home
       }
     } catch (e) {
