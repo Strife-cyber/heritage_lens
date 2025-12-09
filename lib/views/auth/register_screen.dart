@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:heritage_lens/services/auth_service.dart';
-import 'package:heritage_lens/views/auth/login_screen.dart';
 
+import 'package:heritage_lens/services/auth_service.dart';
 import 'package:heritage_lens/views/widgets/standard_toast.dart';
 import 'package:heritage_lens/views/widgets/standard_button.dart';
 import 'package:heritage_lens/views/widgets/standard_text_field.dart';
 import 'package:heritage_lens/views/widgets/standard_text_helpers.dart';
 
+import 'login_screen.dart';
 import 'widgets/connect_with_google.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
@@ -32,6 +31,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final spacing = MediaQuery.of(context).size.height * 0.0075;
+
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -43,23 +44,23 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 64),
+                  SizedBox(height: spacing * 8), 
                   Icon(Icons.arrow_back),
-                  const SizedBox(height: 80),
+                  SizedBox(height: spacing * 10),
                   Text("Créer un Compte", style: AppText.titleL()),
-                  const SizedBox(height: 8),
+                  SizedBox(height: spacing),
                   Text("Dites nous en plus sur vous", style: AppText.bodyM()),
-                  const SizedBox(height: 64),
+                  SizedBox(height: spacing * 8),
                   Text("Nom d'utilisateur", style: AppText.emphasis()),
-                  const SizedBox(height: 8),
+                  SizedBox(height: spacing),
                   StandardTextField(
                     label: "Entrez votre nom d'utilisateur",
                     placeholder: "John Doe", 
                     controller: controllers[0]
                   ),
-                  const SizedBox(height: 32),
+                  SizedBox(height: spacing * 4),
                   Text("Email", style: AppText.emphasis()),
-                  const SizedBox(height: 8),
+                  SizedBox(height: spacing),
                   StandardTextField(
                     label: "Entrez votre email...", 
                     controller: controllers[1],
@@ -81,9 +82,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       return null; // valide
                     },
                   ),
-                  const SizedBox(height: 32),
+                  SizedBox(height: spacing * 4),
                   Text("Mot de passe", style: AppText.emphasis()),
-                  const SizedBox(height: 8),
+                  SizedBox(height: spacing),
                   StandardTextField(
                     label: "Entrez votre mot de passe...", 
                     controller: controllers[2],
@@ -101,7 +102,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       return null; // valide
                     }
                   ),
-                  const SizedBox(height: 24),
+                  SizedBox(height: spacing * 3),
                   Row(
                     children: [
                       Expanded(child: Divider()),
@@ -112,13 +113,13 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       Expanded(child: Divider())
                     ],
                   ),
-                  const SizedBox(height: 24),
+                  SizedBox(height: spacing * 3),
                   ConnectWithGoogleButton(onPressed: _handleGoogleSignIn),
-                  const SizedBox(height: 64),
+                  SizedBox(height: spacing * 8),
                   Row(
                     children: [
                       Text("Vous avez déja un compte ?", style: AppText.bodyS()),
-                      const SizedBox(width: 8),
+                      SizedBox(width: MediaQuery.of(context).size.width * 0.02),
                       GestureDetector(
                         onTap: () => Navigator.pushReplacement(
                           context, 
@@ -128,13 +129,13 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       )
                     ],
                   ),
-                  const SizedBox(height: 32),
+                  SizedBox(height: spacing * 4),
                   StandardButton(
                     width: double.infinity,
                     onPressed: _handleRegister,
                     child: Text("Soumettre")
                   ),
-                  const SizedBox(height: 24)
+                  SizedBox(height: spacing * 3)
                 ],
               ),
             ),

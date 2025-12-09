@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:heritage_lens/services/auth_service.dart';
-import 'package:heritage_lens/views/auth/register_screen.dart';
 
+import 'package:heritage_lens/services/auth_service.dart';
 import 'package:heritage_lens/views/widgets/standard_toast.dart';
 import 'package:heritage_lens/views/widgets/standard_button.dart';
 import 'package:heritage_lens/views/widgets/standard_text_field.dart';
 import 'package:heritage_lens/views/widgets/standard_text_helpers.dart';
 
+import 'register_screen.dart';
 import 'widgets/connect_with_google.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -32,6 +31,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final spacing = MediaQuery.of(context).size.height * 0.0075;
+
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -43,15 +44,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 64),
+                  SizedBox(height: spacing * 8),
                   Icon(Icons.arrow_back),
-                  const SizedBox(height: 80),
+                  SizedBox(height: spacing * 10),
                   Text("Se Connecter", style: AppText.titleL()),
-                  const SizedBox(height: 8),
+                  SizedBox(height: spacing),
                   Text("Ravi de vous revoir, vous nous avez manqué", style: AppText.bodyM()),
-                  const SizedBox(height: 64),
+                  SizedBox(height: spacing * 8),
                   Text("Email", style: AppText.emphasis()),
-                  const SizedBox(height: 8),
+                  SizedBox(height: spacing),
                   StandardTextField(
                     label: "Entrez votre email...", 
                     controller: controllers[0],
@@ -73,9 +74,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       return null; // valide
                     },
                   ),
-                  const SizedBox(height: 32),
+                  SizedBox(height: spacing * 4),
                   Text("Mot de passe", style: AppText.emphasis()),
-                  const SizedBox(height: 8),
+                  SizedBox(height: spacing),
                   StandardTextField(
                     label: "Entrez votre mot de passe...", 
                     controller: controllers[1],
@@ -93,7 +94,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       return null; // valide
                     }
                   ),
-                  const SizedBox(height: 24),
+                  SizedBox(height: spacing * 3),
                   Row(
                     children: [
                       Expanded(child: Divider()),
@@ -104,9 +105,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       Expanded(child: Divider())
                     ],
                   ),
-                  const SizedBox(height: 24),
+                  SizedBox(height: spacing * 3),
                   ConnectWithGoogleButton(onPressed: _handleGoogleSignIn),
-                  const SizedBox(height: 64),
+                  SizedBox(height: spacing * 8),
                   Row(
                     children: [
                       Text("Vous n'avez pas de compte ?", style: AppText.bodyS()),
@@ -120,7 +121,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       )
                     ],
                   ),
-                  const SizedBox(height: 32),
+                  SizedBox(height: spacing * 4),
                   StandardButton(
                     width: double.infinity,
                     onPressed: _handleLogin,
