@@ -2,99 +2,120 @@
 import Layout from '../layouts/Layout.astro';
 ---
 
-<Layout title="Upload Artefact">
-  <main class="upload-container">
-    <div class="upload-card">
-      <h1>Upload Artefact</h1>
-      <p class="subtitle">Téléchargez votre modèle 3D, vidéo et image</p>
+<Layout title="Upload Artefact - HBoard">
+  <div id="upload-app">
+    <!-- Canvas pour Three.js (optionnel pour le fond) -->
+    <canvas id="three-canvas"></canvas>
+    
+    <!-- Grille de fond -->
+    <div class="grid-background"></div>
+    
+    <!-- Contenu principal -->
+    <div class="upload-container">
+      <div class="upload-header">
+        <h1 class="upload-title">Upload Artefact</h1>
+        <p class="upload-subtitle">Téléchargez vos fichiers et complétez les métadonnées</p>
+      </div>
 
       <form id="upload-form" class="upload-form">
-        <!-- Section Fichiers -->
-        <section class="form-section">
-          <h2>Fichiers</h2>
+        <!-- Section 1: Upload des fichiers (divisée en 2) -->
+        <section class="files-section">
+          <div class="files-grid">
+            <!-- Côté gauche: Image et Vidéo -->
+            <div class="files-column">
+              <h2 class="section-title">Médias</h2>
+              
+              <div class="file-upload-area image-upload" id="image-upload-area">
+                <input type="file" id="image" name="image" accept="image/*" class="file-input" />
+                <div class="upload-content">
+                  <div class="upload-icon">🖼️</div>
+                  <p class="upload-label">Image</p>
+                  <p class="upload-hint">Cliquez ou glissez-déposez</p>
+                  <div class="file-preview" id="image-preview"></div>
+                </div>
+              </div>
+
+              <div class="file-upload-area video-upload" id="video-upload-area">
+                <input type="file" id="video" name="video" accept="video/*" class="file-input" />
+                <div class="upload-content">
+                  <div class="upload-icon">🎬</div>
+                  <p class="upload-label">Vidéo</p>
+                  <p class="upload-hint">Cliquez ou glissez-déposez</p>
+                  <div class="file-preview" id="video-preview"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Côté droit: Modèle 3D -->
+            <div class="files-column">
+              <h2 class="section-title">Modèle 3D</h2>
+              
+              <div class="file-upload-area model-upload" id="model-upload-area">
+                <input type="file" id="model3d" name="model3d" accept=".glb" class="file-input" />
+                <div class="upload-content">
+                  <div class="upload-icon">🎨</div>
+                  <p class="upload-label">Modèle 3D (.glb)</p>
+                  <p class="upload-hint">Cliquez ou glissez-déposez</p>
+                  <div class="file-preview" id="model-preview">
+                    <div class="model-viewer-placeholder">
+                      <span>Aperçu du modèle</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 2: Métadonnées -->
+        <section class="metadata-section">
+          <h2 class="section-title">Métadonnées</h2>
           
-          <div class="file-upload-group">
-            <label for="model3d" class="file-label">
-              <span class="label-text">Modèle 3D (.glb)</span>
-              <input type="file" id="model3d" name="model3d" accept=".glb" class="file-input" />
-              <div class="file-display" id="model3d-display">
-                <span class="file-placeholder">Aucun fichier sélectionné</span>
-              </div>
-            </label>
-          </div>
+          <div class="metadata-grid">
+            <div class="form-group">
+              <label for="title">Titre *</label>
+              <input type="text" id="title" name="title" required class="form-input" placeholder="Nom de l'artefact" />
+            </div>
 
-          <div class="file-upload-group">
-            <label for="video" class="file-label">
-              <span class="label-text">Vidéo</span>
-              <input type="file" id="video" name="video" accept="video/*" class="file-input" />
-              <div class="file-display" id="video-display">
-                <span class="file-placeholder">Aucun fichier sélectionné</span>
-              </div>
-            </label>
-          </div>
+            <div class="form-group">
+              <label for="category">Catégorie</label>
+              <input type="text" id="category" name="category" class="form-input" placeholder="Ex: Architecture, Art, etc." />
+            </div>
 
-          <div class="file-upload-group">
-            <label for="image" class="file-label">
-              <span class="label-text">Image</span>
-              <input type="file" id="image" name="image" accept="image/*" class="file-input" />
-              <div class="file-display" id="image-display">
-                <span class="file-placeholder">Aucun fichier sélectionné</span>
-              </div>
-            </label>
-          </div>
-        </section>
+            <div class="form-group full-width">
+              <label for="description">Description</label>
+              <textarea id="description" name="description" rows="4" class="form-textarea" placeholder="Décrivez votre artefact..."></textarea>
+            </div>
 
-        <!-- Section Métadonnées -->
-        <section class="form-section">
-          <h2>Métadonnées</h2>
+            <div class="form-group full-width">
+              <label for="tags">Tags (séparés par des virgules)</label>
+              <input type="text" id="tags" name="tags" class="form-input" placeholder="tag1, tag2, tag3" />
+            </div>
 
-          <div class="form-group">
-            <label for="title">Titre *</label>
-            <input type="text" id="title" name="title" required class="form-input" />
-          </div>
+            <div class="form-group">
+              <label for="status">Statut</label>
+              <select id="status" name="status" class="form-select">
+                <option value="draft">Brouillon</option>
+                <option value="published">Publié</option>
+                <option value="archived">Archivé</option>
+              </select>
+            </div>
 
-          <div class="form-group">
-            <label for="description">Description</label>
-            <textarea id="description" name="description" rows="4" class="form-textarea"></textarea>
-          </div>
-
-          <div class="form-group">
-            <label for="category">Catégorie</label>
-            <input type="text" id="category" name="category" class="form-input" />
-          </div>
-
-          <div class="form-group">
-            <label for="tags">Tags (séparés par des virgules)</label>
-            <input type="text" id="tags" name="tags" placeholder="tag1, tag2, tag3" class="form-input" />
+            <div class="form-group checkbox-group">
+              <label class="checkbox-label">
+                <input type="checkbox" id="isPublic" name="isPublic" value="true" />
+                <span>Rendre public</span>
+              </label>
+            </div>
           </div>
         </section>
 
-        <!-- Section Paramètres -->
-        <section class="form-section">
-          <h2>Paramètres</h2>
-
-          <div class="form-group">
-            <label for="status">Statut</label>
-            <select id="status" name="status" class="form-select">
-              <option value="draft">Brouillon</option>
-              <option value="published">Publié</option>
-              <option value="archived">Archivé</option>
-            </select>
-          </div>
-
-          <div class="form-group checkbox-group">
-            <label class="checkbox-label">
-              <input type="checkbox" id="isPublic" name="isPublic" value="true" />
-              <span>Rendre public</span>
-            </label>
-          </div>
-        </section>
-
-        <!-- Boutons -->
+        <!-- Boutons d'action -->
         <div class="form-actions">
           <button type="submit" class="btn btn-primary" id="submit-btn">
             <span class="btn-text">Upload Artefact</span>
-            <span class="btn-loader" id="loader" style="display: none;">⏳</span>
+            <span class="btn-icon">→</span>
+            <div class="btn-glow"></div>
           </button>
         </div>
 
@@ -102,144 +123,294 @@ import Layout from '../layouts/Layout.astro';
         <div id="status-message" class="status-message" style="display: none;"></div>
       </form>
     </div>
-  </main>
+  </div>
 </Layout>
 
 <style>
-  .upload-container {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  #upload-app {
+    position: relative;
     min-height: 100vh;
-    padding: 2rem;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
+    width: 100vw;
+    overflow-x: hidden;
+    background: #000000;
   }
 
-  .upload-card {
-    background: white;
-    border-radius: 16px;
-    padding: 2.5rem;
-    max-width: 800px;
+  #three-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    height: 100%;
+    z-index: 1;
+    opacity: 0.2;
+    pointer-events: none;
   }
 
-  h1 {
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin: 0 0 0.5rem 0;
-    color: #1a202c;
+  .grid-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    background-image: 
+      linear-gradient(rgba(139, 92, 246, 0.1) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(139, 92, 246, 0.1) 1px, transparent 1px);
+    background-size: 50px 50px;
+    animation: gridMove 20s linear infinite;
+    pointer-events: none;
   }
 
-  .subtitle {
-    color: #718096;
-    margin-bottom: 2rem;
-    font-size: 1.1rem;
+  @keyframes gridMove {
+    0% { transform: translate(0, 0); }
+    100% { transform: translate(50px, 50px); }
   }
 
-  .form-section {
-    margin-bottom: 2.5rem;
-    padding-bottom: 2rem;
-    border-bottom: 1px solid #e2e8f0;
+  .upload-container {
+    position: relative;
+    z-index: 10;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 3rem 2rem;
   }
 
-  .form-section:last-of-type {
-    border-bottom: none;
+  .upload-header {
+    text-align: center;
+    margin-bottom: 4rem;
   }
 
-  .form-section h2 {
+  .upload-title {
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    font-weight: 900;
+    color: #ffffff;
+    margin-bottom: 1rem;
+    text-shadow: 
+      0 0 20px rgba(139, 92, 246, 0.5),
+      0 0 40px rgba(139, 92, 246, 0.3);
+    letter-spacing: -0.02em;
+  }
+
+  .upload-subtitle {
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: 300;
+  }
+
+  .upload-form {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+  }
+
+  .section-title {
     font-size: 1.5rem;
     font-weight: 600;
-    margin-bottom: 1.5rem;
-    color: #2d3748;
+    color: #ffffff;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid rgba(139, 92, 246, 0.3);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
   }
 
-  .file-upload-group {
-    margin-bottom: 1.5rem;
+  /* Section Fichiers */
+  .files-section {
+    margin-bottom: 2rem;
   }
 
-  .file-label {
-    display: block;
+  .files-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+
+  .files-column {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .file-upload-area {
+    position: relative;
+    background: rgba(255, 255, 255, 0.02);
+    backdrop-filter: blur(10px);
+    border: 2px dashed rgba(139, 92, 246, 0.3);
+    border-radius: 16px;
+    padding: 2rem;
+    min-height: 300px;
+    transition: all 0.3s ease;
     cursor: pointer;
+    overflow: hidden;
   }
 
-  .label-text {
-    display: block;
-    font-weight: 500;
-    margin-bottom: 0.5rem;
-    color: #4a5568;
+  .file-upload-area:hover {
+    border-color: rgba(139, 92, 246, 0.6);
+    background: rgba(255, 255, 255, 0.05);
+    box-shadow: 
+      0 0 30px rgba(139, 92, 246, 0.2),
+      inset 0 0 30px rgba(139, 92, 246, 0.1);
+  }
+
+  .file-upload-area.dragover {
+    border-color: #8b5cf6;
+    background: rgba(139, 92, 246, 0.1);
+    box-shadow: 0 0 40px rgba(139, 92, 246, 0.4);
+  }
+
+  .file-upload-area.has-file {
+    border-color: #8b5cf6;
+    border-style: solid;
   }
 
   .file-input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .upload-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    height: 100%;
+    gap: 1rem;
+  }
+
+  .upload-icon {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .upload-label {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #ffffff;
+  }
+
+  .upload-hint {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  .file-preview {
+    width: 100%;
+    margin-top: 1rem;
     display: none;
   }
 
-  .file-display {
-    border: 2px dashed #cbd5e0;
+  .file-preview.active {
+    display: block;
+  }
+
+  .file-preview img,
+  .file-preview video {
+    width: 100%;
+    max-height: 250px;
+    object-fit: contain;
     border-radius: 8px;
-    padding: 1.5rem;
-    text-align: center;
-    transition: all 0.3s ease;
-    background: #f7fafc;
+    border: 1px solid rgba(139, 92, 246, 0.3);
   }
 
-  .file-display:hover {
-    border-color: #667eea;
-    background: #edf2f7;
-  }
-
-  .file-placeholder {
-    color: #a0aec0;
+  .model-viewer-placeholder {
+    width: 100%;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(139, 92, 246, 0.1);
+    border-radius: 8px;
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    color: rgba(255, 255, 255, 0.5);
     font-size: 0.9rem;
   }
 
-  .file-display.has-file {
-    border-color: #48bb78;
-    background: #f0fff4;
+  .file-info {
+    margin-top: 1rem;
+    padding: 0.75rem;
+    background: rgba(139, 92, 246, 0.1);
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.9rem;
   }
 
-  .file-display.has-file .file-placeholder {
-    color: #22543d;
-    font-weight: 500;
+  /* Section Métadonnées */
+  .metadata-section {
+    background: rgba(255, 255, 255, 0.02);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(139, 92, 246, 0.2);
+    border-radius: 16px;
+    padding: 2.5rem;
+  }
+
+  .metadata-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
   }
 
   .form-group {
-    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .form-group.full-width {
+    grid-column: 1 / -1;
   }
 
   .form-group label {
-    display: block;
     font-weight: 500;
+    color: rgba(255, 255, 255, 0.9);
     margin-bottom: 0.5rem;
-    color: #4a5568;
+    font-size: 0.95rem;
   }
 
   .form-input,
   .form-textarea,
   .form-select {
     width: 100%;
-    padding: 0.75rem 1rem;
-    border: 2px solid #e2e8f0;
+    padding: 0.875rem 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(139, 92, 246, 0.3);
     border-radius: 8px;
+    color: #ffffff;
     font-size: 1rem;
-    transition: all 0.3s ease;
     font-family: inherit;
+    transition: all 0.3s ease;
+  }
+
+  .form-input::placeholder,
+  .form-textarea::placeholder {
+    color: rgba(255, 255, 255, 0.3);
   }
 
   .form-input:focus,
   .form-textarea:focus,
   .form-select:focus {
     outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    border-color: #8b5cf6;
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 
+      0 0 0 3px rgba(139, 92, 246, 0.1),
+      0 0 20px rgba(139, 92, 246, 0.2);
   }
 
   .form-textarea {
     resize: vertical;
+    min-height: 120px;
   }
 
   .checkbox-group {
-    margin-top: 1rem;
+    display: flex;
+    align-items: center;
   }
 
   .checkbox-label {
@@ -247,41 +418,68 @@ import Layout from '../layouts/Layout.astro';
     align-items: center;
     gap: 0.75rem;
     cursor: pointer;
+    color: rgba(255, 255, 255, 0.9);
   }
 
   .checkbox-label input[type="checkbox"] {
     width: 1.25rem;
     height: 1.25rem;
     cursor: pointer;
+    accent-color: #8b5cf6;
   }
 
+  /* Boutons */
   .form-actions {
-    margin-top: 2rem;
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
+    margin-top: 2rem;
   }
 
   .btn {
-    padding: 0.875rem 2rem;
-    border: none;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 1rem;
+    padding: 1.25rem 3rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+    text-decoration: none;
+    border: none;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    background: transparent;
+    border: 2px solid #8b5cf6;
+    color: #ffffff;
+    cursor: pointer;
+  }
+
+  .btn-glow {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.4), transparent);
+    transition: left 0.5s ease;
+  }
+
+  .btn:hover .btn-glow {
+    left: 100%;
   }
 
   .btn-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    box-shadow: 
+      0 0 20px rgba(139, 92, 246, 0.3),
+      inset 0 0 20px rgba(139, 92, 246, 0.1);
   }
 
   .btn-primary:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+    background: rgba(139, 92, 246, 0.1);
+    transform: translateY(-3px);
+    box-shadow: 
+      0 10px 40px rgba(139, 92, 246, 0.5),
+      inset 0 0 30px rgba(139, 92, 246, 0.2);
   }
 
   .btn-primary:disabled {
@@ -289,110 +487,290 @@ import Layout from '../layouts/Layout.astro';
     cursor: not-allowed;
   }
 
-  .btn-loader {
-    display: inline-block;
-    animation: spin 1s linear infinite;
+  .btn-icon {
+    font-size: 1.5rem;
+    transition: transform 0.3s ease;
+    color: #8b5cf6;
   }
 
-  @keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+  .btn-primary:hover:not(:disabled) .btn-icon {
+    transform: translateX(5px);
   }
 
   .status-message {
     margin-top: 1.5rem;
-    padding: 1rem;
+    padding: 1.25rem;
     border-radius: 8px;
     font-weight: 500;
+    text-align: center;
   }
 
   .status-message.success {
-    background: #f0fff4;
-    color: #22543d;
-    border: 2px solid #48bb78;
+    background: rgba(139, 92, 246, 0.2);
+    color: #ffffff;
+    border: 2px solid #8b5cf6;
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
   }
 
   .status-message.error {
-    background: #fff5f5;
-    color: #742a2a;
-    border: 2px solid #f56565;
+    background: rgba(255, 0, 0, 0.1);
+    color: #ff6b6b;
+    border: 2px solid rgba(255, 107, 107, 0.5);
+  }
+
+  @media (max-width: 1024px) {
+    .files-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .metadata-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .upload-container {
+      padding: 2rem 1rem;
+    }
+
+    .upload-header {
+      margin-bottom: 2rem;
+    }
+
+    .file-upload-area {
+      min-height: 250px;
+      padding: 1.5rem;
+    }
   }
 </style>
 
 <script>
-  // Gérer l'affichage des fichiers sélectionnés
-  const fileInputs = ['model3d', 'video', 'image'];
-  
-  fileInputs.forEach((inputId) => {
-    const input = document.getElementById(inputId) as HTMLInputElement;
-    const display = document.getElementById(`${inputId}-display`) as HTMLElement;
-    
-    if (input && display) {
+  import * as THREE from 'three';
+  import { gsap } from 'gsap';
+
+  // Initialiser Three.js en arrière-plan
+  if (typeof window !== 'undefined') {
+    window.addEventListener('DOMContentLoaded', () => {
+      initThreeJS();
+      initFileUploads();
+      initFormSubmission();
+    });
+  }
+
+  function initThreeJS() {
+    const canvas = document.getElementById('three-canvas') as HTMLCanvasElement;
+    if (!canvas) return;
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(
+      75,
+      window.innerWidth / window.innerHeight,
+      0.1,
+      1000
+    );
+    const renderer = new THREE.WebGLRenderer({
+      canvas,
+      alpha: true,
+      antialias: true,
+    });
+
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+    camera.position.z = 5;
+
+    // Particules violettes subtiles
+    const particlesGeometry = new THREE.BufferGeometry();
+    const particlesCount = 1000;
+    const posArray = new Float32Array(particlesCount * 3);
+
+    for (let i = 0; i < particlesCount * 3; i++) {
+      posArray[i] = (Math.random() - 0.5) * 20;
+    }
+
+    particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+
+    const particlesMaterial = new THREE.PointsMaterial({
+      size: 0.02,
+      color: 0x8b5cf6,
+      transparent: true,
+      opacity: 0.4,
+    });
+
+    const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+    scene.add(particlesMesh);
+
+    const animate = () => {
+      requestAnimationFrame(animate);
+      particlesMesh.rotation.y += 0.0005;
+      renderer.render(scene, camera);
+    };
+
+    animate();
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+  }
+
+  function initFileUploads() {
+    const fileInputs = [
+      { id: 'image', previewId: 'image-preview', areaId: 'image-upload-area' },
+      { id: 'video', previewId: 'video-preview', areaId: 'video-upload-area' },
+      { id: 'model3d', previewId: 'model-preview', areaId: 'model-upload-area' },
+    ];
+
+    fileInputs.forEach(({ id, previewId, areaId }) => {
+      const input = document.getElementById(id) as HTMLInputElement;
+      const preview = document.getElementById(previewId);
+      const area = document.getElementById(areaId);
+
+      if (!input || !preview || !area) return;
+
+      // Gestion du changement de fichier
       input.addEventListener('change', (e) => {
         const file = (e.target as HTMLInputElement).files?.[0];
         if (file) {
-          display.classList.add('has-file');
-          display.querySelector('.file-placeholder')!.textContent = file.name;
-        } else {
-          display.classList.remove('has-file');
-          display.querySelector('.file-placeholder')!.textContent = 'Aucun fichier sélectionné';
+          handleFileSelect(file, id, preview, area);
         }
       });
-    }
-  });
 
-  // Gérer la soumission du formulaire
-  const form = document.getElementById('upload-form') as HTMLFormElement;
-  const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement;
-  const loader = document.getElementById('loader') as HTMLElement;
-  const statusMessage = document.getElementById('status-message') as HTMLElement;
-
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    // Désactiver le bouton et afficher le loader
-    submitBtn.disabled = true;
-    loader.style.display = 'inline-block';
-    statusMessage.style.display = 'none';
-
-    try {
-      const formData = new FormData(form);
-
-      const response = await fetch('/api/upload-artefact', {
-        method: 'POST',
-        body: formData,
+      // Drag and drop
+      area.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        area.classList.add('dragover');
       });
 
-      const result = await response.json();
+      area.addEventListener('dragleave', () => {
+        area.classList.remove('dragover');
+      });
 
-      if (result.success) {
-        statusMessage.textContent = `✅ ${result.message} (ID: ${result.id})`;
-        statusMessage.className = 'status-message success';
-        statusMessage.style.display = 'block';
-        
-        // Réinitialiser le formulaire après 2 secondes
-        setTimeout(() => {
-          form.reset();
-          fileInputs.forEach((inputId) => {
-            const display = document.getElementById(`${inputId}-display`);
-            if (display) {
-              display.classList.remove('has-file');
-              display.querySelector('.file-placeholder')!.textContent = 'Aucun fichier sélectionné';
-            }
-          });
-          statusMessage.style.display = 'none';
-        }, 2000);
-      } else {
-        throw new Error(result.error || 'Erreur lors de l\'upload');
-      }
-    } catch (error) {
-      statusMessage.textContent = `❌ Erreur: ${error instanceof Error ? error.message : 'Erreur inconnue'}`;
-      statusMessage.className = 'status-message error';
-      statusMessage.style.display = 'block';
-    } finally {
-      submitBtn.disabled = false;
-      loader.style.display = 'none';
+      area.addEventListener('drop', (e) => {
+        e.preventDefault();
+        area.classList.remove('dragover');
+        const file = e.dataTransfer?.files[0];
+        if (file) {
+          input.files = e.dataTransfer.files;
+          handleFileSelect(file, id, preview, area);
+        }
+      });
+    });
+  }
+
+  function handleFileSelect(file: File, type: string, preview: HTMLElement, area: HTMLElement) {
+    area.classList.add('has-file');
+
+    if (type === 'image') {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        preview.innerHTML = `<img src="${e.target?.result}" alt="Preview" />`;
+        preview.classList.add('active');
+      };
+      reader.readAsDataURL(file);
+    } else if (type === 'video') {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        preview.innerHTML = `<video src="${e.target?.result}" controls></video>`;
+        preview.classList.add('active');
+      };
+      reader.readAsDataURL(file);
+    } else if (type === 'model3d') {
+      preview.innerHTML = `
+        <div class="file-info">
+          <strong>${file.name}</strong><br>
+          <span>Taille: ${(file.size / 1024 / 1024).toFixed(2)} MB</span>
+        </div>
+      `;
+      preview.classList.add('active');
     }
-  });
-</script>
+  }
 
+  function initFormSubmission() {
+    const form = document.getElementById('upload-form') as HTMLFormElement;
+    const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement;
+    const statusMessage = document.getElementById('status-message') as HTMLElement;
+
+    if (!form || !submitBtn || !statusMessage) return;
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span class="btn-text">Upload en cours...</span><span class="btn-loader">⏳</span>';
+
+      try {
+        const formData = new FormData(form);
+
+        const response = await fetch('/api/upload-artefact', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          statusMessage.textContent = `✅ ${result.message} (ID: ${result.id})`;
+          statusMessage.className = 'status-message success';
+          statusMessage.style.display = 'block';
+
+          setTimeout(() => {
+            form.reset();
+            document.querySelectorAll('.file-preview').forEach((p) => {
+              p.classList.remove('active');
+              p.innerHTML = '';
+            });
+            document.querySelectorAll('.file-upload-area').forEach((a) => {
+              a.classList.remove('has-file');
+            });
+            statusMessage.style.display = 'none';
+          }, 3000);
+        } else {
+          throw new Error(result.error || 'Erreur lors de l\'upload');
+        }
+      } catch (error) {
+        statusMessage.textContent = `❌ Erreur: ${error instanceof Error ? error.message : 'Erreur inconnue'}`;
+        statusMessage.className = 'status-message error';
+        statusMessage.style.display = 'block';
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `
+          <span class="btn-text">Upload Artefact</span>
+          <span class="btn-icon">→</span>
+          <div class="btn-glow"></div>
+        `;
+      }
+    });
+  }
+
+  // Animations GSAP
+  if (typeof window !== 'undefined') {
+    window.addEventListener('DOMContentLoaded', () => {
+      gsap.fromTo('.upload-title',
+        { y: 50, opacity: 0 },
+        { y: 0, opacity: 1, duration: 1, ease: 'power4.out' }
+      );
+
+      gsap.fromTo('.upload-subtitle',
+        { y: 30, opacity: 0 },
+        { y: 0, opacity: 1, duration: 1, delay: 0.2, ease: 'power4.out' }
+      );
+
+      gsap.fromTo('.files-section',
+        { y: 50, opacity: 0 },
+        { y: 0, opacity: 1, duration: 1, delay: 0.4, ease: 'power4.out' }
+      );
+
+      gsap.fromTo('.metadata-section',
+        { y: 50, opacity: 0 },
+        { y: 0, opacity: 1, duration: 1, delay: 0.6, ease: 'power4.out' }
+      );
+
+      gsap.fromTo('.btn',
+        { scale: 0, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.8, delay: 0.8, ease: 'back.out(1.7)' }
+      );
+    });
+  }
+</script>
