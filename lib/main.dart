@@ -4,7 +4,8 @@ import 'package:heritage_lens/core/app_theme.dart';
 import 'package:heritage_lens/firebase_options.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'views/auth/login_screen.dart';
+import 'views/home.dart';
+
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -47,7 +48,7 @@ class HeritageLens extends StatelessWidget {
       navigatorKey: _navigatorKey,
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
-      home: LoginScreen(),
+      home: Home(),
     );
   }
 }
