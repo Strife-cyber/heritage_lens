@@ -17,9 +17,11 @@ final currentUserProvider = StreamProvider<User?>((ref) {
 
 /// Service responsable des opérations d'authentification Firebase.
 class AuthService {
-  AuthService()
-      : _auth = FirebaseAuth.instance,
-        _googleSignIn = GoogleSignIn();
+  AuthService({
+    FirebaseAuth? auth,
+    GoogleSignIn? googleSignIn,
+  })  : _auth = auth ?? FirebaseAuth.instance,
+        _googleSignIn = googleSignIn ?? GoogleSignIn();
 
   final FirebaseAuth _auth;
   final GoogleSignIn _googleSignIn;
