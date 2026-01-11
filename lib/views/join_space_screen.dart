@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dashboard_screen.dart';
 import '../models/space_model.dart';
-import '../models/user_model.dart';
 
 class JoinSpaceScreen extends StatefulWidget {
   const JoinSpaceScreen({super.key});

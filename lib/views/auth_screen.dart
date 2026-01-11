@@ -6,7 +6,21 @@ import '../models/user_model.dart';
 import 'dashboard_screen.dart';
 
 class AuthScreen extends StatefulWidget {
-  const AuthScreen({super.key});
+  const AuthScreen({
+    super.key,
+    FirebaseAuth? auth,
+    FirebaseFirestore? firestore,
+    GoogleSignIn? googleSignIn,
+    WidgetBuilder? dashboardBuilder,
+  })  : _auth = auth,
+        _firestore = firestore,
+        _googleSignIn = googleSignIn,
+        _dashboardBuilder = dashboardBuilder;
+
+  final FirebaseAuth? _auth;
+  final FirebaseFirestore? _firestore;
+  final GoogleSignIn? _googleSignIn;
+  final WidgetBuilder? _dashboardBuilder;
 
   @override
   State<AuthScreen> createState() => _AuthScreenState();
@@ -23,9 +37,17 @@ class _AuthScreenState extends State<AuthScreen> {
   final _formKey = GlobalKey<FormState>();
   
   // Instances Firebase
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  late final FirebaseAuth _auth;
+  late final FirebaseFirestore _firestore;
+  late final GoogleSignIn _googleSignIn;
+
+  @override
+  void initState() {
+    super.initState();
+    _auth = widget._auth ?? FirebaseAuth.instance;
+    _firestore = widget._firestore ?? FirebaseFirestore.instance;
+    _googleSignIn = widget._googleSignIn ?? GoogleSignIn();
+  }
 
   @override
   void dispose() {
@@ -63,8 +85,10 @@ class _AuthScreenState extends State<AuthScreen> {
             print('Impossible de récupérer le user: $e');
           }
 
+          final dashboardBuilder =
+              widget._dashboardBuilder ?? (_) => const DashboardScreen();
           Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (_) => const DashboardScreen()),
+            MaterialPageRoute(builder: dashboardBuilder),
           );
         }
       } else {
@@ -102,8 +126,10 @@ class _AuthScreenState extends State<AuthScreen> {
             print('Erreur Firestore: $e');
           }
 
+          final dashboardBuilder =
+              widget._dashboardBuilder ?? (_) => const DashboardScreen();
           Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (_) => const DashboardScreen()),
+            MaterialPageRoute(builder: dashboardBuilder),
           );
         }
       }
@@ -193,8 +219,10 @@ class _AuthScreenState extends State<AuthScreen> {
           print('Utilisateur Google connecté: ${userModel.displayName}');
         }
 
+        final dashboardBuilder =
+            widget._dashboardBuilder ?? (_) => const DashboardScreen();
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (_) => const DashboardScreen()),
+          MaterialPageRoute(builder: dashboardBuilder),
         );
       }
     } on FirebaseAuthException catch (e) {

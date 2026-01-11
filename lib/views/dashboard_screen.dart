@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'join_space_screen.dart';
 import 'auth_screen.dart';
 import '../models/user_model.dart';
 import '../models/space_model.dart';
