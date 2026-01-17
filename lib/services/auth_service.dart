@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:heritage_lens/core/app_config.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Fournit une instance unique du service d'authentification via Riverpod.
@@ -19,7 +20,7 @@ final currentUserProvider = StreamProvider<User?>((ref) {
 class AuthService {
   AuthService()
       : _auth = FirebaseAuth.instance,
-        _googleSignIn = GoogleSignIn();
+        _googleSignIn = GoogleSignIn(clientId: AppConfig.webClientIdSync);
 
   final FirebaseAuth _auth;
   final GoogleSignIn _googleSignIn;
@@ -99,17 +100,67 @@ class AuthService {
     }
   }
 
+  /// Vérifie si l'utilisateur est déjà connecté avec Google en utilisant signInSilently().
+  ///
+  /// Cette méthode utilise signInSilently() pour vérifier si une session Google active existe.
+  /// Retourne les informations d'identification si une session est trouvée, null sinon.
+  /// Pour web, cette méthode devrait être utilisée à la place de signIn() qui est déprécié.
+  Future<UserCredential?> checkExistingGoogleSession() async {
+    try {
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signInSilently();
+      
+      if (googleUser == null) {
+        return null;
+      }
+
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      return await _auth.signInWithCredential(credential);
+    } catch (error) {
+      if (kDebugMode) {
+        debugPrint('Erreur lors de la vérification de session Google : $error');
+      }
+      return null;
+    }
+  }
+
   /// Connecte un utilisateur avec Google.
   ///
   /// Retourne les informations d'identification de l'utilisateur Google.
+  /// Pour web, essaie d'abord signInSilently() pour vérifier si l'utilisateur est déjà connecté.
+  /// Si aucune session n'existe, utilise signIn() qui utilise maintenant Google Identity Services
+  /// en interne (bien que la méthode soit marquée comme dépréciée, elle fonctionne avec GIS).
+  /// Pour mobile (Android/iOS), utilise le flux standard avec signIn().
   Future<UserCredential> signInWithGoogle() async {
     try {
-      // Déclenche le flux d'authentification Google
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      GoogleSignInAccount? googleUser;
 
-      if (googleUser == null) {
-        // L'utilisateur a annulé la connexion
-        throw StateError('La connexion Google a été annulée.');
+      if (kIsWeb) {
+        // Pour web: essaie d'abord signInSilently() pour vérifier si l'utilisateur est déjà connecté
+        googleUser = await _googleSignIn.signInSilently();
+        
+        // Si aucune session silencieuse n'existe, déclenche le flux interactif
+        // Note: signIn() utilise maintenant Google Identity Services en interne
+        if (googleUser == null) {
+          googleUser = await _googleSignIn.signIn();
+          
+          if (googleUser == null) {
+            // L'utilisateur a annulé la connexion
+            throw StateError('La connexion Google a été annulée.');
+          }
+        }
+      } else {
+        // Pour mobile (Android/iOS): utilise le flux standard
+        googleUser = await _googleSignIn.signIn();
+        
+        if (googleUser == null) {
+          // L'utilisateur a annulé la connexion
+          throw StateError('La connexion Google a été annulée.');
+        }
       }
 
       // Obtient les détails d'authentification de la demande

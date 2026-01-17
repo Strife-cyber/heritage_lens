@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:yaml/yaml.dart';
 
@@ -121,7 +122,7 @@ void main() {
           // This is a recommendation but not strictly required
           // Log if not present
           if (!hasEnvFile) {
-            print('Warning: .env file not found in assets. '
+            debugPrint('Warning: .env file not found in assets. '
                 'Consider adding it for flutter_dotenv to work properly.');
           }
         }

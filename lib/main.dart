@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:heritage_lens/core/app_theme.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:heritage_lens/firebase_options.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:heritage_lens/views/auth/login_screen.dart';
 
 import 'views/home.dart';
 
@@ -20,12 +22,12 @@ Future<void> main() async {
   }
   
   // Load environment variables
-  /*try {
+  try {
     await dotenv.load(fileName: '.env');
   } catch (e) {
     // .env file is optional, but log the warning
     debugPrint('Warning: Could not load .env file: $e');
-  }*/
+  }
   
   runApp(
     const ProviderScope(
@@ -48,7 +50,7 @@ class HeritageLens extends StatelessWidget {
       navigatorKey: _navigatorKey,
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
-      home: Home(),
+      home: LoginScreen(),
     );
   }
 }
