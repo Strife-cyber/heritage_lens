@@ -1,28 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'auth_screen.dart';
-import '../models/user_model.dart';
-import '../models/space_model.dart';
-import '../models/ar_model.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:heritage_lens/views/auth/login_screen.dart';
 
-class DashboardScreen extends StatefulWidget {
+import '../../models/ar_model.dart';
+import '../../models/space_model.dart';
+import '../../services/auth_service.dart';
+import '../../services/firestore_service.dart';
+
+class DashboardScreen extends ConsumerStatefulWidget {
   const DashboardScreen({super.key});
 
   @override
-  State<DashboardScreen> createState() => _DashboardScreenState();
+  ConsumerState<DashboardScreen> createState() => _DashboardScreenState();
 }
 
-class _DashboardScreenState extends State<DashboardScreen> {
+class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   int _selectedTab = 0;
   int _selectedBottomNav = 0;
   
-  // Instances Firebase
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  
   // Données
-  UserModel? _currentUser;
+  User? _currentUser;
   List<ARModel> _arModels = [];
   List<SpaceModel> _spaces = [];
   bool _isLoading = true;
@@ -33,34 +31,28 @@ class _DashboardScreenState extends State<DashboardScreen> {
     _loadUserData();
   }
 
-  Future<void> _loadUserData() async {
-    final user = _auth.currentUser;
+  void _loadUserData() async {
+    final user = ref.read(currentUserProvider).value;
     if (user == null) return;
 
-    try {
-      // 1. Charger le UserModel
-      final userDoc = await _firestore.collection('users').doc(user.uid).get();
-      if (userDoc.exists) {
-        setState(() {
-          _currentUser = UserModel.fromMap(userDoc.data()!);
-        });
-      }
+    _currentUser = user;
 
-      // 2. Charger les modèles AR de l'utilisateur
-      final arModelsQuery = await _firestore
-          .collection('ar_models')
-          .where('createdBy', isEqualTo: user.uid)
-          .get();
+    try {
+      // 1. Charger les modèles AR de l'utilisateur
+      final arModelsQuery = await ref.read(firestoreServiceProvider).getDocuments(
+        collectionPath: 'ar_models',
+        where: [WhereCondition(field: 'createdBy', isEqualTo: user.uid)],
+      );
 
       final arModels = arModelsQuery.docs
           .map((doc) => ARModel.fromMap(doc.id, doc.data()))
           .toList();
 
-      // 3. Charger les espaces de l'utilisateur
-      final spacesQuery = await _firestore
-          .collection('spaces')
-          .where('members', arrayContains: user.uid)
-          .get();
+      // 2. Charger les espaces de l'utilisateur
+      final spacesQuery = await ref.read(firestoreServiceProvider).getDocuments(
+        collectionPath: 'spaces',
+        where: [WhereCondition(field: 'members', arrayContains: user.uid)],
+      );
 
       final spaces = spacesQuery.docs
           .map((doc) => SpaceModel.fromMap(doc.id, doc.data()))
@@ -72,20 +64,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
         _isLoading = false;
       });
     } catch (e) {
-      print('Erreur chargement données: $e');
+      debugPrint('Erreur chargement données: $e');
       setState(() => _isLoading = false);
     }
   }
 
   String get userName {
-    if (_currentUser != null) {
-      return _currentUser!.displayName ?? 
-             _currentUser!.email.split('@').first;
-    }
-    
-    final user = _auth.currentUser;
-    final name = user?.displayName;
-    return name ?? user?.email?.split('@').first ?? 'Utilisateur';
+    final email = _currentUser?.email;
+    return _currentUser?.displayName
+        ?? (email != null && email.contains('@') ? email.split('@').first : null)
+        ?? 'Utilisateur';
   }
 
   // Statistiques réelles
@@ -99,18 +87,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Future<void> _signOut() async {
-    await _auth.signOut();
+    await ref.read(authServiceProvider).signOut();
     if (mounted) {
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const AuthScreen()),
+        MaterialPageRoute(builder: (_) => const LoginScreen()),
       );
     }
   }
 
   Future<void> _createNewSpace() async {
-    final user = _auth.currentUser;
-    if (user == null) return;
-
     // TODO: Implémenter une boîte de dialogue pour créer un espace
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
@@ -120,9 +105,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Future<void> _addNewModel() async {
-    final user = _auth.currentUser;
-    if (user == null) return;
-
     // TODO: Implémenter l'ajout de modèle AR
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
@@ -388,7 +370,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               width: 50,
               height: 50,
               decoration: BoxDecoration(
-                color: Colors.deepPurple.withOpacity(0.1),
+                color: Colors.deepPurple.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Icon(
@@ -479,7 +461,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.withOpacity(0.2),
+                  color: Colors.grey.withValues(alpha: 0.2),
                   blurRadius: 8,
                   offset: const Offset(0, 4),
                 ),

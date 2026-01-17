@@ -1,27 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import '../models/ar_model.dart';       // On réutilise le même modèle que dans dashboard
-import 'widgets/standard_text_field.dart'; // Si tu as ce widget custom
-// import 'auth_screen.dart';           // Si besoin pour déconnexion
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:heritage_lens/services/firestore_service.dart';
+import 'package:heritage_lens/views/widgets/standard_text_helpers.dart';
 
-class DiscoverScreen extends StatefulWidget {
+import '../../models/ar_model.dart';
+import '../widgets/standard_text_field.dart';
+
+class DiscoverScreen extends ConsumerStatefulWidget {
   const DiscoverScreen({super.key});
 
   @override
-  State<DiscoverScreen> createState() => _DiscoverScreenState();
+  ConsumerState<DiscoverScreen> createState() => _DiscoverScreenState();
 }
 
-class _DiscoverScreenState extends State<DiscoverScreen> {
-  // ───────────────────────────────────────────────
-  // Variables d'état
-  // ───────────────────────────────────────────────
-  int _selectedBottomNav = 0; // Pour le bottom nav (0 = home/discover)
-
-  // Firebase
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
+class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
   // Données
   List<ARModel> _publicModels = []; // ou tous les modèles visibles
   bool _isLoading = true;
@@ -41,13 +33,11 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
   Future<void> _loadPublicModels() async {
     try {
       // TODO: adapter la query selon tes besoins réels
-      // Exemple : tous les modèles publics ou récents
-      final query = await _firestore
-          .collection('ar_models')
-          .where('isPublic', isEqualTo: true)           // ← à adapter
-      // .orderBy('createdAt', descending: true)     // optionnel
-          .limit(20)                                     // limite pour perf
-          .get();
+      final query = await ref.read(firestoreServiceProvider).getDocuments(
+        collectionPath: 'ar_models',
+        where: [WhereCondition(field: 'isPublic', isEqualTo: true)],
+        limit: 20,
+      );
 
       final models = query.docs
           .map((doc) => ARModel.fromMap(doc.id, doc.data()))
@@ -60,7 +50,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
         });
       }
     } catch (e) {
-      print('Erreur chargement modèles publics: $e');
+      debugPrint('Erreur chargement modèles publics: $e');
       if (mounted) {
         setState(() => _isLoading = false);
       }
@@ -88,19 +78,12 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
               // Titre + sous-titre
               Text(
                 'HeritageLens',
-                style: const TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'Alike', // ou ta police titre
-                ),
+                style: AppText.titleXL()
               ),
               const SizedBox(height: 4),
               Text(
                 'Histoire et culture à travers la RA',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey[600],
-                ),
+                style: AppText.bodyS()
               ),
               const SizedBox(height: 24),
 
@@ -116,10 +99,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
               // Question + chips catégories (horizontal scrollable)
               Text(
                 'Que cherchez-vous ?',
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: AppText.emphasis(),
               ),
               const SizedBox(height: 12),
               SizedBox(
@@ -144,27 +124,8 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                 child: _publicModels.isEmpty
                     ? _buildEmptyState()
                     : _buildModelsGrid(),
-              ),
-
-              const SizedBox(height: 16),
-
-              // Bottom navigation capsule (comme dans dashboard)
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.black,
-                  borderRadius: BorderRadius.circular(50),
-                ),
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _buildBottomNavItem(0, Icons.home_outlined),
-                    _buildBottomNavItem(1, Icons.view_in_ar),
-                    _buildBottomNavItem(2, Icons.person_outline),
-                  ],
-                ),
-              ),
-            ],
+              )
+             ],
           ),
         ),
       ),
@@ -188,10 +149,8 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
         ),
         child: Text(
           label,
-          style: TextStyle(
-            color: isSelected ? Colors.white : Colors.black87,
-            fontWeight: FontWeight.w600,
-            fontSize: 14,
+          style: AppText.bodyS().copyWith(
+            color: isSelected ? Colors.white : Colors.black87
           ),
         ),
       ),
@@ -211,17 +170,13 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
           const SizedBox(height: 24),
           Text(
             'Aucun modèle trouvé',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: Colors.grey[700],
-            ),
+            style: AppText.bodyM()
           ),
           const SizedBox(height: 12),
           Text(
             'Essayez une autre recherche ou ajoutez votre premier modèle',
-            style: TextStyle(
-              fontSize: 14,
+            style: AppText.bodyS().copyWith(
+              fontSize: 12,
               color: Colors.grey[600],
             ),
             textAlign: TextAlign.center,
@@ -255,7 +210,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.withOpacity(0.15),
+                  color: Colors.grey.withValues(alpha: 0.15),
                   blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),
@@ -295,7 +250,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        model.formatType ?? 'Modèle 3D',
+                        model.formatType,
                         style: TextStyle(
                           fontSize: 12,
                           color: Colors.grey[600],
@@ -309,28 +264,6 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
           ),
         );
       },
-    );
-  }
-
-  Widget _buildBottomNavItem(int index, IconData icon) {
-    final isSelected = _selectedBottomNav == index;
-    return GestureDetector(
-      onTap: () {
-        setState(() => _selectedBottomNav = index);
-        // TODO: navigation vers autres écrans si index != 0
-      },
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: isSelected ? Colors.white : Colors.transparent,
-          shape: BoxShape.circle,
-        ),
-        child: Icon(
-          icon,
-          color: isSelected ? Colors.black : Colors.white,
-          size: 28,
-        ),
-      ),
     );
   }
 }

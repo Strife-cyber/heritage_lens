@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:heritage_lens/views/pages/dashboard_screen.dart';
+import 'package:heritage_lens/views/pages/discover_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // 1. Setup the provider
@@ -19,8 +21,8 @@ class _HomeState extends ConsumerState<Home> with SingleTickerProviderStateMixin
 
   // 2. Define your pages
   final List<Widget> _pages = [
-    Container(color: Colors.redAccent.shade100, child: const Center(child: Text("Home"))),
-    Container(color: Colors.greenAccent.shade100, child: const Center(child: Text("Cube"))),
+    DashboardScreen(),
+    DiscoverScreen(),
     Container(color: Colors.blueAccent.shade100, child: const Center(child: Text("Profile"))),
   ];
 

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import '../models/ar_model.dart'; // On réutilise le modèle existant
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:heritage_lens/services/auth_service.dart';
 
-class DetailScreen extends StatefulWidget {
+import '../../models/ar_model.dart';
+
+class DetailScreen extends ConsumerStatefulWidget {
   final ARModel model; // On passe le modèle sélectionné depuis Discover ou Dashboard
 
   const DetailScreen({
@@ -12,10 +13,10 @@ class DetailScreen extends StatefulWidget {
   });
 
   @override
-  State<DetailScreen> createState() => _DetailScreenState();
+  ConsumerState<DetailScreen> createState() => _DetailScreenState();
 }
 
-class _DetailScreenState extends State<DetailScreen> {
+class _DetailScreenState extends ConsumerState<DetailScreen> {
   // ───────────────────────────────────────────────
   // Variables d'état
   // ───────────────────────────────────────────────
@@ -25,7 +26,7 @@ class _DetailScreenState extends State<DetailScreen> {
   int _likeCount = 10;           // TODO: fetch réel depuis Firestore
   int _commentCount = 1;         // TODO: fetch réel
   bool _isLikedByUser = false;   // TODO: check si l'utilisateur a liké
-  List<Map<String, dynamic>> _comments = [ // Mock pour l'affichage
+  final List<Map<String, dynamic>> _comments = [ // Mock pour l'affichage
     {
       'username': 'JoliModèleFan',
       'text': 'Joli modèle, j’aime la RA !',
@@ -34,9 +35,6 @@ class _DetailScreenState extends State<DetailScreen> {
   ];
 
   final TextEditingController _commentController = TextEditingController();
-
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   @override
   void dispose() {
@@ -62,7 +60,7 @@ class _DetailScreenState extends State<DetailScreen> {
   Future<void> _addComment() async {
     if (_commentController.text.trim().isEmpty) return;
 
-    final user = _auth.currentUser;
+    final user = ref.read(currentUserProvider).value;
     if (user == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Veuillez vous connecter pour commenter')),
@@ -115,7 +113,7 @@ class _DetailScreenState extends State<DetailScreen> {
                       child: Icon(
                         Icons.view_in_ar_outlined,
                         size: 120,
-                        color: Colors.white.withOpacity(0.4),
+                        color: Colors.white.withValues(alpha: 0.4),
                       ),
                     ), // ← Remplacer par Image.network(widget.model.imageUrl ?? '')
                   ),
@@ -197,8 +195,7 @@ class _DetailScreenState extends State<DetailScreen> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      widget.model.description ??
-                          'ENIAC (Electronic Numerical Integrator and Computer) était le premier ordinateur électronique programmable à usage général. Il fut conçu pendant la Seconde Guerre mondiale...',
+                      widget.model.description,
                       style: TextStyle(
                         fontSize: 15,
                         height: 1.5,
