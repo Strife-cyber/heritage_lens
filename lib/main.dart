@@ -7,8 +7,6 @@ import 'package:heritage_lens/firebase_options.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:heritage_lens/views/auth/login_screen.dart';
 import 'package:heritage_lens/views/home.dart';
-import 'package:heritage_lens/views/pages/dashboard_screen.dart';
-import 'firebase_options.dart';
 
 import 'views/splash/splash_screen.dart';
 

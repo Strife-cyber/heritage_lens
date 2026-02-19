@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'dashboard_screen.dart';
+import 'package:heritage_lens/views/pages/space_screen.dart';
 import '../../models/space_model.dart';
 
 class JoinSpaceScreen extends StatefulWidget {
@@ -100,7 +100,7 @@ class _JoinSpaceScreenState extends State<JoinSpaceScreen> {
         );
         // ignore: use_build_context_synchronously
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (_) => const DashboardScreen()),
+          MaterialPageRoute(builder: (_) => const SpaceScreen()),
         );
         return;
       }
@@ -129,7 +129,7 @@ class _JoinSpaceScreenState extends State<JoinSpaceScreen> {
           SnackBar(content: Text('Vous avez rejoint "${space.name}"')),
         );
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (_) => const DashboardScreen()),
+          MaterialPageRoute(builder: (_) => const SpaceScreen()),
         );
       }
     } catch (e) {
@@ -301,7 +301,7 @@ class _JoinSpaceScreenState extends State<JoinSpaceScreen> {
               onPressed: () {
                 Navigator.pop(context);
                 Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (_) => const DashboardScreen()),
+                  MaterialPageRoute(builder: (_) => const SpaceScreen()),
                 );
               },
               child: const Text('Aller au dashboard'),
@@ -407,7 +407,7 @@ class _JoinSpaceScreenState extends State<JoinSpaceScreen> {
                       ElevatedButton(
                         onPressed: () {
                           Navigator.of(context).pushReplacement(
-                            MaterialPageRoute(builder: (_) => const DashboardScreen()),
+                            MaterialPageRoute(builder: (_) => const SpaceScreen()),
                           );
                         },
                         child: const Text('Aller au dashboard'),
@@ -553,7 +553,7 @@ class _JoinSpaceScreenState extends State<JoinSpaceScreen> {
                       icon: const Icon(Icons.home_outlined, color: Colors.white),
                       onPressed: () {
                         Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(builder: (_) => const DashboardScreen()),
+                          MaterialPageRoute(builder: (_) => const SpaceScreen()),
                         );
                       },
                     ),

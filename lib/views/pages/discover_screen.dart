@@ -14,11 +14,9 @@ class DiscoverScreen extends ConsumerStatefulWidget {
 }
 
 class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
-  // Données
-  List<ARModel> _publicModels = []; // ou tous les modèles visibles
+  List<ARModel> _publicModels = [];
   bool _isLoading = true;
 
-  // Filtre catégorie (optionnel – à activer plus tard)
   String? _selectedCategory;
 
   @override
@@ -27,9 +25,6 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
     _loadPublicModels();
   }
 
-  // ───────────────────────────────────────────────
-  // Chargement des données (similaire au dashboard)
-  // ───────────────────────────────────────────────
   Future<void> _loadPublicModels() async {
     try {
       // TODO: adapter la query selon tes besoins réels
@@ -57,9 +52,6 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
     }
   }
 
-  // ───────────────────────────────────────────────
-  // Build principal
-  // ───────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
@@ -75,7 +67,6 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Titre + sous-titre
               Text(
                 'HeritageLens',
                 style: AppText.titleXL()
@@ -87,8 +78,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
               ),
               const SizedBox(height: 24),
 
-              // Barre de recherche
-              StandardTextField( // ← ton widget custom si tu l'as
+              StandardTextField(
                 label: 'Recherche...',
                 controller: TextEditingController(),
                 icon: Icons.search,
@@ -96,7 +86,6 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
               ),
               const SizedBox(height: 24),
 
-              // Question + chips catégories (horizontal scrollable)
               Text(
                 'Que cherchez-vous ?',
                 style: AppText.emphasis(),
