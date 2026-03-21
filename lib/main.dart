@@ -5,10 +5,7 @@ import 'package:heritage_lens/core/app_theme.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:heritage_lens/firebase_options.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:heritage_lens/views/auth/login_screen.dart';
-import 'package:heritage_lens/views/home.dart';
-
-import 'views/splash/splash_screen.dart';
+import 'package:heritage_lens/views/ar/ar_view.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -46,7 +43,7 @@ class HeritageLens extends StatelessWidget {
       title: 'Heritage Lens',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
-      home: const Home(),
+      home: const ArView(),
     );
   }
 }

@@ -192,6 +192,13 @@ class UnityService {
     );
   }
 
+  /// Envoie plusieurs messages vers Unity dans l'ordre donné.
+  Future<void> sendMany(Iterable<UnityOutgoingMessage> messages) async {
+    for (final message in messages) {
+      await send(message);
+    }
+  }
+
   /// Ferme le flux des messages entrants.
   Future<void> dispose() async {
     await _incomingController.close();
