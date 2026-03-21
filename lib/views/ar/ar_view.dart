@@ -20,6 +20,7 @@ class ArView extends StatefulWidget {
 class _ArViewState extends State<ArView> {
   late UnityService _unityService;
   bool get _isAndroid => !kIsWeb && Platform.isAndroid;
+  bool _isUnityLoading = true;
 
   @override
   void initState() {
@@ -30,26 +31,58 @@ class _ArViewState extends State<ArView> {
   @override
   Widget build(BuildContext context) {
     if (_isAndroid) {
-      return UnityWidget(
-        onUnityCreated: (controller) {
-          debugPrint('Unity created on Android: Initializing UnityService');
-          _unityService = UnityService(unityController: controller);
-          if (widget.modelUrlMessage != null) {
-            _unityService.send(widget.modelUrlMessage!);
-          }
-        },
-        onUnityMessage: (message) {
-          debugPrint('Unity message received: ${message.toString()}');
-          if (widget.onMessageReceived != null) {
-            widget.onMessageReceived!(message.toString());
-          }
-        },
-        onUnitySceneLoaded: (sceneInfo) {
-          debugPrint('Unity scene loaded: ${sceneInfo?.name}');
-          if (widget.onSceneLoaded != null) {
-            widget.onSceneLoaded!(sceneInfo);
-          }
-        },
+      return Stack(
+        children: [
+          UnityWidget(
+            onUnityCreated: (controller) {
+              debugPrint('Unity created on Android: Initializing UnityService');
+              _unityService = UnityService(unityController: controller);
+              if (widget.modelUrlMessage != null) {
+                _unityService.send(widget.modelUrlMessage!);
+              }
+            },
+            onUnityMessage: (message) {
+              debugPrint('Unity message received: ${message.toString()}');
+              if (widget.onMessageReceived != null) {
+                widget.onMessageReceived!(message.toString());
+              }
+            },
+            onUnitySceneLoaded: (sceneInfo) {
+              debugPrint('Unity scene loaded: ${sceneInfo?.name}');
+              setState(() {
+                _isUnityLoading = false;
+              });
+              if (widget.onSceneLoaded != null) {
+                widget.onSceneLoaded!(sceneInfo);
+              }
+            },
+          ),
+          if (_isUnityLoading)
+            Positioned.fill(
+              child: Container(
+                color: Colors.black.withValues(alpha: 0.85),
+                child: const Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                      SizedBox(height: 16),
+                      Text(
+                        'Préparation de la RA...',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+        ],
       );
     }
 
