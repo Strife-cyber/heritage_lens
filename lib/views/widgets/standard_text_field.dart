@@ -46,7 +46,7 @@ import 'package:heritage_lens/core/app_theme.dart';
 class StandardTextField extends StatefulWidget {
   /// Le texte principal qui décrit le champ (ex: "Nom", "Email").
   /// Ce texte flotte sur la bordure lors de la saisie.
-  // final String? label;
+  final String? label;
 
   /// L'icône à afficher au début du champ.
   /// Utiliser des [IconData] standards (ex: `Icons.person`).
@@ -73,6 +73,7 @@ class StandardTextField extends StatefulWidget {
 
   const StandardTextField({
     super.key,
+    this.label,
     required this.controller,
     this.icon,
     required this.placeholder,

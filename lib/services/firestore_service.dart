@@ -2,58 +2,66 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// Fournit une instance unique du service Firestore via Riverpod.
-final firestoreServiceProvider = Provider<FirestoreService>((ref) {
-  final service = FirestoreService();
-  return service;
-});
-
 /// Fournit l'instance Firestore.
 final firestoreProvider = Provider<FirebaseFirestore>((ref) {
   return FirebaseFirestore.instance;
 });
 
-/// Service responsable des opérations Firestore.
-class FirestoreService {
-  FirestoreService() : _firestore = FirebaseFirestore.instance;
+// Note: Vous créerez un provider par modèle. 
+// Exemple: final userServiceProvider = Provider((ref) => FirestoreService<UserModel>(...));
+
+/// Service générique responsable des opérations Firestore pour un modèle [T].
+class FirestoreService<T> {
+  FirestoreService({
+    required this.collectionPath,
+    required this.fromFirestore,
+    required this.toFirestore,
+  }) : _firestore = FirebaseFirestore.instance;
 
   final FirebaseFirestore _firestore;
+
+  /// Le chemin de la collection pour ce service.
+  final String collectionPath;
+
+  /// Fonction pour convertir le snapshot Firestore en modèle [T].
+  final T Function(DocumentSnapshot<Map<String, dynamic>> snapshot, SnapshotOptions? options) fromFirestore;
+
+  /// Fonction pour convertir le modèle [T] en Map pour Firestore.
+  final Map<String, dynamic> Function(T value, SetOptions? options) toFirestore;
 
   /// Obtient l'instance Firestore.
   FirebaseFirestore get firestore => _firestore;
 
-  /// Obtient une référence à une collection.
+  /// Obtient une référence à la collection fortement typée [T].
   ///
-  /// [path] - Le chemin de la collection.
-  ///
-  /// Retourne une référence à la collection.
-  CollectionReference<Map<String, dynamic>> collection(String path) {
-    return _firestore.collection(path);
+  /// Retourne une référence à la collection avec le convertisseur.
+  CollectionReference<T> get collectionRef {
+    return _firestore.collection(collectionPath).withConverter<T>(
+          fromFirestore: fromFirestore,
+          toFirestore: toFirestore,
+        );
   }
 
-  /// Obtient une référence à un document.
+  /// Obtient une référence à un document fortement typé [T].
   ///
-  /// [path] - Le chemin du document.
+  /// [documentId] - L'identifiant du document.
   ///
   /// Retourne une référence au document.
-  DocumentReference<Map<String, dynamic>> document(String path) {
-    return _firestore.doc(path);
+  DocumentReference<T> document(String documentId) {
+    return collectionRef.doc(documentId);
   }
 
-  /// Crée un document dans une collection.
+  /// Crée un document dans la collection.
   ///
-  /// [collectionPath] - Le chemin de la collection.
-  /// [data] - Les données du document.
+  /// [data] - Les données du document (de type T).
   /// [documentId] - L'identifiant du document (optionnel, généré automatiquement si non fourni).
   ///
   /// Retourne une référence au document créé.
-  Future<DocumentReference<Map<String, dynamic>>> createDocument({
-    required String collectionPath,
-    required Map<String, dynamic> data,
+  Future<DocumentReference<T>> createDocument({
+    required T data,
     String? documentId,
   }) async {
     try {
-      final collectionRef = _firestore.collection(collectionPath);
       if (documentId != null) {
         await collectionRef.doc(documentId).set(data);
         return collectionRef.doc(documentId);
@@ -70,14 +78,14 @@ class FirestoreService {
 
   /// Lit un document.
   ///
-  /// [documentPath] - Le chemin du document.
+  /// [documentId] - L'identifiant du document.
   ///
-  /// Retourne les données du document.
-  Future<DocumentSnapshot<Map<String, dynamic>>> getDocument({
-    required String documentPath,
+  /// Retourne le snapshot du document fortement typé.
+  Future<DocumentSnapshot<T>> getDocument({
+    required String documentId,
   }) async {
     try {
-      return await _firestore.doc(documentPath).get();
+      return await collectionRef.doc(documentId).get();
     } catch (error, stackTrace) {
       if (kDebugMode) {
         debugPrint('Erreur lors de la lecture du document : $error\n$stackTrace');
@@ -88,18 +96,20 @@ class FirestoreService {
 
   /// Met à jour un document.
   ///
-  /// [documentPath] - Le chemin du document.
-  /// [data] - Les données à mettre à jour.
+  /// [documentId] - L'identifiant du document.
+  /// [data] - Les données à mettre à jour (Map utilisé ici pour permettre les mises à jour partielles).
   /// [merge] - Si true, fusionne les données avec les données existantes (par défaut: false).
   ///
   /// Retourne une Future qui se complète lorsque le document est mis à jour.
   Future<void> updateDocument({
-    required String documentPath,
+    required String documentId,
     required Map<String, dynamic> data,
     bool merge = false,
   }) async {
     try {
-      final docRef = _firestore.doc(documentPath);
+      // Note: On utilise la référence non-typée ici car .update() 
+      // attend un Map<String, dynamic> pour les mises à jour partielles.
+      final docRef = _firestore.collection(collectionPath).doc(documentId);
       if (merge) {
         await docRef.set(data, SetOptions(merge: true));
       } else {
@@ -115,14 +125,14 @@ class FirestoreService {
 
   /// Supprime un document.
   ///
-  /// [documentPath] - Le chemin du document.
+  /// [documentId] - L'identifiant du document.
   ///
   /// Retourne une Future qui se complète lorsque le document est supprimé.
   Future<void> deleteDocument({
-    required String documentPath,
+    required String documentId,
   }) async {
     try {
-      await _firestore.doc(documentPath).delete();
+      await collectionRef.doc(documentId).delete();
     } catch (error, stackTrace) {
       if (kDebugMode) {
         debugPrint('Erreur lors de la suppression du document : $error\n$stackTrace');
@@ -133,16 +143,16 @@ class FirestoreService {
 
   /// Supprime plusieurs documents.
   ///
-  /// [documentPaths] - Liste des chemins des documents à supprimer.
+  /// [documentIds] - Liste des identifiants des documents à supprimer.
   ///
   /// Retourne une Future qui se complète lorsque tous les documents sont supprimés.
   Future<void> deleteDocuments({
-    required List<String> documentPaths,
+    required List<String> documentIds,
   }) async {
     try {
       await Future.wait(
-        documentPaths.map(
-          (path) => deleteDocument(documentPath: path),
+        documentIds.map(
+          (id) => deleteDocument(documentId: id),
         ),
       );
     } catch (error, stackTrace) {
@@ -153,18 +163,16 @@ class FirestoreService {
     }
   }
 
-  /// Lit les documents d'une collection.
+  /// Lit les documents de la collection.
   ///
-  /// [collectionPath] - Le chemin de la collection.
   /// [where] - Liste des conditions de filtrage (optionnel).
   /// [orderBy] - Champ de tri (optionnel).
   /// [limit] - Nombre maximum de documents à retourner (optionnel).
   /// [startAfter] - Document de départ pour la pagination (optionnel).
   /// [endBefore] - Document de fin pour la pagination (optionnel).
   ///
-  /// Retourne les documents de la collection.
-  Future<QuerySnapshot<Map<String, dynamic>>> getDocuments({
-    required String collectionPath,
+  /// Retourne les documents typés de la collection.
+  Future<QuerySnapshot<T>> getDocuments({
     List<WhereCondition>? where,
     String? orderBy,
     int? limit,
@@ -172,7 +180,7 @@ class FirestoreService {
     DocumentSnapshot? endBefore,
   }) async {
     try {
-      Query<Map<String, dynamic>> query = _firestore.collection(collectionPath);
+      Query<T> query = collectionRef;
 
       if (where != null) {
         for (final condition in where) {
@@ -220,14 +228,14 @@ class FirestoreService {
 
   /// Écoute les changements d'un document en temps réel.
   ///
-  /// [documentPath] - Le chemin du document.
+  /// [documentId] - L'identifiant du document.
   ///
-  /// Retourne un flux des snapshots du document.
-  Stream<DocumentSnapshot<Map<String, dynamic>>> watchDocument({
-    required String documentPath,
+  /// Retourne un flux des snapshots typés du document.
+  Stream<DocumentSnapshot<T>> watchDocument({
+    required String documentId,
   }) {
     try {
-      return _firestore.doc(documentPath).snapshots();
+      return collectionRef.doc(documentId).snapshots();
     } catch (error, stackTrace) {
       if (kDebugMode) {
         debugPrint('Erreur lors de l\'écoute du document : $error\n$stackTrace');
@@ -236,22 +244,20 @@ class FirestoreService {
     }
   }
 
-  /// Écoute les changements d'une collection en temps réel.
+  /// Écoute les changements de la collection en temps réel.
   ///
-  /// [collectionPath] - Le chemin de la collection.
   /// [where] - Liste des conditions de filtrage (optionnel).
   /// [orderBy] - Champ de tri (optionnel).
   /// [limit] - Nombre maximum de documents à retourner (optionnel).
   ///
-  /// Retourne un flux des snapshots de la collection.
-  Stream<QuerySnapshot<Map<String, dynamic>>> watchCollection({
-    required String collectionPath,
+  /// Retourne un flux des snapshots typés de la collection.
+  Stream<QuerySnapshot<T>> watchCollection({
     List<WhereCondition>? where,
     String? orderBy,
     int? limit,
   }) {
     try {
-      Query<Map<String, dynamic>> query = _firestore.collection(collectionPath);
+      Query<T> query = collectionRef;
 
       if (where != null) {
         for (final condition in where) {
@@ -294,14 +300,14 @@ class FirestoreService {
   /// [transaction] - La fonction de transaction à exécuter.
   ///
   /// Retourne le résultat de la transaction.
-  Future<T> runTransaction<T>(
-    Future<T> Function(Transaction transaction) transaction,
+  Future<R> runTransaction<R>(
+    Future<R> Function(Transaction transaction) transaction,
   ) async {
     try {
       return await _firestore.runTransaction(transaction);
     } catch (error, stackTrace) {
       if (kDebugMode) {
-        debugPrint('Erreur lors de l\'exécution de la transaction : $error\n$stackTrace');
+        debugPrint("Erreur lors de l'exécution de la transaction : $error\n$stackTrace");
       }
       rethrow;
     }
@@ -358,4 +364,3 @@ class WhereCondition {
   final List<Object?>? whereNotIn;
   final bool? isNull;
 }
-

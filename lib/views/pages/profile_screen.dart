@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:heritage_lens/core/app_theme.dart';
-import 'package:heritage_lens/services/firestore_service.dart';
-import 'package:heritage_lens/views/pages/discover_screen.dart';
-import 'package:heritage_lens/views/pages/space_screen.dart';
+import 'package:heritage_lens/services/model_service.dart';
 import 'package:heritage_lens/views/widgets/standard_button.dart';
 import 'package:heritage_lens/views/widgets/standard_text_helpers.dart';
 
 import '../../models/ar_model.dart';
-import '../widgets/standard_text_field.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -36,14 +32,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   Future<void> _loadFavoriteModels() async {
     _isLoadingFavorites = true;
     try {
-      final query = await ref.read(firestoreServiceProvider).getDocuments(
-        collectionPath: 'ar_models',
-        where: [WhereCondition(field: 'isPublic', isEqualTo: true)],
-        limit: 20,
-      );
+      final query = await ref.read(arModelServiceProvider).getDocuments( limit: 20 );
 
       final models = query.docs
-          .map((doc) => ARModel.fromMap(doc.id, doc.data()))
+          .map((doc) => doc.data())
           .toList();
 
       if (mounted) {
@@ -63,14 +55,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   Future<void> _loadUserModels() async {
     _isLoadingFavorites = true;
     try {
-      final query = await ref.read(firestoreServiceProvider).getDocuments(
-        collectionPath: 'ar_models',
-        where: [WhereCondition(field: 'isPublic', isEqualTo: true)],
-        limit: 20,
-      );
+      final query = await ref.read(arModelServiceProvider).getDocuments( limit: 20 );
 
       final models = query.docs
-          .map((doc) => ARModel.fromMap(doc.id, doc.data()))
+          .map((doc) => doc.data())
           .toList();
 
       if (mounted) {

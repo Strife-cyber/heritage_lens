@@ -45,6 +45,7 @@ dependencies:
   firebase_auth: ^6.1.2
   google_sign_in: ^6.2.1
   shared_preferences: ^2.5.4
+  cached_network_image: ^3.4.1
 
 dev_dependencies:
   flutter_test:
@@ -85,7 +86,7 @@ flutter:
   assets:
     #- .env # Environment variables
     #- .env.test # Environment variables for testing
-    - assets/.env
+    - .env
     - assets/icons/
     - assets/images/
 

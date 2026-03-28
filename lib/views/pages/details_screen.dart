@@ -140,7 +140,7 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.model.name,
+                      widget.model.title,
                       style: const TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.bold,

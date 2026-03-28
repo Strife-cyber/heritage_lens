@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:heritage_lens/views/pages/discover_screen.dart';
-import 'package:heritage_lens/views/pages/join_space_screen.dart';
 import 'package:heritage_lens/views/pages/profile_screen.dart';
 import 'package:heritage_lens/views/pages/space_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
