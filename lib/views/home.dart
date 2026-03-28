@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:heritage_lens/views/pages/discover_screen.dart';
+import 'package:heritage_lens/views/pages/join_space_screen.dart';
+import 'package:heritage_lens/views/pages/profile_screen.dart';
 import 'package:heritage_lens/views/pages/space_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -23,7 +25,7 @@ class _HomeState extends ConsumerState<Home> with SingleTickerProviderStateMixin
   final List<Widget> _pages = [
     DiscoverScreen(),
     SpaceScreen(),
-    Container(color: Colors.blueAccent.shade100, child: const Center(child: Text("Profile"))),
+    ProfileScreen()
   ];
 
   @override
@@ -72,7 +74,7 @@ class _HomeState extends ConsumerState<Home> with SingleTickerProviderStateMixin
       // 3. The Custom Floating Bottom Bar
       bottomNavigationBar: SafeArea(
         child: Container(
-          height: 115, // Height of the area
+          height: 96, // Height of the area
           padding: const EdgeInsets.all(12),
           margin: const EdgeInsets.symmetric(horizontal: 24),
           child: Container( 
@@ -155,8 +157,8 @@ class _BottomNavItem extends StatelessWidget {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeOutQuart,
-        width: 80,
-        height: 80,
+        width: 64,
+        height: 64,
         decoration: BoxDecoration(
           // If selected, show white circle, else transparent
           color: isSelected ? Colors.white : Colors.transparent, 
