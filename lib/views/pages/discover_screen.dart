@@ -2,9 +2,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:heritage_lens/services/model_service.dart';
+import 'package:heritage_lens/views/pages/details_screen.dart';
 import 'package:heritage_lens/views/widgets/standard_text_helpers.dart';
 import '../../models/ar_model.dart';
-import '../widgets/standard_text_field.dart';
 
 class DiscoverScreen extends ConsumerStatefulWidget {
   const DiscoverScreen({super.key});
@@ -22,13 +22,44 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
   @override
   void initState() {
     super.initState();
+    _searchController.addListener(_onSearchChanged);
     _loadPublicModels();
+  }
+
+  void _onSearchChanged() {
+    setState(() {});
   }
 
   @override
   void dispose() {
+    _searchController.removeListener(_onSearchChanged);
     _searchController.dispose();
     super.dispose();
+  }
+
+  List<ARModel> get _filteredModels {
+    return _publicModels.where((model) {
+      final searchText = _searchController.text.trim().toLowerCase();
+      final matchesSearch = searchText.isEmpty ||
+          model.title.toLowerCase().contains(searchText) ||
+          model.description.toLowerCase().contains(searchText);
+
+      final matchesCategory = _selectedCategory == 'Tous' ||
+          model.era == _selectedCategory ||
+          model.originLocation == _selectedCategory;
+
+      return matchesSearch && matchesCategory;
+    }).toList();
+  }
+
+  List<String> get _availableCategories {
+    // TODO: Lionel  will fix this
+    final Set<String> categories = {'Tous'};
+    for (final model in _publicModels) {
+      if (model.era.isNotEmpty) categories.add(model.era);
+      if (model.originLocation.isNotEmpty) categories.add(model.originLocation);
+    }
+    return categories.toList();
   }
 
   Future<void> _loadPublicModels() async {
@@ -76,14 +107,22 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
               ),
             ),
             bottom: PreferredSize(
-              preferredSize: const Size.fromHeight(80),
+              preferredSize: const Size.fromHeight(60),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                child: StandardTextField(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                child: TextFormField(
                   controller: _searchController,
-                  icon: Icons.search,
-                  placeholder: 'Recherche un trésor...',
-                ),
+                  decoration: InputDecoration(
+                    hintText: 'Search for a treasure...',
+                    suffixIcon: const Icon(Icons.search),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
+                    filled: true,
+                    fillColor: Colors.grey[100],
+                  ),
+                )
               ),
             ),
           ),
@@ -101,12 +140,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
                     height: 40,
                     child: ListView(
                       scrollDirection: Axis.horizontal,
-                      children: [
-                        _buildCategoryChip('Tous'),
-                        _buildCategoryChip('Technologie'),
-                        _buildCategoryChip('Peinture'),
-                        _buildCategoryChip('Monument'),
-                      ],
+                      children: _availableCategories.map(_buildCategoryChip).toList(),
                     ),
                   ),
                 ],
@@ -117,15 +151,18 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
           // Liste des modèles en pleine largeur
           SliverPadding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
-            sliver: _publicModels.isEmpty
+            sliver: _filteredModels.isEmpty
                 ? SliverFillRemaining(child: _buildEmptyState())
                 : SliverList(
                     delegate: SliverChildBuilderDelegate(
                       (context, index) => Padding(
                         padding: const EdgeInsets.only(bottom: 24),
-                        child: _ModelCard(model: _publicModels[index]),
+                        child: _ModelCard(
+                          key: ValueKey(_filteredModels[index].documentId),
+                          model: _filteredModels[index]
+                        ),
                       ),
-                      childCount: _publicModels.length,
+                      childCount: _filteredModels.length,
                     ),
                   ),
           ),
@@ -137,7 +174,11 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
   Widget _buildCategoryChip(String label) {
     final isSelected = _selectedCategory == label;
     return GestureDetector(
-      onTap: () => setState(() => _selectedCategory = label),
+      behavior: HitTestBehavior.opaque,
+      onTap: () {
+        debugPrint('🔍 Fitre cliqué: $label');
+        setState(() => _selectedCategory = label);
+      },
       child: Container(
         margin: const EdgeInsets.only(right: 12),
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -169,13 +210,13 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
 
 class _ModelCard extends StatelessWidget {
   final ARModel model;
-  const _ModelCard({required this.model});
+  const _ModelCard({super.key, required this.model});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // TODO: Navigation vers le détail
+        Navigator.push(context, MaterialPageRoute(builder: (context) => DetailScreen(model: model)));
       },
       child: Container(
         clipBehavior: Clip.antiAlias,
@@ -200,6 +241,7 @@ class _ModelCard extends StatelessWidget {
                 children: [
                   model.thumbnailUrl.isNotEmpty
                       ? CachedNetworkImage(
+                          //Images in 1080p so it is better to append /preview to get something lighter
                           imageUrl: model.thumbnailUrl,
                           width: double.infinity,
                           fit: BoxFit.cover,
