@@ -31,7 +31,7 @@ class AppText {
   /// Utilisé pour : En-têtes principaux, noms de sections majeurs.
   static TextStyle titleXL({
     Color color = _primaryColor,
-    FontWeight weight = FontWeight.w600,
+    FontWeight weight = FontWeight.w400,
     double? height,
   }) =>
       TextStyle(
@@ -67,8 +67,8 @@ class AppText {
     double? height,
   }) =>
       TextStyle(
-        fontFamily: FontFamily.alike.font,
-        fontSize: 22,
+        fontFamily: FontFamily.inriaSerif.font,
+        fontSize: 24,
         fontWeight: weight,
         color: color,
         height: height,
@@ -110,19 +110,58 @@ class AppText {
         height: height,
       );
 
-  /// Body S - **14px** - *Inria Serif Regular*
-  ///
-  /// **Couleur par défaut : Gris #909090**
-  ///
-  /// Utilisé pour : Mentions légales, hints, placeholders, textes secondaires.
-  static TextStyle bodyS({
+  static TextStyle bodyMG({
     Color color = _secondaryColor,
     FontWeight weight = FontWeight.w400,
     double? height,
   }) =>
       TextStyle(
         fontFamily: FontFamily.inriaSerif.font,
-        fontSize: 14,
+        fontSize: 16,
+        fontWeight: weight,
+        color: color,
+        height: height,
+      );
+
+  static TextStyle bodyMW({
+    Color color = _inverseColor,
+    FontWeight weight = FontWeight.w400,
+    double? height,
+  }) =>
+      TextStyle(
+        fontFamily: FontFamily.inriaSerif.font,
+        fontSize: 16,
+        fontWeight: weight,
+        color: color,
+        height: height,
+      );
+
+  /// Body S - **14px** - *Inria Serif Regular*
+  ///
+  /// **Couleur par défaut : Gris #909090**
+  ///
+  /// Utilisé pour : Mentions légales, hints, placeholders, textes secondaires.
+  static TextStyle bodyS({
+    Color color = _primaryColor,
+    FontWeight weight = FontWeight.w600,
+    double? height,
+  }) =>
+      TextStyle(
+        fontFamily: FontFamily.inriaSerif.font,
+        fontSize: 12,
+        fontWeight: weight,
+        color: color,
+        height: height,
+      );
+
+  static TextStyle bodySW({
+    Color color = _inverseColor,
+    FontWeight weight = FontWeight.w600,
+    double? height,
+  }) =>
+      TextStyle(
+        fontFamily: FontFamily.inriaSerif.font,
+        fontSize: 12,
         fontWeight: weight,
         color: color,
         height: height,

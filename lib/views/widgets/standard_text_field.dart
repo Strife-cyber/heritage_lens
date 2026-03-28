@@ -46,7 +46,7 @@ import 'package:heritage_lens/core/app_theme.dart';
 class StandardTextField extends StatefulWidget {
   /// Le texte principal qui décrit le champ (ex: "Nom", "Email").
   /// Ce texte flotte sur la bordure lors de la saisie.
-  final String label;
+  // final String? label;
 
   /// L'icône à afficher au début du champ.
   /// Utiliser des [IconData] standards (ex: `Icons.person`).
@@ -54,7 +54,7 @@ class StandardTextField extends StatefulWidget {
 
   /// Texte indicatif (hint) qui s'affiche uniquement quand le champ est focus
   /// et vide. Utile pour donner un format attendu.
-  final String? placeholder;
+  final String placeholder;
 
   /// Le contrôleur indispensable pour récupérer ou modifier le texte.
   final TextEditingController controller;
@@ -73,10 +73,9 @@ class StandardTextField extends StatefulWidget {
 
   const StandardTextField({
     super.key,
-    required this.label,
     required this.controller,
     this.icon,
-    this.placeholder,
+    required this.placeholder,
     this.validator,
     this.isOptional = false,
     this.obscureText = false,
@@ -88,7 +87,7 @@ class StandardTextField extends StatefulWidget {
 
 class _StandardTextFieldState extends State<StandardTextField> {
   // Définition de la couleur grise spécifique demandée : #909090
-  static const Color _customGrey = Color(0xFF909090);
+  static const Color _customGrey = Color(0x90909090);
 
   late FocusNode _focusNode;
   bool _focused = false;
@@ -111,9 +110,9 @@ class _StandardTextFieldState extends State<StandardTextField> {
   @override
   Widget build(BuildContext context) {
     // Construction du libellé
-    final String labelDisplay = widget.isOptional
-        ? '${widget.label} (Optionnel)'
-        : widget.label;
+    // final String labelDisplay = widget.isOptional
+    //     ? '${widget.label} (Optionnel)'
+    //     : widget.label;
 
     return TextFormField(
       controller: widget.controller,
@@ -136,12 +135,12 @@ class _StandardTextFieldState extends State<StandardTextField> {
         filled: true,
         // Blanc quand focus, Gris très clair (presque blanc) quand inactif pour le fond
         // Note: On garde le fond très clair pour la lisibilité, le gris #909090 est utilisé pour les traits.
-        fillColor: _focused ? Colors.white : const Color(0xFFFAFAFA),
+        fillColor: const Color(0xFFF0F0F0),
         
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
 
         // Gestion de l'icône (Gris #909090 -> Noir)
-        prefixIcon: widget.icon != null
+        suffixIcon: widget.icon != null
             ? Icon(
                 widget.icon,
                 color: _focused ? Colors.black : _customGrey,
@@ -150,42 +149,35 @@ class _StandardTextFieldState extends State<StandardTextField> {
             : null,
 
         // --- Configuration du Label (Libellé) ---
-        labelText: labelDisplay,
+        // labelText: labelDisplay,
         // Le style du label change selon l'état (Gris #909090 -> Noir)
-        labelStyle: TextStyle(
-          color: _focused ? Colors.black : _customGrey,
-          fontFamily: FontFamily.inriaSerif.font,
-          fontWeight: _focused ? FontWeight.w600 : FontWeight.normal,
-        ),
-        floatingLabelBehavior: FloatingLabelBehavior.auto,
+        // labelStyle: TextStyle(
+        //   color: _customGrey,
+        //   fontFamily: FontFamily.inriaSerif.font,
+        //   fontWeight: _focused ? FontWeight.w600 : FontWeight.normal,
+        // ),
+        // floatingLabelBehavior: FloatingLabelBehavior.auto,
 
         // --- Configuration du Placeholder (Hint) ---
         hintText: widget.placeholder,
         hintStyle: TextStyle(
           color: _customGrey, // Utilisation de la couleur #909090
-          fontSize: 14,
+          fontSize: 16,
+          fontWeight: FontWeight.w400,
           fontFamily: FontFamily.inriaSerif.font
         ),
 
         // --- Configuration des Bordures ---
-        
-        // 1. Bordure au repos (Utilisation de #909090)
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(
-            color: _customGrey, 
-            width: 1.0,
-          ),
-        ),
+    
 
         // 2. Bordure quand on écrit (Noir épais)
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(
-            color: Colors.black,
-            width: 2.0,
-          ),
-        ),
+        // focusedBorder: OutlineInputBorder(
+        //   borderRadius: BorderRadius.circular(12),
+        //   borderSide: const BorderSide(
+        //     color: Colors.black,
+        //     width: 2.0,
+        //   ),
+        // ),
 
         // 3. Bordure en cas d'erreur (Noir)
         errorBorder: OutlineInputBorder(

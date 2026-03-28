@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:heritage_lens/core/app_theme.dart';
 import 'package:heritage_lens/services/firestore_service.dart';
 import 'package:heritage_lens/views/widgets/standard_text_helpers.dart';
 
@@ -16,8 +17,9 @@ class DiscoverScreen extends ConsumerStatefulWidget {
 class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
   List<ARModel> _publicModels = [];
   bool _isLoading = true;
-
   String? _selectedCategory;
+  final _searchController = TextEditingController();
+
 
   @override
   void initState() {
@@ -74,21 +76,21 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
               const SizedBox(height: 4),
               Text(
                 'Histoire et culture à travers la RA',
-                style: AppText.bodyS()
+                style: AppText.bodyMG()
               ),
               const SizedBox(height: 24),
 
               StandardTextField(
-                label: 'Recherche...',
                 controller: TextEditingController(),
                 icon: Icons.search,
-                placeholder: 'Modèle, monument, artiste...',
+                placeholder: 'Recherche...',
               ),
+              
               const SizedBox(height: 24),
 
               Text(
                 'Que cherchez-vous ?',
-                style: AppText.emphasis(),
+                style: AppText.titleM(),
               ),
               const SizedBox(height: 12),
               SizedBox(
@@ -96,13 +98,13 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
                 child: ListView(
                   scrollDirection: Axis.horizontal,
                   children: [
+                    _buildCategoryChip('Tous', isSelected: _selectedCategory == 'Tous'),
+                    const SizedBox(width: 12),
                     _buildCategoryChip('Technologie', isSelected: _selectedCategory == 'Technologie'),
                     const SizedBox(width: 12),
                     _buildCategoryChip('Peinture', isSelected: _selectedCategory == 'Peinture'),
                     const SizedBox(width: 12),
                     _buildCategoryChip('Monument', isSelected: _selectedCategory == 'Monument'),
-                    const SizedBox(width: 12),
-                    _buildCategoryChip('Tous', isSelected: _selectedCategory == null),
                   ],
                 ),
               ),
@@ -126,7 +128,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
     return GestureDetector(
       onTap: () {
         setState(() {
-          _selectedCategory = isSelected ? null : label;
+          _selectedCategory = isSelected ? 'Tous' : label;
           // TODO: filtrer _publicModels selon catégorie si implémenté
         });
       },
@@ -138,7 +140,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
         ),
         child: Text(
           label,
-          style: AppText.bodyS().copyWith(
+          style: AppText.bodySW().copyWith(
             color: isSelected ? Colors.white : Colors.black87
           ),
         ),

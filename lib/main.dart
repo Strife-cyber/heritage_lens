@@ -6,6 +6,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:heritage_lens/firebase_options.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:heritage_lens/views/ar/ar_view.dart';
+import 'package:heritage_lens/views/home.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -43,7 +44,7 @@ class HeritageLens extends StatelessWidget {
       title: 'Heritage Lens',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
-      home: const ArView(),
+      home: const Home(),
     );
   }
 }

@@ -19,8 +19,7 @@ class _SpaceScreenState extends ConsumerState<SpaceScreen> {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+          child: ListView(
             children: [
               Text(
                 'Espaces',
@@ -29,21 +28,32 @@ class _SpaceScreenState extends ConsumerState<SpaceScreen> {
               const SizedBox(height: 4),
               Text(
                 'Rejoindre un espace partagé grace a un lien',
-                style: AppText.bodyS(),
+                style: AppText.bodyMG(),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 64),
 
-              Text('Lien d\'invitation', style: AppText.emphasis()),
-              const SizedBox(height: 4),
+              Text('Lien d\'invitation', style: AppText.bodyS()),
+              const SizedBox(height: 16),
               StandardTextField(
-                label: 'Entrez le lien de l\'espace ...', 
+                placeholder: 'Entrez le lien de l\'espace ...', 
                 controller: TextEditingController()
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: 24),
               StandardButton(
+                width: 50,
                 child: Text('Rejoindre'), 
                 onPressed: () {} //TODO: Implementer la logique de rejoindre un espace
-              )
+              ),
+              const SizedBox(height: 64),
+              Text(
+                'C\'est quoi un espace partagé ?',
+                style: AppText.titleM(),
+              ),
+              const SizedBox(height: 24),
+              Text(
+                "Grace a l’espace partagé, vous pouvez placer des artéfacts sur un emplacement, et les autres pourront le voir a partir de la cameraAR. Un bon lien devrait ressembler a ceci : \n\nHeritageLens/c2f1f0d8-8a5e-4a6d-9f0f-4d6e3a6a86f1 \n\nHeritageLens/a8b6e52d-1e4f-46c7-9b1b-7c9a41f8d9e2",
+                style: AppText.bodyMG(),
+              ),
             ],
           ),
         )
