@@ -6,6 +6,8 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:heritage_lens/firebase_options.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:heritage_lens/views/home.dart';
+import 'package:heritage_lens/services/auth_service.dart';
+import 'package:heritage_lens/views/auth/login_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,16 +36,29 @@ Future<void> main() async {
   );
 }
 
-class HeritageLens extends StatelessWidget {
+class HeritageLens extends ConsumerWidget {
   const HeritageLens({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final authState = ref.watch(currentUserProvider);
+
     return MaterialApp(
       title: 'Heritage Lens',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
-      home: const Home(),
+      home: authState.when(
+        data: (user) {
+          if (user != null) {
+            return const Home();
+          }
+          return const LoginScreen();
+        },
+        loading: () => const Scaffold(
+          body: Center(child: CircularProgressIndicator(color: Colors.black)),
+        ),
+        error: (e, trace) => const LoginScreen(),
+      ),
     );
   }
 }

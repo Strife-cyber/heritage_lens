@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:heritage_lens/views/ar/ar_view.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:heritage_lens/services/auth_service.dart';
+import 'package:heritage_lens/services/unity_service.dart';
+import 'package:better_player_plus/better_player_plus.dart';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:heritage_lens/models/comment_model.dart';
+import 'package:heritage_lens/services/comment_service.dart';
 
 import '../../models/ar_model.dart';
 
 class DetailScreen extends ConsumerStatefulWidget {
-  final ARModel model; // On passe le modèle sélectionné depuis Discover ou Dashboard
+  final ARModel
+  model; // On passe le modèle sélectionné depuis Discover ou Dashboard
 
-  const DetailScreen({
-    super.key,
-    required this.model,
-  });
+  const DetailScreen({super.key, required this.model});
 
   @override
   ConsumerState<DetailScreen> createState() => _DetailScreenState();
@@ -20,41 +25,87 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
   // ───────────────────────────────────────────────
   // Variables d'état
   // ───────────────────────────────────────────────
-  int _selectedBottomNav = 0; // 0 = retour discover/home
+  late int _likeCount;
+  bool _isLikedByUser = false;
 
-  // Données mockées / futures (TODO: implémenter)
-  int _likeCount = 10;           // TODO: fetch réel depuis Firestore
-  int _commentCount = 1;         // TODO: fetch réel
-  bool _isLikedByUser = false;   // TODO: check si l'utilisateur a liké
-  final List<Map<String, dynamic>> _comments = [ // Mock pour l'affichage
-    {
-      'username': 'JoliModèleFan',
-      'text': 'Joli modèle, j’aime la RA !',
-      'timestamp': DateTime.now().subtract(const Duration(minutes: 5)),
-    },
-  ];
-
+  BetterPlayerController? _betterPlayerController;
   final TextEditingController _commentController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _likeCount = widget.model.likeCount;
+    _initializePlayer();
+  }
 
   @override
   void dispose() {
     _commentController.dispose();
+    _betterPlayerController?.dispose();
     super.dispose();
+  }
+
+  void _initializePlayer() {
+    if (widget.model.videoUrl.trim().isEmpty) {
+      return;
+    }
+
+    final dataSource = BetterPlayerDataSource(
+      BetterPlayerDataSourceType.network,
+      widget.model.videoUrl,
+      videoFormat: BetterPlayerVideoFormat.other,
+      videoExtension: "mp4",
+      cacheConfiguration: const BetterPlayerCacheConfiguration(useCache: true),
+    );
+
+    _betterPlayerController = BetterPlayerController(
+      const BetterPlayerConfiguration(
+        aspectRatio: 16 / 9,
+        autoPlay: true,
+        looping: true,
+        fit: BoxFit.contain,
+        controlsConfiguration: BetterPlayerControlsConfiguration(
+          enableSkips: false,
+          enableFullscreen: true,
+          enableMute: true,
+          progressBarPlayedColor: Colors.black,
+          progressBarHandleColor: Colors.black,
+          controlBarColor: Colors.black45,
+        ),
+      ),
+      betterPlayerDataSource: dataSource,
+    );
   }
 
   // ───────────────────────────────────────────────
   // Actions (TODO: implémenter la logique réelle)
   // ───────────────────────────────────────────────
   Future<void> _toggleLike() async {
-    // TODO: implémenter like/unlike dans Firestore
-    // Exemple futur : update likes array ou counter
     setState(() {
       _isLikedByUser = !_isLikedByUser;
       _likeCount += _isLikedByUser ? 1 : -1;
     });
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(_isLikedByUser ? 'Ajouté aux favoris' : 'Retiré des favoris')),
-    );
+
+    try {
+      await FirebaseFirestore.instance
+          .collection('artifacts')
+          .doc(widget.model.documentId)
+          .update(
+            {'likeCount': FieldValue.increment(_isLikedByUser ? 1 : -1)}
+          );
+    } catch (e) {
+      debugPrint("Le like n'a pas pu être enregistré : $e");
+    }
+
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            _isLikedByUser ? 'Ajouté aux favoris' : 'Retiré des favoris',
+          ),
+        ),
+      );
+    }
   }
 
   Future<void> _addComment() async {
@@ -68,28 +119,64 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
       return;
     }
 
-    // TODO: implémenter l'ajout réel dans Firestore (collection comments sous le modèle)
+    final newComment = CommentModel(
+      documentId: '',
+      authorId: user.uid,
+      authorName: user.displayName ?? user.email?.split('@').first ?? 'Anonyme',
+      text: _commentController.text.trim(),
+      createdAt: Timestamp.now(),
+    );
+
+    await ref
+        .read(commentServiceProvider(widget.model.documentId))
+        .createDocument(data: newComment);
+
+    try {
+      await FirebaseFirestore.instance
+          .collection('artifacts')
+          .doc(widget.model.documentId)
+          .update({'commentCount': FieldValue.increment(1)});
+    } catch (_) {}
+
     setState(() {
-      _comments.add({
-        'username': user.displayName ?? user.email?.split('@').first ?? 'Anonyme',
-        'text': _commentController.text.trim(),
-        'timestamp': DateTime.now(),
-      });
-      _commentCount++;
       _commentController.clear();
     });
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Commentaire ajouté')),
-    );
+    if (mounted) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Commentaire ajouté')));
+    }
   }
 
   Future<void> _viewInAR() async {
-    // TODO: Implémenter l'ouverture Unity / AR
-    // Exemple : Navigator.push vers UnityWidget screen
-    // ou lancer FlutterUnityWidget avec model.assetPath
+    if (widget.model.modelUrl == null || widget.model.modelUrl!.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Le modèle 3D n'est pas encore disponible pour cet objet.")),
+      );
+      return;
+    }
+
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Ouverture en RA... (à implémenter)')),
+      const SnackBar(content: Text('Ouverture en RA...')),
+    );
+
+    final modelMessage = UnityOutgoingMessage(
+      bridge: UnityBridgeTarget.model,
+      type: UnityMessageType.modelUrl,
+      payload: UnityStringPayload(widget.model.modelUrl!),
+    );
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ArView(
+          modelUrlMessage: modelMessage,
+          onMessageReceived: (message) {
+            debugPrint("Received a message back from unity: $message");
+          },
+        ),
+      ),
     );
   }
 
@@ -101,22 +188,27 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // ── Image principale (grand format noir) ──────────────
               Stack(
                 children: [
-                  // Image / placeholder
-                  Container(
-                    height: 300,
-                    width: double.infinity,
-                    color: Colors.black,
-                    child: Center(
-                      child: Icon(
-                        Icons.view_in_ar_outlined,
-                        size: 120,
-                        color: Colors.white.withValues(alpha: 0.4),
-                      ),
-                    ), // ← Remplacer par Image.network(widget.model.imageUrl ?? '')
-                  ),
+                  _betterPlayerController == null
+                      ? Container(
+                          height: 300,
+                          width: double.infinity,
+                          color: Colors.black,
+                          child: Center(
+                            child: Icon(
+                              Icons.view_in_ar_outlined,
+                              size: 120,
+                              color: Colors.white.withValues(alpha: 0.4),
+                            ),
+                          ), // ← Remplacer par Image.network(widget.model.imageUrl ?? '')
+                        )
+                      : AspectRatio(
+                          aspectRatio: 16 / 9,
+                          child: BetterPlayer(
+                            controller: _betterPlayerController!,
+                          ),
+                        ),
 
                   // Bouton flottant "Voir en RA"
                   Positioned(
@@ -167,14 +259,20 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         _buildInteractionButton(
-                          icon: _isLikedByUser ? Icons.favorite : Icons.favorite_border,
+                          icon: _isLikedByUser
+                              ? Icons.favorite
+                              : Icons.favorite_border,
                           count: _likeCount,
-                          color: _isLikedByUser ? Colors.red : Colors.grey[600]!,
+                          color: _isLikedByUser
+                              ? Colors.red
+                              : Colors.grey[600]!,
                           onTap: _toggleLike,
                         ),
                         _buildInteractionButton(
                           icon: Icons.comment_outlined,
-                          count: _commentCount,
+                          count: widget
+                              .model
+                              .commentCount, // Or a local updated variable
                           color: Colors.grey[600]!,
                           onTap: () {
                             // Optionnel : scroll vers commentaires
@@ -216,7 +314,36 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
                     const SizedBox(height: 12),
 
                     // Liste des commentaires existants
-                    ..._comments.map((comment) => _buildCommentItem(comment)),
+                    Consumer(
+                      builder: (context, ref, child) {
+                        final commentsState = ref.watch(
+                          modelCommentsProvider(widget.model.documentId),
+                        );
+                        return commentsState.when(
+                          data: (comments) {
+                            if (comments.isEmpty) {
+                              return const Padding(
+                                padding: EdgeInsets.symmetric(vertical: 16.0),
+                                child: Text("Soyez le premier à commenter !"),
+                              );
+                            }
+                            return Column(
+                              children: comments
+                                  .map((c) => _buildCommentItem(c))
+                                  .toList(),
+                            );
+                          },
+                          loading: () => const Center(
+                            child: CircularProgressIndicator(
+                              color: Colors.black,
+                            ),
+                          ),
+                          error: (e, stack) => Text(
+                            'Erreur lors du chargement des commentaires',
+                          ),
+                        );
+                      },
+                    ),
 
                     const SizedBox(height: 24),
 
@@ -270,24 +397,6 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
           ),
         ),
       ),
-
-      // Bottom navigation capsule (comme dans dashboard)
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: Colors.black,
-          borderRadius: BorderRadius.circular(50),
-        ),
-        margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            _buildBottomNavItem(0, Icons.home_outlined),
-            _buildBottomNavItem(1, Icons.view_in_ar),
-            _buildBottomNavItem(2, Icons.person_outline),
-          ],
-        ),
-      ),
     );
   }
 
@@ -320,7 +429,7 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
     );
   }
 
-  Widget _buildCommentItem(Map<String, dynamic> comment) {
+  Widget _buildCommentItem(CommentModel comment) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: Row(
@@ -330,7 +439,9 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
             radius: 20,
             backgroundColor: Colors.grey[300],
             child: Text(
-              (comment['username'] as String)[0].toUpperCase(),
+              comment.authorName.isNotEmpty
+                  ? comment.authorName[0].toUpperCase()
+                  : '?',
               style: const TextStyle(color: Colors.black54),
             ),
           ),
@@ -340,7 +451,7 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  comment['username'] as String,
+                  comment.authorName,
                   style: const TextStyle(
                     fontWeight: FontWeight.w600,
                     fontSize: 14,
@@ -348,19 +459,13 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  comment['text'] as String,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey[800],
-                  ),
+                  comment.text,
+                  style: TextStyle(fontSize: 14, color: Colors.grey[800]),
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  _formatTimeAgo(comment['timestamp'] as DateTime),
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey[500],
-                  ),
+                  _formatTimeAgo(comment.createdAt.toDate()),
+                  style: TextStyle(fontSize: 12, color: Colors.grey[500]),
                 ),
               ],
             ),
@@ -376,30 +481,5 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
     if (diff.inMinutes < 60) return 'Il y a ${diff.inMinutes} min';
     if (diff.inHours < 24) return 'Il y a ${diff.inHours} h';
     return 'Il y a ${diff.inDays} j';
-  }
-
-  Widget _buildBottomNavItem(int index, IconData icon) {
-    final isSelected = _selectedBottomNav == index;
-    return GestureDetector(
-      onTap: () {
-        setState(() => _selectedBottomNav = index);
-        if (index != 0) {
-          // TODO: navigation vers autres écrans
-          Navigator.pop(context); // Exemple : retour à discover
-        }
-      },
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: isSelected ? Colors.white : Colors.transparent,
-          shape: BoxShape.circle,
-        ),
-        child: Icon(
-          icon,
-          color: isSelected ? Colors.black : Colors.white,
-          size: 28,
-        ),
-      ),
-    );
   }
 }

@@ -46,6 +46,7 @@ dependencies:
   google_sign_in: ^6.2.1
   shared_preferences: ^2.5.4
   cached_network_image: ^3.4.1
+  better_player_plus: ^1.1.5
 
 dev_dependencies:
   flutter_test:

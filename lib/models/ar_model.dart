@@ -12,9 +12,13 @@ class ARModel {
   final String originLocation;
   final String thumbnailUrl;
   final String videoUrl;
+  final String? modelUrl;
   final Timestamp? createdAt;
   final Timestamp? updatedAt;
   final List<String> didYouKnow;
+  final int likeCount;
+  final int commentCount;
+
   ARModel({
     required this.documentId,
     required this.modelFileId,
@@ -24,9 +28,12 @@ class ARModel {
     required this.originLocation,
     required this.thumbnailUrl,
     required this.videoUrl,
+    required this.modelUrl,
     required this.createdAt,
     required this.updatedAt,
     required this.didYouKnow,
+    this.likeCount = 0,
+    this.commentCount = 0,
   });
 
 
@@ -39,9 +46,12 @@ class ARModel {
     String? originLocation,
     String? thumbnailUrl,
     String? videoUrl,
+    String? modelUrl,
     Timestamp? createdAt,
     Timestamp? updatedAt,
     List<String>? didYouKnow,
+    int? likeCount,
+    int? commentCount,
   }) {
     return ARModel(
       documentId: documentId ?? this.documentId,
@@ -52,9 +62,12 @@ class ARModel {
       originLocation: originLocation ?? this.originLocation,
       thumbnailUrl: thumbnailUrl ?? this.thumbnailUrl,
       videoUrl: videoUrl ?? this.videoUrl,
+      modelUrl: modelUrl ?? this.modelUrl,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       didYouKnow: didYouKnow ?? this.didYouKnow,
+      likeCount: likeCount ?? this.likeCount,
+      commentCount: commentCount ?? this.commentCount,
     );
   }
 
@@ -68,15 +81,18 @@ class ARModel {
       'originLocation': originLocation,
       'thumbnailUrl': thumbnailUrl,
       'videoUrl': videoUrl,
+      'modelUrl': modelUrl,
       'createdAt': createdAt,
       'updatedAt': updatedAt,
       'didYouKnow': didYouKnow,
+      'likeCount': likeCount,
+      'commentCount': commentCount,
     };
   }
 
   factory ARModel.fromMap(Map<String, dynamic> map, String documentId) {
     return ARModel(
-      documentId: getValue<String>(map, 'documentId', defaultValue: '')!,
+      documentId: documentId,
       modelFileId: getValue<String>(map, 'modelFileId', defaultValue: '')!,
       era: getValue<String>(map, 'era', defaultValue: '')!,
       title: getValue<String>(map, 'title', defaultValue: '')!,
@@ -84,9 +100,12 @@ class ARModel {
       originLocation: getValue<String>(map, 'originLocation', defaultValue: '')!,
       thumbnailUrl: getValue<String>(map, 'thumbnailUrl', defaultValue: '')!,
       videoUrl: getValue<String>(map, 'videoUrl', defaultValue: '')!,
+      modelUrl: getValue<String>(map, 'modelUrl'),
       createdAt: getValue<Timestamp>(map, 'createdAt'),
       updatedAt: getValue<Timestamp>(map, 'updatedAt'),
       didYouKnow: getList<String>(map, 'didYouKnow'),
+      likeCount: getValue<int>(map, 'likeCount', defaultValue: 0)!,
+      commentCount: getValue<int>(map, 'commentCount', defaultValue: 0)!,
     );
   }
 
@@ -96,7 +115,7 @@ class ARModel {
 
   @override
   String toString() {
-    return 'ARModel(documentId: $documentId, modelFileId: $modelFileId, era: $era, title: $title, description: $description, originLocation: $originLocation, thumbnailUrl: $thumbnailUrl, videoUrl: $videoUrl, createdAt: $createdAt, updatedAt: $updatedAt, didYouKnow: $didYouKnow)';
+    return 'ARModel(documentId: $documentId, modelFileId: $modelFileId, era: $era, title: $title, description: $description, originLocation: $originLocation, thumbnailUrl: $thumbnailUrl, videoUrl: $videoUrl, modelUrl: $modelUrl, createdAt: $createdAt, updatedAt: $updatedAt, didYouKnow: $didYouKnow, likeCount: $likeCount, commentCount: $commentCount)';
   }
 
   @override
@@ -112,8 +131,11 @@ class ARModel {
       other.originLocation == originLocation &&
       other.thumbnailUrl == thumbnailUrl &&
       other.videoUrl == videoUrl &&
+      other.modelUrl == modelUrl &&
       other.createdAt == createdAt &&
       other.updatedAt == updatedAt &&
+      other.likeCount == likeCount &&
+      other.commentCount == commentCount &&
       listEquals(other.didYouKnow, didYouKnow);
   }
 
@@ -127,8 +149,11 @@ class ARModel {
       originLocation.hashCode ^
       thumbnailUrl.hashCode ^
       videoUrl.hashCode ^
+      modelUrl.hashCode ^
       createdAt.hashCode ^
       updatedAt.hashCode ^
-      didYouKnow.hashCode;
+      didYouKnow.hashCode ^
+      likeCount.hashCode ^
+      commentCount.hashCode;
   }
 }

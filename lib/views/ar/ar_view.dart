@@ -20,7 +20,7 @@ class ArView extends StatefulWidget {
 class _ArViewState extends State<ArView> {
   late UnityService _unityService;
   bool get _isAndroid => !kIsWeb && Platform.isAndroid;
-  bool _isUnityLoading = true;
+  bool _isUnityLoading = false;
 
   @override
   void initState() {

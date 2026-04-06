@@ -65,6 +65,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.13.0"
+  better_player_plus:
+    dependency: "direct main"
+    description:
+      name: better_player_plus
+      sha256: "8670ccf8fead5572bfcd1568c008f72f3202593ef07fc90921e2cbcaac77852b"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.5"
   boolean_selector:
     dependency: transitive
     description:
@@ -193,6 +201,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.7"
+  csslib:
+    dependency: transitive
+    description:
+      name: csslib
+      sha256: "09bad715f418841f976c77db72d5398dc1253c21fb9c0c7f0b0b985860b2d58e"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.2"
   cupertino_icons:
     dependency: "direct main"
     description:
@@ -209,6 +225,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.3.1"
+  dbus:
+    dependency: transitive
+    description:
+      name: dbus
+      sha256: d0c98dcd4f5169878b6cf8f6e0a52403a9dff371a3e2f019697accbf6f44a270
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.7.12"
   desktop_webview_window:
     dependency: transitive
     description:
@@ -387,6 +411,11 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.0.0"
+  flutter_localizations:
+    dependency: transitive
+    description: flutter
+    source: sdk
+    version: "0.0.0"
   flutter_plugin_android_lifecycle:
     dependency: transitive
     description:
@@ -445,6 +474,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_widget_from_html_core:
+    dependency: transitive
+    description:
+      name: flutter_widget_from_html_core
+      sha256: "1120ee6ed3509ceff2d55aa6c6cbc7b6b1291434422de2411b5a59364dd6ff03"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.17.0"
   frontend_server_client:
     dependency: transitive
     description:
@@ -514,6 +551,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.12.4+4"
+  html:
+    dependency: transitive
+    description:
+      name: html
+      sha256: "6d1264f2dffa1b1101c25a91dff0dc2daee4c18e87cd8538729773c073dbf602"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.15.6"
   http:
     dependency: transitive
     description:
@@ -543,6 +588,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  intl:
+    dependency: transitive
+    description:
+      name: intl
+      sha256: "3df61194eb431efc39c4ceba583b95633a403f46c9fd341e550ce0bfa50e9aa5"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.20.2"
   io:
     dependency: transitive
     description:
@@ -1228,6 +1281,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.2.0"
+  visibility_detector:
+    dependency: transitive
+    description:
+      name: visibility_detector
+      sha256: dd5cc11e13494f432d15939c3aa8ae76844c42b723398643ce9addb88a5ed420
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.4.0+2"
   vm_service:
     dependency: transitive
     description:
@@ -1236,6 +1297,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "15.0.2"
+  wakelock_plus:
+    dependency: transitive
+    description:
+      name: wakelock_plus
+      sha256: "8b12256f616346910c519a35606fb69b1fe0737c06b6a447c6df43888b097f39"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.5.1"
+  wakelock_plus_platform_interface:
+    dependency: transitive
+    description:
+      name: wakelock_plus_platform_interface
+      sha256: "24b84143787220a403491c2e5de0877fbbb87baf3f0b18a2a988973863db4b03"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.4.0"
   watcher:
     dependency: transitive
     description:
