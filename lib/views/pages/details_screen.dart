@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:heritage_lens/core/app_theme.dart';
+import 'package:heritage_lens/views/widgets/standard_button.dart';
+import 'package:heritage_lens/views/widgets/standard_text_helpers.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:heritage_lens/views/ar/ar_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -27,6 +31,7 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
   bool _isLikedByUser = false;
 
   BetterPlayerController? _betterPlayerController;
+  bool _shouldShowVideo = false;
   final TextEditingController _commentController = TextEditingController();
 
   @override
@@ -34,7 +39,6 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
     super.initState();
     _likeCount = widget.model.likeCount;
     _commentCount = widget.model.commentCount;
-    _initializePlayer();
     _initLikeState();
   }
 
@@ -75,6 +79,23 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
       ),
       betterPlayerDataSource: dataSource,
     );
+  }
+
+  Future<void> _onPlayVideo() async {
+    if (widget.model.videoUrl.trim().isEmpty) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Vidéo indisponible pour cet objet.')),
+      );
+      return;
+    }
+
+    if (_betterPlayerController == null) {
+      _initializePlayer();
+    }
+
+    if (!mounted) return;
+    setState(() => _shouldShowVideo = true);
   }
 
   Future<void> _initLikeState() async {
@@ -223,239 +244,232 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Stack(
-                children: [
-                  _betterPlayerController == null
-                      ? Container(
-                          height: 300,
-                          width: double.infinity,
-                          color: Colors.black,
-                          child: Center(
-                            child: Icon(
-                              Icons.view_in_ar_outlined,
-                              size: 120,
-                              color: Colors.white.withValues(alpha: 0.4),
-                            ),
-                          ), // ← Remplacer par Image.network(widget.model.imageUrl ?? '')
-                        )
-                      : AspectRatio(
-                          aspectRatio: 16 / 9,
-                          child: BetterPlayer(
-                            controller: _betterPlayerController!,
-                          ),
-                        ),
-
-                  // Bouton flottant "Voir en RA"
-                  Positioned(
-                    bottom: 16,
-                    right: 16,
-                    child: FloatingActionButton.extended(
-                      onPressed: _viewInAR,
-                      backgroundColor: Colors.white,
-                      foregroundColor: Colors.black,
-                      icon: const Icon(Icons.view_in_ar),
-                      label: const Text('Voir en RA'),
-                    ),
-                  ),
-                ],
-              ),
-
-              // ── Infos principales ──────────────────────────────────
-              Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+        child: Stack(
+          children: [
+            Positioned.fill(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 24, 24, 120),
+                  child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      widget.model.title,
-                      style: const TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'Alike', // ou ta police titre
-                      ),
+                    IconButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      icon: const Icon(Icons.arrow_back),
                     ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Text(
-                          'John Mauchly & J. Presper Eckert', // ← à rendre dynamique si dans model
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    const SizedBox(height: 24),
-
-                    // Likes + Commentaires count
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        _buildInteractionButton(
-                          icon: _isLikedByUser
-                              ? Icons.favorite
-                              : Icons.favorite_border,
-                          count: _likeCount,
-                          color: _isLikedByUser
-                              ? Colors.red
-                              : Colors.grey[600]!,
-                          onTap: _toggleLike,
-                        ),
-                        _buildInteractionButton(
-                          icon: Icons.comment_outlined,
-                          count: _commentCount,
-                          color: Colors.grey[600]!,
-                          onTap: () {},
-                        ),
-                      ],
-                    ),
-
-                    const SizedBox(height: 32),
-
-                    // Description
-                    const Text(
-                      'Description',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      widget.model.description,
-                      style: TextStyle(
-                        fontSize: 15,
-                        height: 1.5,
-                        color: Colors.grey[800],
-                      ),
-                    ),
-
-                    const SizedBox(height: 32),
-
-                    // Commentaires
-                    const Text(
-                      'Commentaires',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-
-                    // Liste des commentaires existants
-                    Consumer(
-                      builder: (context, ref, child) {
-                        final commentsState = ref.watch(
-                          modelCommentsProvider(widget.model.documentId),
-                        );
-                        return commentsState.when(
-                          data: (comments) {
-                            if (comments.isEmpty) {
-                              return const Padding(
-                                padding: EdgeInsets.symmetric(vertical: 16.0),
-                                child: Text("Soyez le premier à commenter !"),
-                              );
-                            }
-                            return Column(
-                              children: comments
-                                  .map((c) => _buildCommentItem(c))
-                                  .toList(),
-                            );
-                          },
-                          loading: () => const Center(
-                            child: CircularProgressIndicator(
-                              color: Colors.black,
-                            ),
-                          ),
-                          error: (e, stack) => Text(
-                            'Erreur lors du chargement des commentaires',
-                          ),
-                        );
-                      },
-                    ),
-
-                    const SizedBox(height: 24),
-
-                    // Champ pour ajouter un commentaire
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            controller: _commentController,
-                            decoration: InputDecoration(
-                              hintText: 'Écrivez un commentaire...',
-                              hintStyle: TextStyle(color: Colors.grey[500]),
-                              filled: true,
-                              fillColor: Colors.grey[100],
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide.none,
-                              ),
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 12,
-                              ),
-                            ),
-                            maxLines: 3,
-                            minLines: 1,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        ElevatedButton(
-                          onPressed: _addComment,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.black,
-                            foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 24,
-                              vertical: 14,
-                            ),
-                          ),
-                          child: const Text('Envoyer'),
-                        ),
-                      ],
-                    ),
+                    Icon(Icons.bookmark_outline)
                   ],
                 ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
 
-  Widget _buildInteractionButton({
-    required IconData icon,
-    required int count,
-    required Color color,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Row(
-        children: [
-          Icon(icon, color: color, size: 28),
-          const SizedBox(width: 6),
-          Text(
-            '$count',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: color,
+                const SizedBox(height: 16),
+
+                // Large image (>= half screen height)
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.55,
+                  width: double.infinity,
+                  child: _shouldShowVideo && _betterPlayerController != null
+                      ? BetterPlayer(controller: _betterPlayerController!)
+                      : Stack(
+                          children: [
+                            Positioned.fill(
+                              child: widget.model.thumbnailUrl.isNotEmpty
+                                  ? CachedNetworkImage(
+                                      imageUrl: widget.model.thumbnailUrl,
+                                      fit: BoxFit.cover,
+                                      placeholder: (context, url) =>
+                                          Container(
+                                        color: Colors.grey[200],
+                                        child: const Center(
+                                          child:
+                                              CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                          ),
+                                        ),
+                                      ),
+                                      errorWidget: (context, url, error) =>
+                                          Container(
+                                        color: Colors.grey[200],
+                                        child: const Icon(Icons.broken_image),
+                                      ),
+                                    )
+                                  : Container(color: Colors.grey[200]),
+                            ),
+                            if (widget.model.videoUrl.trim().isNotEmpty)
+                              Positioned.fill(
+                                child: Align(
+                                  alignment: Alignment.center,
+                                  child: InkWell(
+                                    borderRadius: BorderRadius.circular(18),
+                                    onTap: _onPlayVideo,
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 18,
+                                        vertical: 12,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: Colors.black.withValues(
+                                          alpha: 0.45,
+                                        ),
+                                        borderRadius:
+                                            BorderRadius.circular(999),
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: const [
+                                          Icon(Icons.play_arrow,
+                                              color: Colors.white),
+                                          SizedBox(width: 10),
+                                          Text(
+                                            'Lire la vidéo',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                ),
+
+                const SizedBox(height: 20),
+                Text(widget.model.title, style: AppText.titleM()),
+                const SizedBox(height: 8),
+                Text(
+                  "${widget.model.originLocation} - ${widget.model.era}",
+                  style: AppText.bodyS(),
+                ),
+
+                const SizedBox(height: 12),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    GestureDetector(
+                      onTap: _toggleLike,
+                      child: Icon(
+                        _isLikedByUser
+                            ? Icons.favorite
+                            : Icons.favorite_outline,
+                        color: _isLikedByUser ? Colors.red : Colors.black,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(_likeCount.toString(), style: AppText.bodySNB()),
+                    const SizedBox(width: 16),
+                    const Icon(Icons.comment_outlined),
+                    const SizedBox(width: 8),
+                    Text(_commentCount.toString(), style: AppText.bodySNB()),
+                  ],
+                ),
+
+                const SizedBox(height: 16),
+                Text("Description", style: AppText.emphasis()),
+                const SizedBox(height: 8),
+                Text(
+                  widget.model.description.replaceAll("\n\n", "\n"),
+                  style: AppText.bodySNB(),
+                ),
+
+                const SizedBox(height: 24),
+                Text("Commentaires", style: AppText.emphasis()),
+                
+                const SizedBox(height: 8),
+
+                // Add comment input
+                TextField(
+                  controller: _commentController,
+                  style: AppText.bodySNB(),
+                  maxLines: 3,
+                  minLines: 1,
+                  decoration: InputDecoration(
+                    hintText: "Écrivez un commentaire...",
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: AppTheme.grey, width: 1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    focusedBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.black, width: 2),
+                      borderRadius: BorderRadius.all(Radius.circular(12)),
+                    ),
+                    filled: true,
+                    fillColor: Colors.white,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 12),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: StandardButton(
+                    onPressed: _addComment,
+                    child: const Text("Envoyer"),
+                  ),
+                ),
+
+                const SizedBox(height: 12),
+
+                // Comments list
+                Consumer(
+                  builder: (context, ref, child) {
+                    final commentsState = ref.watch(
+                      modelCommentsProvider(widget.model.documentId),
+                    );
+                    return commentsState.when(
+                      data: (comments) {
+                        if (comments.isEmpty) {
+                          return const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 16.0),
+                            child: Text("Soyez le premier à commenter !"),
+                          );
+                        }
+                        return Column(
+                          children: comments
+                              .map((c) => _buildCommentItem(c))
+                              .toList(),
+                        );
+                      },
+                      loading: () => const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 16.0),
+                        child: Center(
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                      ),
+                      error: (e, stack) => const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 16.0),
+                        child: Text(
+                          "Erreur lors du chargement des commentaires",
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ],
             ),
           ),
-        ],
+              ),
+            ),
+            Positioned(
+              left: 24,
+              right: 24,
+              bottom: 16,
+              child: StandardButton(
+                onPressed: _viewInAR,
+                child: const Text("Voir en RA"),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
