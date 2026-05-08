@@ -154,6 +154,19 @@ class AppText {
         height: height,
       );
 
+  static TextStyle bodySNB({
+    Color color = _primaryColor,
+    FontWeight weight = FontWeight.w400,
+    double? height,
+  }) =>
+      TextStyle(
+        fontFamily: FontFamily.inriaSerif.font,
+        fontSize: 12,
+        fontWeight: weight,
+        color: color,
+        height: height,
+      );
+
   static TextStyle bodySW({
     Color color = _inverseColor,
     FontWeight weight = FontWeight.w600,

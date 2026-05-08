@@ -53,7 +53,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
   }
 
   List<String> get _availableCategories {
-    // TODO: Lionel  will fix this
+    // TODO: Lionel will fix this - Lionel : Fix What ??????!, also we filter with categories e.g Technology. It's not in the model
     final Set<String> categories = {'Tous'};
     for (final model in _publicModels) {
       if (model.era.isNotEmpty) categories.add(model.era);
@@ -91,12 +91,12 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
           // AppBar dynamique avec Titre et Recherche
           SliverAppBar(
             floating: true,
-            expandedHeight: 180.0,
+            expandedHeight: 190.0,
             backgroundColor: Colors.white,
             elevation: 0,
             flexibleSpace: FlexibleSpaceBar(
               background: Padding(
-                padding: const EdgeInsets.fromLTRB(24, 60, 24, 0),
+                padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -109,11 +109,11 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
             bottom: PreferredSize(
               preferredSize: const Size.fromHeight(60),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                 child: TextFormField(
                   controller: _searchController,
                   decoration: InputDecoration(
-                    hintText: 'Search for a treasure...',
+                    hintText: 'Rechercher un artéfact...',
                     suffixIcon: const Icon(Icons.search),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -130,12 +130,12 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
           // Section "Que cherchez-vous" en Sliver
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(24, 12, 24, 16),
+              padding: const EdgeInsets.fromLTRB(24, 16, 24, 16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text('Que cherchez-vous ?', style: AppText.titleM()),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 18),
                   SizedBox(
                     height: 40,
                     child: ListView(
@@ -143,6 +143,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
                       children: _availableCategories.map(_buildCategoryChip).toList(),
                     ),
                   ),
+                  const SizedBox(height: 18),
                 ],
               ),
             ),
@@ -222,7 +223,7 @@ class _ModelCard extends StatelessWidget {
         clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(10),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.06),
@@ -236,7 +237,7 @@ class _ModelCard extends StatelessWidget {
           children: [
             // Image Large avec Aspect Ratio fixe (16:9 est idéal pour le plein écran)
             AspectRatio(
-              aspectRatio: 16 / 9,
+              aspectRatio: 1 / 1,
               child: Stack(
                 children: [
                   model.thumbnailUrl.isNotEmpty
@@ -244,6 +245,7 @@ class _ModelCard extends StatelessWidget {
                           //Images in 1080p so it is better to append /preview to get something lighter
                           imageUrl: model.thumbnailUrl,
                           width: double.infinity,
+                          height: double.infinity,
                           fit: BoxFit.cover,
                           // Un placeholder propre pendant le chargement (évite le vide blanc)
                           placeholder: (context, url) => Container(
@@ -261,7 +263,7 @@ class _ModelCard extends StatelessWidget {
                           fadeInDuration: const Duration(milliseconds: 500),
                         )
                       : Container(color: Colors.grey[200]),
-                  // Badge d'époque
+                  // Badge d'époque const Icon(Icons.view_in_ar, color: Colors.black54),
                   Positioned(
                     top: 16,
                     left: 16,
@@ -273,7 +275,7 @@ class _ModelCard extends StatelessWidget {
                       ),
                       child: Text(
                         model.era.toUpperCase(),
-                        style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1),
+                        style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w400, letterSpacing: 1),
                       ),
                     ),
                   ),
@@ -291,17 +293,14 @@ class _ModelCard extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Expanded(
-                        child: Text(model.title, style: AppText.bodyS()),
+                        child: Text(model.title, style: AppText.bodyM().copyWith(fontWeight: FontWeight.w600)),
                       ),
-                      const Icon(Icons.view_in_ar, color: Colors.black54),
                     ],
                   ),
                   const SizedBox(height: 8),
                   Row(
                     children: [
-                      const Icon(Icons.location_on_outlined, size: 14, color: Colors.grey),
-                      const SizedBox(width: 4),
-                      Expanded(child: Text(model.originLocation, style: AppText.bodyS().copyWith(color: Colors.grey[600]), overflow: TextOverflow.ellipsis)),
+                      Expanded(child: Text('${model.originLocation} - ${model.era.toLowerCase()}', style: AppText.bodySNB().copyWith(color: Colors.grey[500]), overflow: TextOverflow.ellipsis)),
                     ],
                   ),
                   const SizedBox(height: 12),
@@ -310,8 +309,26 @@ class _ModelCard extends StatelessWidget {
                     model.description,
                     maxLines: 3,
                     overflow: TextOverflow.ellipsis,
-                    style: AppText.bodyS().copyWith(color: Colors.black54, height: 1.4),
+                    style: AppText.bodySNB().copyWith(color: Colors.black, height: 1.4),
                   ),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      Icon(Icons.favorite_outline, color: Colors.grey[500]),
+                      const SizedBox(width: 8),
+                      Text(
+                        '0', // TODO : need likes on model
+                        style: AppText.bodySNB().copyWith(color: Colors.grey[500], height: 1.4),
+                      ),
+                      const SizedBox(width: 16),
+                      Icon(Icons.comment_outlined, color: Colors.grey[500]),
+                      const SizedBox(width: 8),
+                      Text(
+                        '0', // TODO : need comments on model
+                        style: AppText.bodySNB().copyWith(color: Colors.grey[500], height: 1.4),
+                      ),
+                    ],
+                  )
                 ],
               ),
             ),
