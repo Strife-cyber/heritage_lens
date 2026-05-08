@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:timeago/timeago.dart' as timeago;
 import 'package:heritage_lens/views/ar/ar_view.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:heritage_lens/services/auth_service.dart';
 import 'package:heritage_lens/services/unity_service.dart';
 import 'package:better_player_plus/better_player_plus.dart';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:heritage_lens/models/comment_model.dart';
 import 'package:heritage_lens/services/comment_service.dart';
 
 import '../../models/ar_model.dart';
+import '../../models/comment_model.dart';
 
 class DetailScreen extends ConsumerStatefulWidget {
   final ARModel
@@ -22,10 +22,8 @@ class DetailScreen extends ConsumerStatefulWidget {
 }
 
 class _DetailScreenState extends ConsumerState<DetailScreen> {
-  // ───────────────────────────────────────────────
-  // Variables d'état
-  // ───────────────────────────────────────────────
   late int _likeCount;
+  late int _commentCount;
   bool _isLikedByUser = false;
 
   BetterPlayerController? _betterPlayerController;
@@ -35,7 +33,9 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
   void initState() {
     super.initState();
     _likeCount = widget.model.likeCount;
+    _commentCount = widget.model.commentCount;
     _initializePlayer();
+    _initLikeState();
   }
 
   @override
@@ -77,22 +77,63 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
     );
   }
 
-  // ───────────────────────────────────────────────
-  // Actions (TODO: implémenter la logique réelle)
-  // ───────────────────────────────────────────────
-  Future<void> _toggleLike() async {
-    setState(() {
-      _isLikedByUser = !_isLikedByUser;
-      _likeCount += _isLikedByUser ? 1 : -1;
-    });
+  Future<void> _initLikeState() async {
+    final user = ref.read(currentUserProvider).value;
+    if (user == null) return;
 
     try {
-      await FirebaseFirestore.instance
+      final likeDoc = await FirebaseFirestore.instance
           .collection('artifacts')
           .doc(widget.model.documentId)
-          .update(
-            {'likeCount': FieldValue.increment(_isLikedByUser ? 1 : -1)}
-          );
+          .collection('likes')
+          .doc(user.uid)
+          .get();
+
+      if (!mounted) return;
+      setState(() {
+        _isLikedByUser = likeDoc.exists;
+      });
+    } catch (e) {
+      debugPrint('Failed to init like state: $e');
+    }
+  }
+
+  Future<void> _toggleLike() async {
+    try {
+      final user = ref.read(currentUserProvider).value;
+      if (user == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Veuillez vous connecter pour liker')),
+        );
+        return;
+      }
+
+      final artifactRef = FirebaseFirestore.instance
+          .collection('artifacts')
+          .doc(widget.model.documentId);
+      final likeRef = artifactRef.collection('likes').doc(user.uid);
+
+      final previousLiked = _isLikedByUser;
+      await FirebaseFirestore.instance.runTransaction((tx) async {
+        final likeSnap = await tx.get(likeRef);
+        final currentlyLiked = likeSnap.exists;
+
+        if (currentlyLiked) {
+          tx.delete(likeRef);
+          tx.update(artifactRef, {'likeCount': FieldValue.increment(-1)});
+        } else {
+          tx.set(likeRef, <String, dynamic>{
+            'createdAt': FieldValue.serverTimestamp(),
+          });
+          tx.update(artifactRef, {'likeCount': FieldValue.increment(1)});
+        }
+      });
+
+      if (!mounted) return;
+      setState(() {
+        _isLikedByUser = !previousLiked;
+        _likeCount += _isLikedByUser ? 1 : -1;
+      });
     } catch (e) {
       debugPrint("Le like n'a pas pu être enregistré : $e");
     }
@@ -119,28 +160,21 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
       return;
     }
 
-    final newComment = CommentModel(
-      documentId: '',
-      authorId: user.uid,
-      authorName: user.displayName ?? user.email?.split('@').first ?? 'Anonyme',
-      text: _commentController.text.trim(),
-      createdAt: Timestamp.now(),
-    );
-
-    await ref
-        .read(commentServiceProvider(widget.model.documentId))
-        .createDocument(data: newComment);
-
     try {
-      await FirebaseFirestore.instance
-          .collection('artifacts')
-          .doc(widget.model.documentId)
-          .update({'commentCount': FieldValue.increment(1)});
-    } catch (_) {}
+      await addComment(
+        artifactId: widget.model.documentId,
+        authorId: user.uid,
+        authorName: user.displayName ?? 'Anonyme',
+        text: _commentController.text.trim(),
+      );
 
-    setState(() {
-      _commentController.clear();
-    });
+      setState(() {
+        _commentController.clear();
+        _commentCount += 1;
+      });
+    } catch (_) {
+      // Keep the input if comment creation fails.
+    }
 
     if (mounted) {
       ScaffoldMessenger.of(
@@ -150,16 +184,21 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
   }
 
   Future<void> _viewInAR() async {
-    if (widget.model.modelUrl == null || widget.model.modelUrl!.trim().isEmpty) {
+    if (widget.model.modelUrl == null ||
+        widget.model.modelUrl!.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Le modèle 3D n'est pas encore disponible pour cet objet.")),
+        const SnackBar(
+          content: Text(
+            "Le modèle 3D n'est pas encore disponible pour cet objet.",
+          ),
+        ),
       );
       return;
     }
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Ouverture en RA...')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Ouverture en RA...')));
 
     final modelMessage = UnityOutgoingMessage(
       bridge: UnityBridgeTarget.model,
@@ -270,13 +309,9 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
                         ),
                         _buildInteractionButton(
                           icon: Icons.comment_outlined,
-                          count: widget
-                              .model
-                              .commentCount, // Or a local updated variable
+                          count: _commentCount,
                           color: Colors.grey[600]!,
-                          onTap: () {
-                            // Optionnel : scroll vers commentaires
-                          },
+                          onTap: () {},
                         ),
                       ],
                     ),
@@ -400,10 +435,6 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
     );
   }
 
-  // ───────────────────────────────────────────────
-  // Widgets réutilisables
-  // ───────────────────────────────────────────────
-
   Widget _buildInteractionButton({
     required IconData icon,
     required int count,
@@ -464,7 +495,7 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  _formatTimeAgo(comment.createdAt.toDate()),
+                  timeago.format(comment.createdAt.toDate(), locale: 'fr'),
                   style: TextStyle(fontSize: 12, color: Colors.grey[500]),
                 ),
               ],
@@ -473,13 +504,5 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
         ],
       ),
     );
-  }
-
-  String _formatTimeAgo(DateTime date) {
-    final diff = DateTime.now().difference(date);
-    if (diff.inMinutes < 1) return 'À l\'instant';
-    if (diff.inMinutes < 60) return 'Il y a ${diff.inMinutes} min';
-    if (diff.inHours < 24) return 'Il y a ${diff.inHours} h';
-    return 'Il y a ${diff.inDays} j';
   }
 }

@@ -6,6 +6,7 @@ import 'package:heritage_lens/utils/map_helper.dart';
 class ARModel {
   final String documentId;
   final String modelFileId;
+  final String category;
   final String era;
   final String title;
   final String description;
@@ -22,6 +23,7 @@ class ARModel {
   ARModel({
     required this.documentId,
     required this.modelFileId,
+    required this.category,
     required this.era,
     required this.title,
     required this.description,
@@ -40,6 +42,7 @@ class ARModel {
   ARModel copyWith({
     String? documentId,
     String? modelFileId,
+    String? category,
     String? era,
     String? title,
     String? description,
@@ -56,6 +59,7 @@ class ARModel {
     return ARModel(
       documentId: documentId ?? this.documentId,
       modelFileId: modelFileId ?? this.modelFileId,
+      category: category ?? this.category,
       era: era ?? this.era,
       title: title ?? this.title,
       description: description ?? this.description,
@@ -75,6 +79,7 @@ class ARModel {
     return <String, dynamic>{
       'documentId': documentId,
       'modelFileId': modelFileId,
+      'category': category,
       'era': era,
       'title': title,
       'description': description,
@@ -94,6 +99,7 @@ class ARModel {
     return ARModel(
       documentId: documentId,
       modelFileId: getValue<String>(map, 'modelFileId', defaultValue: '')!,
+      category: getValue<String>(map, 'category', defaultValue: '')!,
       era: getValue<String>(map, 'era', defaultValue: '')!,
       title: getValue<String>(map, 'title', defaultValue: '')!,
       description: getValue<String>(map, 'description', defaultValue: '')!,
@@ -115,7 +121,7 @@ class ARModel {
 
   @override
   String toString() {
-    return 'ARModel(documentId: $documentId, modelFileId: $modelFileId, era: $era, title: $title, description: $description, originLocation: $originLocation, thumbnailUrl: $thumbnailUrl, videoUrl: $videoUrl, modelUrl: $modelUrl, createdAt: $createdAt, updatedAt: $updatedAt, didYouKnow: $didYouKnow, likeCount: $likeCount, commentCount: $commentCount)';
+    return 'ARModel(documentId: $documentId, modelFileId: $modelFileId, category: $category, era: $era, title: $title, description: $description, originLocation: $originLocation, thumbnailUrl: $thumbnailUrl, videoUrl: $videoUrl, modelUrl: $modelUrl, createdAt: $createdAt, updatedAt: $updatedAt, didYouKnow: $didYouKnow, likeCount: $likeCount, commentCount: $commentCount)';
   }
 
   @override
@@ -125,6 +131,7 @@ class ARModel {
     return 
       other.documentId == documentId &&
       other.modelFileId == modelFileId &&
+      other.category == category &&
       other.era == era &&
       other.title == title &&
       other.description == description &&
@@ -143,6 +150,7 @@ class ARModel {
   int get hashCode {
     return documentId.hashCode ^
       modelFileId.hashCode ^
+      category.hashCode ^
       era.hashCode ^
       title.hashCode ^
       description.hashCode ^

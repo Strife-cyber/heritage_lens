@@ -1,10 +1,10 @@
-import 'package:cached_network_image/cached_network_image.dart';
+import '../../models/ar_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:heritage_lens/services/model_service.dart';
 import 'package:heritage_lens/views/pages/details_screen.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:heritage_lens/views/widgets/standard_text_helpers.dart';
-import '../../models/ar_model.dart';
 
 class DiscoverScreen extends ConsumerStatefulWidget {
   const DiscoverScreen({super.key});
@@ -40,11 +40,15 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
   List<ARModel> get _filteredModels {
     return _publicModels.where((model) {
       final searchText = _searchController.text.trim().toLowerCase();
-      final matchesSearch = searchText.isEmpty ||
+      final matchesSearch =
+          searchText.isEmpty ||
           model.title.toLowerCase().contains(searchText) ||
-          model.description.toLowerCase().contains(searchText);
+          model.description.toLowerCase().contains(searchText) ||
+          model.category.toLowerCase().contains(searchText);
 
-      final matchesCategory = _selectedCategory == 'Tous' ||
+      final matchesCategory =
+          _selectedCategory == 'Tous' ||
+          model.category == _selectedCategory ||
           model.era == _selectedCategory ||
           model.originLocation == _selectedCategory;
 
@@ -53,9 +57,9 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
   }
 
   List<String> get _availableCategories {
-    // TODO: Lionel will fix this - Lionel : Fix What ??????!, also we filter with categories e.g Technology. It's not in the model
     final Set<String> categories = {'Tous'};
     for (final model in _publicModels) {
+      if (model.category.isNotEmpty) categories.add(model.category);
       if (model.era.isNotEmpty) categories.add(model.era);
       if (model.originLocation.isNotEmpty) categories.add(model.originLocation);
     }
@@ -64,7 +68,9 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
 
   Future<void> _loadPublicModels() async {
     try {
-      final query = await ref.read(arModelServiceProvider).getDocuments(limit: 20);
+      final query = await ref
+          .read(arModelServiceProvider)
+          .getDocuments(limit: 20);
       final models = query.docs.map((doc) => doc.data()).toList();
 
       if (mounted) {
@@ -101,7 +107,10 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text('HeritageLens', style: AppText.titleXL()),
-                    Text('Histoire et culture à travers la RA', style: AppText.bodyMG()),
+                    Text(
+                      'Histoire et culture à travers la RA',
+                      style: AppText.bodyMG(),
+                    ),
                   ],
                 ),
               ),
@@ -109,7 +118,10 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
             bottom: PreferredSize(
               preferredSize: const Size.fromHeight(60),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 12,
+                ),
                 child: TextFormField(
                   controller: _searchController,
                   decoration: InputDecoration(
@@ -122,7 +134,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
                     filled: true,
                     fillColor: Colors.grey[100],
                   ),
-                )
+                ),
               ),
             ),
           ),
@@ -140,7 +152,9 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
                     height: 40,
                     child: ListView(
                       scrollDirection: Axis.horizontal,
-                      children: _availableCategories.map(_buildCategoryChip).toList(),
+                      children: _availableCategories
+                          .map(_buildCategoryChip)
+                          .toList(),
                     ),
                   ),
                   const SizedBox(height: 18),
@@ -160,7 +174,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
                         padding: const EdgeInsets.only(bottom: 24),
                         child: _ModelCard(
                           key: ValueKey(_filteredModels[index].documentId),
-                          model: _filteredModels[index]
+                          model: _filteredModels[index],
                         ),
                       ),
                       childCount: _filteredModels.length,
@@ -217,7 +231,10 @@ class _ModelCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => DetailScreen(model: model)));
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => DetailScreen(model: model)),
+        );
       },
       child: Container(
         clipBehavior: Clip.antiAlias,
@@ -257,7 +274,10 @@ class _ModelCard extends StatelessWidget {
                           // Gestion des erreurs (image corrompue ou lien mort)
                           errorWidget: (context, url, error) => Container(
                             color: Colors.grey[200],
-                            child: const Icon(Icons.broken_image, color: Colors.grey),
+                            child: const Icon(
+                              Icons.broken_image,
+                              color: Colors.grey,
+                            ),
                           ),
                           // Durée de l'animation d'apparition
                           fadeInDuration: const Duration(milliseconds: 500),
@@ -267,22 +287,60 @@ class _ModelCard extends StatelessWidget {
                   Positioned(
                     top: 16,
                     left: 16,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: Colors.black.withValues(alpha: 0.7),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(
-                        model.era.toUpperCase(),
-                        style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w400, letterSpacing: 1),
-                      ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withValues(alpha: 0.7),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            (model.category.isNotEmpty
+                                    ? model.category
+                                    : model.era)
+                                .toUpperCase(),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400,
+                              letterSpacing: 1,
+                            ),
+                          ),
+                        ),
+                        if (model.category.isNotEmpty) ...[
+                          const SizedBox(height: 6),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 6,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.black.withValues(alpha: 0.55),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              model.era.toUpperCase(),
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w400,
+                                letterSpacing: 1,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ],
                     ),
                   ),
                 ],
               ),
             ),
-            
+
             // Détails du modèle
             Padding(
               padding: const EdgeInsets.all(20),
@@ -293,14 +351,27 @@ class _ModelCard extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Expanded(
-                        child: Text(model.title, style: AppText.bodyM().copyWith(fontWeight: FontWeight.w600)),
+                        child: Text(
+                          model.title,
+                          style: AppText.bodyM().copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 8),
                   Row(
                     children: [
-                      Expanded(child: Text('${model.originLocation} - ${model.era.toLowerCase()}', style: AppText.bodySNB().copyWith(color: Colors.grey[500]), overflow: TextOverflow.ellipsis)),
+                      Expanded(
+                        child: Text(
+                          '${model.originLocation} - ${model.era.toLowerCase()}',
+                          style: AppText.bodySNB().copyWith(
+                            color: Colors.grey[500],
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 12),
@@ -309,7 +380,10 @@ class _ModelCard extends StatelessWidget {
                     model.description,
                     maxLines: 3,
                     overflow: TextOverflow.ellipsis,
-                    style: AppText.bodySNB().copyWith(color: Colors.black, height: 1.4),
+                    style: AppText.bodySNB().copyWith(
+                      color: Colors.black,
+                      height: 1.4,
+                    ),
                   ),
                   const SizedBox(height: 16),
                   Row(
@@ -317,18 +391,24 @@ class _ModelCard extends StatelessWidget {
                       Icon(Icons.favorite_outline, color: Colors.grey[500]),
                       const SizedBox(width: 8),
                       Text(
-                        '0', // TODO : need likes on model
-                        style: AppText.bodySNB().copyWith(color: Colors.grey[500], height: 1.4),
+                        '${model.likeCount}',
+                        style: AppText.bodySNB().copyWith(
+                          color: Colors.grey[500],
+                          height: 1.4,
+                        ),
                       ),
                       const SizedBox(width: 16),
                       Icon(Icons.comment_outlined, color: Colors.grey[500]),
                       const SizedBox(width: 8),
                       Text(
-                        '0', // TODO : need comments on model
-                        style: AppText.bodySNB().copyWith(color: Colors.grey[500], height: 1.4),
+                        '${model.commentCount}',
+                        style: AppText.bodySNB().copyWith(
+                          color: Colors.grey[500],
+                          height: 1.4,
+                        ),
                       ),
                     ],
-                  )
+                  ),
                 ],
               ),
             ),

@@ -1,7 +1,7 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:heritage_lens/services/model_service.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:heritage_lens/views/widgets/standard_button.dart';
 import 'package:heritage_lens/views/widgets/standard_text_helpers.dart';
 
@@ -21,7 +21,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   bool _isLoadingUserModels = true;
   final _username = "Lionel";
 
-
   @override
   void initState() {
     super.initState();
@@ -29,14 +28,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     _loadUserModels();
   }
 
-  Future<void> _loadFavoriteModels() async { // TODO : Change to actual get of favourites models of current user
+  Future<void> _loadFavoriteModels() async {
     _isLoadingFavorites = true;
     try {
-      final query = await ref.read(arModelServiceProvider).getDocuments( limit: 20 );
+      final query = await ref
+          .read(arModelServiceProvider)
+          .getDocuments(limit: 20);
 
-      final models = query.docs
-          .map((doc) => doc.data())
-          .toList();
+      final models = query.docs.map((doc) => doc.data()).toList();
 
       if (mounted) {
         setState(() {
@@ -52,14 +51,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     }
   }
 
-  Future<void> _loadUserModels() async { //TODO : Change to actual get of user added models
-    _isLoadingFavorites = true;
+  Future<void> _loadUserModels() async {
+    _isLoadingUserModels = true;
     try {
-      final query = await ref.read(arModelServiceProvider).getDocuments( limit: 20 );
+      final query = await ref
+          .read(arModelServiceProvider)
+          .getDocuments(limit: 20);
 
-      final models = query.docs
-          .map((doc) => doc.data())
-          .toList();
+      final models = query.docs.map((doc) => doc.data()).toList();
 
       if (mounted) {
         setState(() {
@@ -101,62 +100,58 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          Text(
-                            'Bonjour $_username',
-                            style: AppText.titleXL()
-                          ),
+                          Text('Bonjour $_username', style: AppText.titleXL()),
                           const SizedBox(height: 8),
                           Text(
                             "Alors, Qu’allons nous faire aujourd'hui ?",
-                            style: AppText.bodyMG()
+                            style: AppText.bodyMG(),
                           ),
                           const SizedBox(height: 32),
-                    
+
                           Container(
                             decoration: BoxDecoration(
                               border: BoxBorder.all(color: Color(0x11000000)),
-                              borderRadius: const BorderRadius.all(Radius.circular(10.0))
+                              borderRadius: const BorderRadius.all(
+                                Radius.circular(10.0),
+                              ),
                             ),
-                            padding: const EdgeInsets.only(top: 16.0, bottom: 16.0),
+                            padding: const EdgeInsets.only(
+                              top: 16.0,
+                              bottom: 16.0,
+                            ),
                             child: Row(
                               children: [
                                 Expanded(
                                   child: Container(
                                     decoration: BoxDecoration(
-                                      border: Border(right: BorderSide(color: Color(0x22000000)))
+                                      border: Border(
+                                        right: BorderSide(
+                                          color: Color(0x22000000),
+                                        ),
+                                      ),
                                     ),
                                     child: Column(
                                       children: [
                                         Text(
-                                          '0',
-                                          // "${_favoriteModels.length}", TODO : Fake favoriteModels function to be removed
+                                          '${_favoriteModels.length}',
                                           style: AppText.bodyM(),
                                         ),
                                         SizedBox(height: 8),
-                                        Text(
-                                          "Favoris",
-                                          style: AppText.bodyM(),
-                                        ),
+                                        Text("Favoris", style: AppText.bodyM()),
                                       ],
                                     ),
                                   ),
                                 ),
                                 Expanded(
-                                  child: Container(
-                                    child: Column(
-                                      children: [
-                                        Text(
-                                          '0',
-                                          // "${_userModels.length}", TODO : Fake userModels function to be removed
-                                          style: AppText.bodyM(),
-                                        ),
-                                        SizedBox(height: 8),
-                                        Text(
-                                          "Modèles",
-                                          style: AppText.bodyM(),
-                                        ),
-                                      ],
-                                    ),
+                                  child: Column(
+                                    children: [
+                                      Text(
+                                        '${_userModels.length}',
+                                        style: AppText.bodyM(),
+                                      ),
+                                      SizedBox(height: 8),
+                                      Text("Modèles", style: AppText.bodyM()),
+                                    ],
                                   ),
                                 ),
                               ],
@@ -167,15 +162,23 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             children: [
                               Expanded(
                                 child: StandardButton(
-                                  child: Text("Ajouter un Modèle",style: AppText.bodySW()),
-                                  onPressed: () => {}),
+                                  child: Text(
+                                    "Ajouter un Modèle",
+                                    style: AppText.bodySW(),
+                                  ),
+                                  onPressed: () => {},
+                                ),
                               ),
-                                SizedBox(width: 16),
-                                Expanded(
-                                  child: StandardButton(
-                                  child: Text("Créer un Espace",style: AppText.bodySW()),
-                                  onPressed: () => {}),
-                                )
+                              SizedBox(width: 16),
+                              Expanded(
+                                child: StandardButton(
+                                  child: Text(
+                                    "Créer un Espace",
+                                    style: AppText.bodySW(),
+                                  ),
+                                  onPressed: () => {},
+                                ),
+                              ),
                             ],
                           ),
                         ],
@@ -185,9 +188,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 ),
                 SliverPersistentHeader(
                   pinned: true,
-                  delegate: _StickyTabBarDelegate (
+                  delegate: _StickyTabBarDelegate(
                     tabBar: TabBar(
-                      tabs: [Tab(icon: Icon(Icons.star)), Tab(icon: Icon(Icons.window))],
+                      tabs: [
+                        Tab(icon: Icon(Icons.star)),
+                        Tab(icon: Icon(Icons.window)),
+                      ],
                     ),
                   ),
                 ),
@@ -205,7 +211,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     );
   }
 
- Widget _buildGrid(List<ARModel> models, bool isLoading) {
+  Widget _buildGrid(List<ARModel> models, bool isLoading) {
     if (isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -223,28 +229,28 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       ),
       itemCount: models.length,
       itemBuilder: (context, index) => models[index].thumbnailUrl.isNotEmpty
-                      ? CachedNetworkImage(
-                          //Images in 1080p so it is better to append /preview to get something lighter
-                          imageUrl: models[index].thumbnailUrl,
-                          width: double.infinity,
-                          height: double.infinity,
-                          fit: BoxFit.cover,
-                          // Un placeholder propre pendant le chargement (évite le vide blanc)
-                          placeholder: (context, url) => Container(
-                            color: Colors.grey[200],
-                            child: const Center(
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            ),
-                          ),
-                          // Gestion des erreurs (image corrompue ou lien mort)
-                          errorWidget: (context, url, error) => Container(
-                            color: Colors.grey[200],
-                            child: const Icon(Icons.broken_image, color: Colors.grey),
-                          ),
-                          // Durée de l'animation d'apparition
-                          fadeInDuration: const Duration(milliseconds: 500),
-                        )
-                      : Container(color: Colors.grey[200]),
+          ? CachedNetworkImage(
+              //Images in 1080p so it is better to append /preview to get something lighter
+              imageUrl: models[index].thumbnailUrl,
+              width: double.infinity,
+              height: double.infinity,
+              fit: BoxFit.cover,
+              // Un placeholder propre pendant le chargement (évite le vide blanc)
+              placeholder: (context, url) => Container(
+                color: Colors.grey[200],
+                child: const Center(
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                ),
+              ),
+              // Gestion des erreurs (image corrompue ou lien mort)
+              errorWidget: (context, url, error) => Container(
+                color: Colors.grey[200],
+                child: const Icon(Icons.broken_image, color: Colors.grey),
+              ),
+              // Durée de l'animation d'apparition
+              fadeInDuration: const Duration(milliseconds: 500),
+            )
+          : Container(color: Colors.grey[200]),
     );
   }
 
@@ -253,16 +259,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.view_in_ar_outlined,
-            size: 80,
-            color: Colors.grey[400],
-          ),
+          Icon(Icons.view_in_ar_outlined, size: 80, color: Colors.grey[400]),
           const SizedBox(height: 24),
-          Text(
-            'Aucun modèle trouvé',
-            style: AppText.bodyM()
-          ),
+          Text('Aucun modèle trouvé', style: AppText.bodyM()),
           const SizedBox(height: 12),
           Text(
             'Essayez une autre recherche ou ajoutez votre premier modèle',
@@ -284,7 +283,11 @@ class _StickyTabBarDelegate extends SliverPersistentHeaderDelegate {
   const _StickyTabBarDelegate({required this.tabBar});
 
   @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+  Widget build(
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
     return Container(
       color: Colors.white, // Prevents content showing through when pinned
       child: tabBar,

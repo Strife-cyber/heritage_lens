@@ -1,0 +1,524 @@
+0001-01-01 00:00:00.000 -1 -1 Info  --------- beginning of main
+2026-04-29 09:41:45.212 20269 20269 Info e.heritage_lens Late-enabling -Xcheck:jni
+2026-04-29 09:41:45.268 20269 20269 Info e.heritage_lens Using CollectorTypeCMC GC.
+2026-04-29 09:41:45.693 20269 20269 Info ActivityThread Relaunch all activities: onCoreSettingsChange
+2026-04-29 09:41:45.768 20269 20269 Info LoadedApk No resource references to update in package com.transsion.theme.icon
+2026-04-29 09:41:45.932 20269 20269 Info TranVersion TranVersion static initializer: default = 34.2.6.1
+2026-04-29 09:41:45.932 20269 20269 Info TranVersion  debug = false, debug_version = 34.2.6.1
+2026-04-29 09:41:45.933 20269 20269 Warn System ClassLoader referenced unknown path: /system_ext/framework/multidisplay.jar
+0001-01-01 00:00:00.000 -1 -1 Info  --------- beginning of system
+2026-04-29 09:41:45.938 20269 20269 Warn TranClassInfo instance failed. com.transsion.display.multidisplay.core.MultiDisplayCoreComponentImpl from com.transsion.hubcore.multidisplay.ITranMultiDisplayCoreComponent
+2026-04-29 09:41:45.938 20269 20269 Warn TranClassInfo java.lang.ClassNotFoundException: com.transsion.display.multidisplay.core.MultiDisplayCoreComponentImpl
+2026-04-29 09:41:45.938 20269 20269 Warn TranClassInfo 	at java.lang.Class.classForName(Native Method)
+2026-04-29 09:41:45.938 20269 20269 Warn TranClassInfo 	at java.lang.Class.forName(Class.java:591)
+2026-04-29 09:41:45.938 20269 20269 Warn TranClassInfo 	at com.transsion.hubcore.utils.TranClassInfo.getImpl(TranClassInfo.java:124)
+2026-04-29 09:41:45.938 20269 20269 Warn TranClassInfo 	at com.transsion.hubcore.multidisplay.ITranMultiDisplayCoreComponent.Instance(ITranMultiDisplayCoreComponent.java:32)
+2026-04-29 09:41:45.938 20269 20269 Warn TranClassInfo 	at com.transsion.hubcore.app.TranActivityImpl.attach(TranActivityImpl.java:44)
+2026-04-29 09:41:45.938 20269 20269 Warn TranClassInfo 	at android.app.Activity.attach(Activity.java:8581)
+2026-04-29 09:41:45.938 20269 20269 Warn TranClassInfo 	at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:3915)
+2026-04-29 09:41:45.938 20269 20269 Warn TranClassInfo 	at android.app.ActivityThread.handleLaunchActivity(ActivityThread.java:4109)
+2026-04-29 09:41:45.938 20269 20269 Warn TranClassInfo 	at android.app.servertransaction.LaunchActivityItem.execute(LaunchActivityItem.java:103)
+2026-04-29 09:41:45.938 20269 20269 Warn TranClassInfo 	at android.app.servertransaction.TransactionExecutor.executeCallbacks(TransactionExecutor.java:139)
+2026-04-29 09:41:45.938 20269 20269 Warn TranClassInfo 	at android.app.servertransaction.TransactionExecutor.execute(TransactionExecutor.java:96)
+2026-04-29 09:41:45.938 20269 20269 Warn TranClassInfo 	at android.app.ActivityThread$H.handleMessage(ActivityThread.java:2561)
+2026-04-29 09:41:45.938 20269 20269 Warn TranClassInfo 	at android.os.Handler.dispatchMessage(Handler.java:106)
+2026-04-29 09:41:45.938 20269 20269 Warn TranClassInfo 	at android.os.Looper.loopOnce(Looper.java:243)
+2026-04-29 09:41:45.938 20269 20269 Warn TranClassInfo 	at android.os.Looper.loop(Looper.java:338)
+2026-04-29 09:41:45.938 20269 20269 Warn TranClassInfo 	at android.app.ActivityThread.main(ActivityThread.java:8470)
+2026-04-29 09:41:45.938 20269 20269 Warn TranClassInfo 	at java.lang.reflect.Method.invoke(Native Method)
+2026-04-29 09:41:45.938 20269 20269 Warn TranClassInfo 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:600)
+2026-04-29 09:41:45.938 20269 20269 Warn TranClassInfo 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:1064)
+2026-04-29 09:41:45.938 20269 20269 Warn TranClassInfo Caused by: java.lang.ClassNotFoundException: Didn't find class "com.transsion.display.multidisplay.core.MultiDisplayCoreComponentImpl" on path: DexPathList[[],nativeLibraryDirectories=[/system/lib64, /system_ext/lib64]]
+2026-04-29 09:41:45.938 20269 20269 Warn TranClassInfo 	at dalvik.system.BaseDexClassLoader.findClass(BaseDexClassLoader.java:259)
+2026-04-29 09:41:45.938 20269 20269 Warn TranClassInfo 	at java.lang.ClassLoader.loadClass(ClassLoader.java:642)
+2026-04-29 09:41:45.938 20269 20269 Warn TranClassInfo 	at java.lang.ClassLoader.loadClass(ClassLoader.java:578)
+2026-04-29 09:41:45.938 20269 20269 Warn TranClassInfo 	... 19 more
+2026-04-29 09:41:45.960 20269 20269 Error e.heritage_lens Invalid resource ID 0x00000000.
+2026-04-29 09:41:45.976 20269 20269 Info SurfaceFactory [static] sSurfaceFactory = com.transsion.rt.SurfaceFactoryImpl@3a80cd4
+2026-04-29 09:41:45.982 20269 20269 Warn AppResolutionTuner Target file doesn't exist: /data/retuner/sf_resolution_tuner_app_list.xml
+2026-04-29 09:41:46.033 20269 20269 Warn AppResolutionTuner Target file doesn't exist: /data/retuner/sf_resolution_tuner_app_list.xml
+2026-04-29 09:41:46.075 20269 20269 Info Unity applyWindowUIChanges fullScreen = true, renderOutsideSafeArea = true
+2026-04-29 09:41:46.157 20269 20269 Info IL2CPP JNI_OnLoad
+2026-04-29 09:41:46.176 20269 20269 Warn WindowOnBackDispatcher OnBackInvokedCallback is not enabled for the application.
+2026-04-29 09:41:46.176 20269 20269 Warn WindowOnBackDispatcher Set 'android:enableOnBackInvokedCallback="true"' in the application manifest.
+2026-04-29 09:41:46.186 20269 20269 Info Unity onResume
+2026-04-29 09:41:46.208 20269 20269 Info M-ProMotion M-ProMotion is disabled
+2026-04-29 09:41:46.219 20269 26455 Info PowerHalWrapper PowerHalWrapper.getInstance 
+2026-04-29 09:41:46.418 20269 20269 Info libMEOW_gift open /data/performance/gift/arc.ini
+2026-04-29 09:41:46.418 20269 20269 Error QT [QT]file does not exist
+2026-04-29 09:41:46.501 20269 20269 Info config_debug updateDecorCaptionStatus: {1.0 624mcc2mnc [en_US] ldltr sw360dp w360dp h724dp 480dpi nrml long port night finger -keyb/v/h -nav/h winConfig={ mBounds=Rect(0, 0 - 1080, 2400) mAppBounds=Rect(0, 108 - 1080, 2280) mMaxBounds=Rect(0, 0 - 1080, 2400) mDisplayRotation=ROTATION_0 mWindowingMode=fullscreen mDisplayWindowingMode=fullscreen mMultiWindowMode=normal mMultiWindowId=0 mWindowResiable=6 mInLargeScreen=-1 mActivityType=standard mAlwaysOnTop=undefined mRotation=ROTATION_0 mUiOptSpec=-1 mCurDisplayId=-1} s.1 fontWeightAdjustment=0} fromMultiWindow: true
+2026-04-29 09:41:46.514 20269 20269 Debug View title:com.example.heritage_lens/com.unity3d.player.UnityPlayerActivity
+2026-04-29 09:41:46.527 20269 20269 Debug BufferQueueConsumer [](id:4f2d00000001,api:0,p:-1,c:20269) connect: controlledByApp=false
+2026-04-29 09:41:46.536 20269 20269 Debug Surface lockCanvas
+2026-04-29 09:41:46.537 20269 20269 Debug MAGT_SYNC_FRAME MAGT Sync: MAGT is not supported. Disabling Sync.
+2026-04-29 09:41:46.557 20269 20269 Info DMABUFHEAPS Using DMA-BUF heap named: mtk_mm
+2026-04-29 09:41:46.557 20269 20269 Info DMABUFHEAPS Using DMA-BUF heap named: mtk_mm-uncached
+2026-04-29 09:41:46.557 20269 20269 Info DMABUFHEAPS Using DMA-BUF heap named: mtk_svp_region
+2026-04-29 09:41:46.557 20269 20269 Info DMABUFHEAPS Using DMA-BUF heap named: mtk_prot_region
+2026-04-29 09:41:46.557 20269 20269 Info DMABUFHEAPS Using DMA-BUF heap named: mtk_2d_fr_region
+2026-04-29 09:41:46.557 20269 20269 Info DMABUFHEAPS Using DMA-BUF heap named: mtk_wfd_region
+2026-04-29 09:41:46.595 20269 20269 Debug BLASTBufferQueue [VRI[UnityPlayerActivity]#0](f:0,a:1) acquireNextBufferLocked size=1080x2400 mFrameNumber=1 applyTransaction=true mTimestamp=691819122412696(auto) mPendingTransactions.size=0 graphicBufferId=87054692122624 transform=0
+2026-04-29 09:41:46.630 20269 20269 Debug Surface lockCanvas
+2026-04-29 09:41:46.671 20269 20269 Info Unity windowFocusChanged: true
+2026-04-29 09:41:46.671 20269 20269 Info Unity resumeUnity
+2026-04-29 09:41:46.697 20269 26435 Info Unity MemoryManager: Using 'Dynamic Heap' Allocator.
+2026-04-29 09:41:46.697 20269 26435 Debug Unity [UnityMemory] Configuration Parameters - Can be set up in boot.config
+2026-04-29 09:41:46.697 20269 26435 Debug Unity     "memorysetup-allocator-temp-initial-block-size-main=262144"
+2026-04-29 09:41:46.697 20269 26435 Debug Unity     "memorysetup-allocator-temp-initial-block-size-worker=262144"
+2026-04-29 09:41:46.697 20269 26435 Debug Unity     "memorysetup-temp-allocator-size-background-worker=32768"
+2026-04-29 09:41:46.697 20269 26435 Debug Unity     "memorysetup-temp-allocator-size-job-worker=262144"
+2026-04-29 09:41:46.697 20269 26435 Debug Unity     "memorysetup-temp-allocator-size-preload-manager=262144"
+2026-04-29 09:41:46.697 20269 26435 Debug Unity     "memorysetup-temp-allocator-size-nav-mesh-worker=65536"
+2026-04-29 09:41:46.697 20269 26435 Debug Unity     "memorysetup-temp-allocator-size-audio-worker=65536"
+2026-04-29 09:41:46.697 20269 26435 Debug Unity     "memorysetup-temp-allocator-size-cloud-worker=32768"
+2026-04-29 09:41:46.697 20269 26435 Debug Unity     "memorysetup-bucket-allocator-granularity=16"
+2026-04-29 09:41:46.697 20269 26435 Debug Unity     "memorysetup-bucket-allocator-bucket-count=8"
+2026-04-29 09:41:46.697 20269 26435 Debug Unity     "memorysetup-bucket-allocator-block-size=4194304"
+2026-04-29 09:41:46.697 20269 26435 Debug Unity     "memorysetup-bucket-allocator-block-count=1"
+2026-04-29 09:41:46.697 20269 26435 Debug Unity     "memorysetup-main-allocator-block-size=16777216"
+2026-04-29 09:41:46.697 20269 26435 Debug Unity     "memorysetup-thread-allocator-block-size=16777216"
+2026-04-29 09:41:46.697 20269 26435 Debug Unity     "memorysetup-gfx-main-allocator-block-size=16777216"
+2026-04-29 09:41:46.697 20269 26435 Debug Unity     "memorysetup-gfx-thread-allocator-block-size=16777216"
+2026-04-29 09:41:46.697 20269 26435 Debug Unity     "memorysetup-cache-allocator-block-size=4194304"
+2026-04-29 09:41:46.697 20269 26435 Debug Unity     "memorysetup-typetree-allocator-block-size=2097152"
+2026-04-29 09:41:46.697 20269 26435 Debug Unity     "memorysetup-profiler-bucket-allocator-granularity=16"
+2026-04-29 09:41:46.704 20269 26435 Debug Unity     "memorysetup-profiler-bucket-allocator-bucket-count=8"
+2026-04-29 09:41:46.704 20269 26435 Debug Unity     "memorysetup-profiler-bucket-allocator-block-size=4194304"
+2026-04-29 09:41:46.704 20269 26435 Debug Unity     "memorysetup-profiler-bucket-allocator-block-count=1"
+2026-04-29 09:41:46.704 20269 26435 Debug Unity     "memorysetup-profiler-allocator-block-size=16777216"
+2026-04-29 09:41:46.704 20269 26435 Debug Unity     "memorysetup-profiler-editor-allocator-block-size=1048576"
+2026-04-29 09:41:46.704 20269 26435 Debug Unity     "memorysetup-temp-allocator-size-main=4194304"
+2026-04-29 09:41:46.704 20269 26435 Debug Unity     "memorysetup-job-temp-allocator-block-size=2097152"
+2026-04-29 09:41:46.704 20269 26435 Debug Unity     "memorysetup-job-temp-allocator-block-size-background=1048576"
+2026-04-29 09:41:46.704 20269 26435 Debug Unity     "memorysetup-job-temp-allocator-reduction-small-platforms=262144"
+2026-04-29 09:41:46.704 20269 26435 Debug Unity     "memorysetup-temp-allocator-size-gfx=262144"
+2026-04-29 09:41:46.769 20269 26435 Debug Unity Enabling Unity systrace
+2026-04-29 09:41:46.769 20269 26435 Debug Unity Starting Unity systrace
+2026-04-29 09:41:46.805 20269 26435 Info Unity SetGameState: isLoading: true, mode: UNKNOWN, label: -2, quality: -1
+2026-04-29 09:41:46.852 20269 26435 Debug Unity [VFS] Mount /data/app/~~ILaEEDLTY0UzbXTDdSv1FA==/com.example.heritage_lens-JrpCRyR8IDKm17t4oMygcQ==/base.apk
+2026-04-29 09:41:46.853 20269 26435 Debug Unity Loading player data from /data/app/~~ILaEEDLTY0UzbXTDdSv1FA==/com.example.heritage_lens-JrpCRyR8IDKm17t4oMygcQ==/base.apk/assets/bin/Data/data.unity3d
+2026-04-29 09:41:46.901 20269 26435 Info Unity SystemInfo CPU = ARM64 FP ASIMD AES, Cores = 8, Memory = 7704mb
+2026-04-29 09:41:46.901 20269 26435 Info Unity SystemInfo ARM big.LITTLE configuration: 2 big (mask: 0xc0), 6 little (mask: 0x3f)
+2026-04-29 09:41:46.901 20269 26435 Info Unity ApplicationInfo 'com.example.heritage_lens', Version '1.0', Min API Level '29', Target API Level '36'
+2026-04-29 09:41:46.901 20269 26435 Info Unity Built from '6000.3/staging' branch, Version '6000.3.11f1 (3000ef702840)', Build type 'Development', Scripting Backend 'il2cpp', CPU 'arm64-v8a', Stripping 'Enabled'
+2026-04-29 09:41:46.901 20269 26435 Info Unity Device Model 'TECNO TECNO CK6', OS 'Android OS 14 (API 34)'
+2026-04-29 09:41:46.904 20269 26435 Debug Unity Determine if il2cpp resources need to extracted:
+2026-04-29 09:41:46.908 20269 26435 Debug Unity     Guid in '/storage/emulated/0/Android/data/com.example.heritage_lens/files/il2cpp/unity.ver' is invalid, expected 'c2f593ad-f59b-493d-b6be-7f1b59c4f439' was 'e8f851d3-3ab7-4f4c-a2ff-a854bda10c8f'
+2026-04-29 09:41:46.908 20269 26435 Debug Unity     Extracting il2cpp resources
+2026-04-29 09:41:47.026 20269 26435 Debug Unity Unable to find library path for 'il2cpp.usym'.
+2026-04-29 09:41:47.073 20269 20269 Info Unity applyWindowUIChanges fullScreen = true, renderOutsideSafeArea = true
+2026-04-29 09:41:47.480 20269 26435 Debug Unity [EGL] Attaching window :0xb4000072e52d2d80
+2026-04-29 09:41:47.480 20269 26435 Debug Unity InitializeScriptEngine OK (0x7552e0efc0)
+2026-04-29 09:41:47.483 20269 26435 Debug Unity Found 2 interfaces on host :
+2026-04-29 09:41:47.483 20269 26435 Debug Unity  0) 10.105.39.4
+2026-04-29 09:41:47.483 20269 26435 Debug Unity  1) 192.168.1.145
+2026-04-29 09:41:47.483 20269 26435 Debug Unity 
+2026-04-29 09:41:47.505 20269 26435 Debug Unity Player connection [492554099888]  Target information:
+2026-04-29 09:41:47.505 20269 26435 Debug Unity 
+2026-04-29 09:41:47.505 20269 26435 Debug Unity Player connection [492554099888]  * "[IP] 10.105.39.4 [Port] 55000 [Flags] 2 [Guid] 3608175697 [EditorId] 883234402 [Version] 1048832 [Id] AndroidPlayer(11,TECNO_TECNO_CK6@192.168.1.145) [Debug] 0 [PackageName] AndroidPlayer [ProjectName] hlens" 
+2026-04-29 09:41:47.505 20269 26435 Debug Unity 
+2026-04-29 09:41:47.505 20269 26435 Debug Unity Player connection [492554099888]  * "[IP] 192.168.1.145 [Port] 55000 [Flags] 2 [Guid] 3608175697 [EditorId] 883234402 [Version] 1048832 [Id] AndroidPlayer(11,TECNO_TECNO_CK6@192.168.1.145) [Debug] 0 [PackageName] AndroidPlayer [ProjectName] hlens" 
+2026-04-29 09:41:47.505 20269 26435 Debug Unity 
+2026-04-29 09:41:47.505 20269 26435 Debug Unity Player connection [492554099888] Started UDP target info broadcast (1) on [225.0.0.222:54997].
+2026-04-29 09:41:47.505 20269 26435 Debug Unity 
+2026-04-29 09:41:47.537 20269 26435 Debug Unity Input System module state changed to: Initialized.
+2026-04-29 09:41:47.550 20269 26435 Debug Unity [Physics::Module] Initialized fallback backend.
+2026-04-29 09:41:47.550 20269 26435 Debug Unity [Physics::Module] Id: 0xdecafbad
+2026-04-29 09:41:47.550 20269 26435 Debug Unity Loading player data from assets/bin/Data/data.unity3d
+2026-04-29 09:41:47.554 20269 26435 Debug Unity PlayerInitEngineNoGraphics OK
+2026-04-29 09:41:47.554 20269 26435 Info Unity Company Name: example
+2026-04-29 09:41:47.554 20269 26435 Info Unity Product Name: hlens
+2026-04-29 09:41:47.554 20269 26435 Debug Unity AndroidGraphics::Startup window =  0xb4000072e52d2d80
+2026-04-29 09:41:47.554 20269 26435 Debug Unity [EGL] Attaching window :0xb4000072e52d2d80
+2026-04-29 09:41:47.558 20269 20269 Info Unity applyWindowUIChanges fullScreen = true, renderOutsideSafeArea = true
+2026-04-29 09:41:47.563 20269 26435 Debug Unity [Subsystems] Discovering subsystems at path /data/app/~~ILaEEDLTY0UzbXTDdSv1FA==/com.example.heritage_lens-JrpCRyR8IDKm17t4oMygcQ==/base.apk/assets/bin/Data/UnitySubsystems
+2026-04-29 09:41:47.564 20269 26435 Debug libMEOW meow new tls: 0xb4000074953350a0
+2026-04-29 09:41:47.564 20269 26435 Debug libMEOW applied 1 plugins for [com.example.heritage_lens]:
+2026-04-29 09:41:47.564 20269 26435 Debug libMEOW   plugin 1: [libMEOW_gift.so]: 0xb4000072c529d820
+2026-04-29 09:41:47.564 20269 26435 Debug libMEOW rebuild call chain: 0xb4000074953850f0
+2026-04-29 09:41:47.575 20269 26435 Debug Unity [EGL] Request: ES 3.2 RGB 000 0/0
+2026-04-29 09:41:47.576 20269 26435 Debug Unity [EGL] Checking ES 3.2 support...
+2026-04-29 09:41:47.579 20269 26435 Debug Unity [EGL] ES 3.2 support detected
+2026-04-29 09:41:47.579 20269 26435 Debug Unity [EGL] Found: ID[5] ES 3.2 RGB 565 0/0
+2026-04-29 09:41:47.579 20269 26435 Debug Unity GfxDevice: creating device client; kGfxThreadingModeThreaded
+2026-04-29 09:41:47.585 20269 26435 Debug Unity [EGL] Request: ES 3.2 RGB 000 0/0
+2026-04-29 09:41:47.585 20269 26435 Debug Unity [EGL] Found: ID[5] ES 3.2 RGB 565 0/0
+2026-04-29 09:41:47.586 20269 26435 Debug Unity [EGL] Request: ES 3.0 RGBA 8888 0/0
+2026-04-29 09:41:47.587 20269 26435 Debug Unity [EGL] Found: ID[1] ES 3.0 RGBA 8888 0/0
+2026-04-29 09:41:47.597 20269 20269 Info Unity applyWindowUIChanges fullScreen = true, renderOutsideSafeArea = true
+2026-04-29 09:41:47.620 20269 26435 Debug Unity ANativeWindow: (1080/2400) RequestedResolution: (0/0) RenderingResolution: (0/0) EGLSurface: (1080/2400)
+2026-04-29 09:41:47.625 20269 26435 Debug Unity Renderer: Mali-G52 MC2
+2026-04-29 09:41:47.625 20269 26435 Debug Unity Vendor:   ARM
+2026-04-29 09:41:47.625 20269 26435 Debug Unity Version:  OpenGL ES 3.2 v1.r32p1-01eac0.2a893c04ca0026c2e6802dbe7d7af5c5
+2026-04-29 09:41:47.625 20269 26435 Debug Unity GLES:     3
+2026-04-29 09:41:47.625 20269 26435 Debug Unity  GL_EXT_debug_marker GL_ARM_rgba8 GL_ARM_mali_shader_binary GL_OES_depth24 GL_OES_depth_texture GL_OES_depth_texture_cube_map GL_OES_packed_depth_stencil GL_OES_rgb8_rgba8 GL_EXT_read_format_bgra GL_OES_compressed_paletted_texture GL_OES_compressed_ETC1_RGB8_texture GL_OES_standard_derivatives GL_OES_EGL_image GL_OES_EGL_image_external GL_OES_EGL_image_external_essl3 GL_OES_EGL_sync GL_OES_texture_npot GL_OES_vertex_half_float GL_OES_required_internalformat GL_OES_vertex_array_object GL_OES_mapbuffer GL_EXT_texture_format_BGRA8888 GL_EXT_texture_rg GL_EXT_texture_type_2_10_10_10_REV GL_OES_fbo_render_mipmap GL_OES_element_index_uint GL_EXT_shadow_samplers GL_OES_texture_compression_astc GL_KHR_texture_compression_astc_ldr GL_KHR_texture_compression_astc_hdr GL_KHR_texture_compression_astc_sliced_3d GL_EXT_texture_compression_astc_decode_mode GL_EXT_texture_compression_astc_decode_mode_rgb9e5 GL_KHR_debug GL_EXT_occlusion_query_boolean GL_EXT_disjoint_timer_query GL_EXT_blend_minmax GL_EXT_discard_framebuffer
+2026-04-29 09:41:47.625 20269 26435 Debug Unity  GL_OES_get_program_binary GL_OES_texture_3D GL_EXT_texture_storage GL_EXT_multisampled_render_to_texture GL_EXT_multisampled_render_to_texture2 GL_OES_surfaceless_context GL_OES_texture_stencil8 GL_EXT_shader_pixel_local_storage GL_ARM_shader_framebuffer_fetch GL_ARM_shader_framebuffer_fetch_depth_stencil GL_ARM_mali_program_binary GL_EXT_sRGB GL_EXT_sRGB_write_control GL_EXT_texture_sRGB_decode GL_EXT_texture_sRGB_R8 GL_EXT_texture_sRGB_RG8 GL_KHR_blend_equation_advanced GL_KHR_blend_equation_advanced_coherent GL_OES_texture_storage_multisample_2d_array GL_OES_shader_image_atomic GL_EXT_robustness GL_EXT_draw_buffers_indexed GL_OES_draw_buffers_indexed GL_EXT_texture_border_clamp GL_OES_texture_border_clamp GL_EXT_texture_cube_map_array GL_OES_texture_cube_map_array GL_OES_sample_variables GL_OES_sample_shading GL_OES_shader_multisample_interpolation GL_EXT_shader_io_blocks GL_OES_shader_io_blocks GL_EXT_tessellation_shader GL_OES_tessellation_shader GL_EXT_primitive_bounding_box GL_OES_primitive_bounding_
+2026-04-29 09:41:47.625 20269 26435 Debug Unity box GL_EXT_geometry_shader GL_OES_geometry_shader GL_ANDROID_extension_pack_es31a GL_EXT_gpu_shader5 GL_OES_gpu_shader5 GL_EXT_texture_buffer GL_OES_texture_buffer GL_EXT_copy_image GL_OES_copy_image GL_EXT_shader_non_constant_global_initializers GL_EXT_color_buffer_half_float GL_EXT_unpack_subimage GL_EXT_color_buffer_float GL_EXT_YUV_target GL_OVR_multiview GL_OVR_multiview2 GL_OVR_multiview_multisampled_render_to_texture GL_KHR_robustness GL_KHR_robust_buffer_access_behavior GL_EXT_draw_elements_base_vertex GL_OES_draw_elements_base_vertex GL_EXT_protected_textures GL_EXT_buffer_storage GL_EXT_external_buffer GL_EXT_EGL_image_array GL_EXT_texture_filter_anisotropic GL_ARM_texture_unnormalized_coordinates GL_EXT_shader_framebuffer_fetch
+2026-04-29 09:41:47.636 20269 26435 Debug Unity OPENGL LOG: Creating OpenGL ES 3.2 graphics device ; Context level  <OpenGL ES 3.2> ; Context handle -1792239488
+2026-04-29 09:41:47.640 20269 26586 Debug libMEOW meow new tls: 0xb4000074953650d0
+2026-04-29 09:41:47.640 20269 26586 Debug libMEOW applied 1 plugins for [com.example.heritage_lens]:
+2026-04-29 09:41:47.640 20269 26586 Debug libMEOW   plugin 1: [libMEOW_gift.so]: 0xb4000072c529d820
+2026-04-29 09:41:47.641 20269 26586 Debug libMEOW rebuild call chain: 0xb4000074953750e0
+2026-04-29 09:41:47.642 20269 26435 Debug Unity [EGL] Attaching window :0xb4000072e52d2d80
+2026-04-29 09:41:47.645 20269 26435 Debug Unity Requested framebuffer: resolution[1080x2400], rgba[8/8/8/8], depth+stencil[on], samples[1]
+2026-04-29 09:41:47.645 20269 26435 Debug Unity Created framebuffer: resolution[1080x2400], rgba[8/8/8/8], depth+stencil[24/8], samples[0] 
+2026-04-29 09:41:47.651 20269 26435 Debug nativeloader Load liblibswappywrapper.so using class loader ns clns-4 (caller=/data/app/~~ILaEEDLTY0UzbXTDdSv1FA==/com.example.heritage_lens-JrpCRyR8IDKm17t4oMygcQ==/base.apk): dlopen failed: library "liblibswappywrapper.so" not found
+2026-04-29 09:41:47.654 20269 26435 Debug nativeloader Load /data/app/~~ILaEEDLTY0UzbXTDdSv1FA==/com.example.heritage_lens-JrpCRyR8IDKm17t4oMygcQ==/lib/arm64/libswappywrapper.so using class loader ns clns-4 (caller=/data/app/~~ILaEEDLTY0UzbXTDdSv1FA==/com.example.heritage_lens-JrpCRyR8IDKm17t4oMygcQ==/base.apk): ok
+2026-04-29 09:41:47.655 20269 26435 Info SwappyWrapper SwappyWrapperInit() succeeded. Build: Wed Apr 29 09:21:44 2026
+2026-04-29 09:41:47.655 20269 26435 Debug Unity SwappyWrapper: InitSwappyWrapper() succeeded.
+2026-04-29 09:41:47.673 20269 26590 Debug AChoreographer Attaching thread to JVM for AChoreographer
+2026-04-29 09:41:47.732 20269 26598 Info SwappyDisplayManager Starting looper thread
+2026-04-29 09:41:47.733 20269 26435 Debug Unity [EGL] Attaching window :0xb4000072e52d2d80
+2026-04-29 09:41:47.733 20269 26435 Debug Unity Initialize engine version: 6000.3.11f1 (3000ef702840)
+2026-04-29 09:41:47.735 20269 26586 Info mali [DebugProp] GPU Debug-Mechanism Disable !
+2026-04-29 09:41:47.839 20269 26435 Info AAudio AAudioStreamBuilder_openStream() called ----------------------------------------
+2026-04-29 09:41:47.839 20269 26435 Info AudioStreamBuilder rate   =  24000, channels  = 2, channelMask = 0x80000003, format   = 5, sharing = SH, dir = OUTPUT
+2026-04-29 09:41:47.839 20269 26435 Info AudioStreamBuilder device =      0, sessionId = 0, perfMode = 12, callback: ON with frames = 512, error callback: ON
+2026-04-29 09:41:47.839 20269 26435 Info AudioStreamBuilder usage  =      0, contentType = 0, inputPreset = 0, allowedCapturePolicy = 0
+2026-04-29 09:41:47.839 20269 26435 Info AudioStreamBuilder privacy sensitive = false, opPackageName = (null), attributionTag = (null)
+2026-04-29 09:41:47.840 20269 26435 Debug AudioStreamBuilder build() MMAP not used because sessionId specified.
+2026-04-29 09:41:47.840 20269 26435 Debug e.heritage_lens PlayerBase::PlayerBase()
+2026-04-29 09:41:47.840 20269 26435 Debug AudioStreamTrack open(), request notificationFrames = 0, frameCount = 8192
+2026-04-29 09:41:47.841 20269 26435 Debug AudioTrack INSP: type=audio,case=1,set=0xb4000074b52d6900,stream_type=-1,sample_rate=24000,format=0x5,channel_mask=0x3,frame_count=8192,flags=0x4,notification_frames=0,session_id=0,transfer_type=1,uid=-1,pid=-1
+2026-04-29 09:41:47.841 20269 26435 Debug AudioTrack INSP: type=audio,case=1,attributes=1,content_type=2,usage=1,source=0,flags=0x100
+2026-04-29 09:41:47.872 20269 26435 Debug AudioTrack createTrack_l(16638): 0xb4000074b52d6900, mCblk = 0x755ccc9000, mLatency = 393, mAfLatency = 52, frameCount = 8192, mSampleRate = 24000, mFlags = 0, mReqFrameCount = 8192, mNotificationFramesAct = 480
+2026-04-29 09:41:47.873 20269 26435 Debug AudioTrack setVolume(16638): 0xb4000074b52d6900, left = 1.000000, right = 1.000000
+2026-04-29 09:41:47.875 20269 26435 Debug AudioStreamTrack open() flags changed from 0x00000004 to 0x00000000
+2026-04-29 09:41:47.875 20269 26435 Debug AudioStreamTrack open() perfMode changed from 12 to 10
+2026-04-29 09:41:47.875 20269 26435 Debug AAudioStream setState(s#1) from 0 to 2
+2026-04-29 09:41:47.904 20269 26435 Info AAudio AAudioStreamBuilder_openStream() returns 0 = AAUDIO_OK for s#1 ----------------
+2026-04-29 09:41:47.905 20269 26435 Debug AAudio AAudioStream_requestStart(s#1) called --------------
+2026-04-29 09:41:47.905 20269 26435 Debug AAudioStream setState(s#1) from 2 to 3
+2026-04-29 09:41:47.905 20269 26435 Debug AudioTrack start(16638): 0xb4000074b52d6900, prior state:STATE_STOPPED
+2026-04-29 09:41:47.926 20269 26609 Debug AudioStreamTrack onAudioDeviceUpdate() audioIo 13 devId 3 => 3
+2026-04-29 09:41:47.927 20269 26435 Debug AAudio AAudioStream_requestStart(s#1) returned 0 ---------
+2026-04-29 09:41:47.974 20269 26610 Debug AAudioStream setState(s#1) from 3 to 4
+2026-04-29 09:41:48.699 20269 26435 Debug Unity [Physics::Module] Selected backend.
+2026-04-29 09:41:48.699 20269 26435 Debug Unity [Physics::Module] Name: PhysX
+2026-04-29 09:41:48.699 20269 26435 Debug Unity [Physics::Module] Id: 0xf2b8ea05
+2026-04-29 09:41:48.699 20269 26435 Debug Unity [Physics::Module] SDK Version: 4.1.2
+2026-04-29 09:41:48.699 20269 26435 Debug Unity [Physics::Module] Integration Version: 1.0.0
+2026-04-29 09:41:48.699 20269 26435 Debug Unity [Physics::Module] Threading Mode: Multi-Threaded
+2026-04-29 09:41:49.693 20269 26398 Info e.heritage_lens Compiler allocated 6110KB to compile void android.view.ViewRootImpl.performTraversals()
+2026-04-29 09:41:49.772 20269 26435 Info IL2CPP Locale en-US
+2026-04-29 09:41:50.193 20269 26435 Debug Unity PlayerInitEngineGraphics OK
+2026-04-29 09:41:50.227 20269 26435 Debug SensorManager registerListenerImpl sensor={Sensor name="ACCELEROMETER", vendor="sc7a20e", version=1, type=1, maxRange=78.453606, resolution=0.0012, power=0.001, minDelay=5000} pid=20269 uid=10453pkgname: com.example.heritage_lens
+2026-04-29 09:41:50.239 20269 26435 Info Unity SetGameState: isLoading: false, mode: UNKNOWN, label: -1, quality: 2
+2026-04-29 09:41:50.252 20269 26435 Debug Unity ANativeWindow: (1080/2400) RequestedResolution: (0/0) RenderingResolution: (0/0) EGLSurface: (1080/2400)
+2026-04-29 09:41:50.285 20269 26435 Verbose MediaRouter Selecting route: RouteInfo{ name=Phone, description=null, status=null, category=RouteCategory{ name=System types=ROUTE_TYPE_LIVE_AUDIO ROUTE_TYPE_LIVE_VIDEO  groupable=false }, supportedTypes=ROUTE_TYPE_LIVE_AUDIO ROUTE_TYPE_LIVE_VIDEO , presentationDisplay=null }
+2026-04-29 09:41:50.288 20269 26435 Info MediaRouter Skip setBluetoothA2dpOn(): types=8388615, isPlaybackActive()=true, BT route=null
+2026-04-29 09:41:50.311 20269 20269 Debug TranClassInfo instance successfully. com.transsion.hubcore.view.TranOrientationEventListenerImpl@d3bc2df from com.transsion.hubcore.server.view.ITranOrientationEventListener
+2026-04-29 09:41:50.578 20269 26435 Info Unity SetGameState: isLoading: true, mode: UNKNOWN, label: 0, quality: 2
+2026-04-29 09:41:50.610 20269 26599 Debug libMEOW meow new tls: 0xb4000074953f5160
+2026-04-29 09:41:50.610 20269 26599 Debug libMEOW applied 1 plugins for [com.example.heritage_lens]:
+2026-04-29 09:41:50.610 20269 26599 Debug libMEOW   plugin 1: [libMEOW_gift.so]: 0xb4000072c529d820
+2026-04-29 09:41:50.610 20269 26599 Debug libMEOW rebuild call chain: 0xb400007495405170
+2026-04-29 09:41:50.612 20269 26586 Debug BLASTBufferQueue [SurfaceView[com.example.heritage_lens/com.unity3d.player.UnityPlayerActivity]#1](f:0,a:1) acquireNextBufferLocked size=1080x2400 mFrameNumber=1 applyTransaction=true mTimestamp=691823140156619(auto) mPendingTransactions.size=0 graphicBufferId=87054692122626 transform=0
+2026-04-29 09:41:50.695 20269 20269 Debug Surface lockCanvas
+2026-04-29 09:41:52.627 20269 26435 Debug Unity UnloadTime: 1.457000 ms
+2026-04-29 09:41:52.638 20269 26435 Debug Unity UUID: 9f19e6b1c3357a16 => 7e80420cf05d1ca30b182a770666aa97
+2026-04-29 09:41:53.309 20269 26435 Debug nativeloader Load /data/app/~~ILaEEDLTY0UzbXTDdSv1FA==/com.example.heritage_lens-JrpCRyR8IDKm17t4oMygcQ==/lib/arm64/libVuforiaEngine.so using class loader ns clns-4 (caller=/data/app/~~ILaEEDLTY0UzbXTDdSv1FA==/com.example.heritage_lens-JrpCRyR8IDKm17t4oMygcQ==/base.apk): ok
+2026-04-29 09:41:53.320 20269 26435 Debug nativeloader Load /data/app/~~ILaEEDLTY0UzbXTDdSv1FA==/com.example.heritage_lens-JrpCRyR8IDKm17t4oMygcQ==/lib/arm64/libVuforiaUnityPlayer.so using class loader ns clns-4 (caller=/data/app/~~ILaEEDLTY0UzbXTDdSv1FA==/com.example.heritage_lens-JrpCRyR8IDKm17t4oMygcQ==/base.apk): ok
+2026-04-29 09:41:53.359 20269 26435 Info AR 2026-04-29 09:41:53: Creating Vuforia Engine instance...
+2026-04-29 09:41:53.365 20269 26435 Debug AR Found and imported ARCore library.
+2026-04-29 09:41:53.367 20269 26435 Debug AR ARCore version installed on device: unknown
+2026-04-29 09:41:53.367 20269 26435 Debug AR ARCore library built into app: 00f0a63cbbf72dd513a4e1bc91ec2c0e
+2026-04-29 09:41:53.376 20269 26435 Info CameraManagerGlobal Connecting to camera service
+2026-04-29 09:41:53.386 20269 26435 Debug TranClassInfo instance successfully. com.transsion.camera.camadapter.Implement.TranCamAdapterComponentImpl@f5f29e2 from com.transsion.hubcore.camadapter.ITranCamAdapterComponent
+2026-04-29 09:41:53.386 20269 26435 Debug TranClassInfo instance successfully. com.transsion.hubcore.hardware.camera2.TranCameraManagerImpl@113e173 from com.transsion.hubcore.hardware.camera2.ITranCameraManager
+2026-04-29 09:41:53.387 20269 26435 Debug TranCamManagerExt ignore id:2
+2026-04-29 09:41:53.387 20269 26435 Debug TranCamManagerExt ignore id:3
+2026-04-29 09:41:53.388 20269 26404 Debug TranCamManagerExt id:2 ignore...
+2026-04-29 09:41:53.388 20269 26404 Debug TranCamManagerExt id:3 ignore...
+2026-04-29 09:41:53.396 20269 26435 Info AR 2026-04-29 09:41:53: Required permissions have been granted
+2026-04-29 09:41:53.396 20269 26435 Info AR 2026-04-29 09:41:53: Vuforia build version: 11.4.4+1238
+2026-04-29 09:41:53.435 20269 20269 Info ARCore-InstallService Install service connected
+2026-04-29 09:41:53.447 20269 26404 Error ARCore-InstallService The device is not supported.
+2026-04-29 09:41:53.531 20269 26435 Debug AR ARCore is not available to Vuforia, it reports that this device is not supported.
+2026-04-29 09:41:53.797 20269 26733 Debug libMEOW meow new tls: 0xb400007495415180
+2026-04-29 09:41:53.797 20269 26733 Debug libMEOW applied 1 plugins for [com.example.heritage_lens]:
+2026-04-29 09:41:53.797 20269 26733 Debug libMEOW   plugin 1: [libMEOW_gift.so]: 0xb4000072c529d820
+2026-04-29 09:41:53.797 20269 26733 Debug libMEOW rebuild call chain: 0xb400007495525290
+2026-04-29 09:41:53.804 20269 26435 Info AR Creating Vuforia Engine instance...SUCCESS
+2026-04-29 09:41:53.879 20269 26435 Info AR Creating DevicePoseObserver...
+2026-04-29 09:41:53.879 20269 26435 Info AR Created new observer with ID '1'
+2026-04-29 09:41:53.879 20269 26435 Info AR Creating DevicePoseObserver...SUCCESS
+2026-04-29 09:41:53.904 20269 26435 Info AR Creating IlluminationObserver...
+2026-04-29 09:41:53.904 20269 26435 Info AR Auto-activating observer...
+2026-04-29 09:41:53.904 20269 26435 Info AR Activated observer with ID '2'
+2026-04-29 09:41:53.904 20269 26435 Info AR Auto-activating observer...DONE
+2026-04-29 09:41:53.904 20269 26435 Info AR Created new observer with ID '2'
+2026-04-29 09:41:53.904 20269 26435 Info AR Creating IlluminationObserver...SUCCESS
+2026-04-29 09:41:53.925 20269 26435 Info Unity Vuforia Initialized
+2026-04-29 09:41:53.925 20269 26435 Info Unity UnityEngine.DebugLogHandler:Internal_Log_Injected(LogType, LogOption, ManagedSpanWrapper&, IntPtr)
+2026-04-29 09:41:53.925 20269 26435 Info Unity UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+2026-04-29 09:41:53.925 20269 26435 Info Unity UnityEngine.DebugLogHandler:LogFormat(LogType, Object, String, Object[])
+2026-04-29 09:41:53.925 20269 26435 Info Unity UnityEngine.Logger:Log(LogType, Object)
+2026-04-29 09:41:53.925 20269 26435 Info Unity UnityEngine.Debug:Log(Object)
+2026-04-29 09:41:53.925 20269 26435 Info Unity Vuforia.Internal.Utility.UnityLogger:LogInfo(String)
+2026-04-29 09:41:53.925 20269 26435 Info Unity Vuforia.Internal.Utility.Log:Info(String)
+2026-04-29 09:41:53.925 20269 26435 Info Unity Vuforia.Internal.Core.Engine:InitOnCameraReady()
+2026-04-29 09:41:53.925 20269 26435 Info Unity UnityEngine.Rendering.CommandBuffer:SetBufferData(GraphicsBuffer, List`1)
+2026-04-29 09:41:53.925 20269 26435 Info Unity Vuforia.Internal.ExternalCamera.NullExternalCamera:Init(Func`1)
+2026-04-29 09:41:53.925 20269 26435 Info Unity Vuforia.Internal.Core.Engine:<Init>b__160_0()
+2026-04-29 09:41:53.925 20269 26435 Info Unity Unity.Collections.FixedString:Format(FixedString512Bytes, Int32, String, T1, Single)
+2026-04-29 09:41:53.925 20269 26435 Info Unity Vuforia.Internal.Core.EnginePermissions:OnPermissionRequestFinished(Boolean)
+2026-04-29 09:41:53.925 20269 26435 Info Unity FlutterUnityIntegration.MessageHandlerDelegate:EndInvoke(IAsyncResult)
+2026-04-29 09:41:53.925 20269 26435 Info Unity Vuforia.Internal.Permissions.PermissionCallbacksAndroid:TryInvokeCallback()
+2026-04-29 09:41:53.925 20269 26435 Info Unity Vuforia.Internal.Permissions.PermissionCallback
+2026-04-29 09:41:53.972 20269 26435 Info AR Activating observer...
+2026-04-29 09:41:53.973 20269 26435 Info AR Activated observer with ID '1'
+2026-04-29 09:41:53.973 20269 26435 Info AR Activating observer...SUCCESS
+2026-04-29 09:41:53.975 20269 26435 Info AR Starting Vuforia Engine instance...
+2026-04-29 09:41:53.981 20269 26435 Debug TranClassInfo instance successfully. com.transsion.hubcore.hardware.camera2.impl.TranCameraMetadataNativeImpl@e791154 from com.transsion.hubcore.hardware.camera2.impl.ITranCameraMetadataNative
+2026-04-29 09:41:53.987 20269 26435 Debug TranClassInfo instance successfully. com.transsion.hubcore.hardware.camera2.params.TranStreamConfigurationMapImpl@718b9f2 from com.transsion.hubcore.hardware.camera2.params.ITranStreamConfigurationMap
+2026-04-29 09:41:53.992 20269 26435 Debug TranStreamConfigurationMapExt loadAppInfoFromXML 6
+2026-04-29 09:41:54.011 20269 26609 Error CameraManagerGlobal Camera 3 is not present. Ignore physical camera status change
+2026-04-29 09:41:54.043 20269 26404 Debug TranCamManagerExt id:2 ignore...
+2026-04-29 09:41:54.055 20269 26404 Debug TranCamManagerExt id:3 ignore...
+2026-04-29 09:41:54.107 20269 26435 Debug CompatibilityChangeReporter Compat change id reported: 236825255; UID 10453; state: ENABLED
+2026-04-29 09:41:54.107 20269 26435 Debug BufferQueueConsumer [](id:4f2d00000002,api:0,p:-1,c:20269) connect: controlledByApp=true
+2026-04-29 09:41:54.329 20269 26435 Info AR Starting camera with profile for TECNO CK6, 0
+2026-04-29 09:41:54.329 20269 26435 Info AR Starting Vuforia Engine instance...SUCCESS
+2026-04-29 09:41:54.413 20269 26435 Info Unity Vuforia Started
+2026-04-29 09:41:54.413 20269 26435 Info Unity UnityEngine.DebugLogHandler:Internal_Log_Injected(LogType, LogOption, ManagedSpanWrapper&, IntPtr)
+2026-04-29 09:41:54.413 20269 26435 Info Unity UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+2026-04-29 09:41:54.413 20269 26435 Info Unity UnityEngine.DebugLogHandler:LogFormat(LogType, Object, String, Object[])
+2026-04-29 09:41:54.413 20269 26435 Info Unity UnityEngine.Logger:Log(LogType, Object)
+2026-04-29 09:41:54.413 20269 26435 Info Unity UnityEngine.Debug:Log(Object)
+2026-04-29 09:41:54.413 20269 26435 Info Unity Vuforia.Internal.Utility.UnityLogger:LogInfo(String)
+2026-04-29 09:41:54.413 20269 26435 Info Unity Vuforia.Internal.Utility.Log:Info(String)
+2026-04-29 09:41:54.413 20269 26435 Info Unity Vuforia.Internal.Core.Engine:Start(Action)
+2026-04-29 09:41:54.413 20269 26435 Info Unity Vuforia.Internal.Core.Engine:Start()
+2026-04-29 09:41:54.413 20269 26435 Info Unity Vuforia.VuforiaBehaviour:AfterVuforiaInitialized(VuforiaInitError)
+2026-04-29 09:41:54.413 20269 26435 Info Unity System.Reflection.RuntimeMethodInfo:InternalInvoke(Object, Object[], Exception&)
+2026-04-29 09:41:54.413 20269 26435 Info Unity System.Reflection.RuntimeMethodInfo:Invoke(Object, BindingFlags, Binder, Object[], CultureInfo)
+2026-04-29 09:41:54.413 20269 26435 Info Unity System.Reflection.MethodBase:Invoke(Object, Object[])
+2026-04-29 09:41:54.413 20269 26435 Info Unity System.Delegate:DynamicInvokeImpl(Object[])
+2026-04-29 09:41:54.413 20269 26435 Info Unity System.MulticastDelegate:DynamicInvokeImpl(Object[])
+2026-04-29 09:41:54.413 20269 26435 Info Unity System.Delegate:DynamicInvoke(Object[])
+2026-04-29 09:41:54.413 20269 26435 Info Unity Vuforia.Utility.ExtensionMethods.DelegateHelper:InvokeDelegate(Delegate, Objec
+2026-04-29 09:41:54.417 20269 26435 Info Unity Creating dataset: Vuforia/hlens.xml/logo-black
+2026-04-29 09:41:54.417 20269 26435 Info Unity UnityEngine.DebugLogHandler:Internal_Log_Injected(LogType, LogOption, ManagedSpanWrapper&, IntPtr)
+2026-04-29 09:41:54.417 20269 26435 Info Unity UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+2026-04-29 09:41:54.417 20269 26435 Info Unity UnityEngine.DebugLogHandler:LogFormat(LogType, Object, String, Object[])
+2026-04-29 09:41:54.417 20269 26435 Info Unity UnityEngine.Logger:LogFormat(LogType, String, Object[])
+2026-04-29 09:41:54.417 20269 26435 Info Unity UnityEngine.Debug:LogFormat(String, Object[])
+2026-04-29 09:41:54.417 20269 26435 Info Unity Vuforia.Internal.Utility.UnityLogger:LogInfo(String, Object[])
+2026-04-29 09:41:54.417 20269 26435 Info Unity Vuforia.Internal.Utility.Log:Info(String, Object[])
+2026-04-29 09:41:54.417 20269 26435 Info Unity Vuforia.ImageTargetBehaviour:CreateObserverFromDataset(IObserverFactory)
+2026-04-29 09:41:54.417 20269 26435 Info Unity Vuforia.ImageTargetBehaviour:CreateFromSerializedTarget()
+2026-04-29 09:41:54.417 20269 26435 Info Unity Vuforia.ObserverBehaviour:OnVuforiaStarted()
+2026-04-29 09:41:54.417 20269 26435 Info Unity System.Reflection.RuntimeMethodInfo:InternalInvoke(Object, Object[], Exception&)
+2026-04-29 09:41:54.417 20269 26435 Info Unity System.Reflection.RuntimeMethodInfo:Invoke(Object, BindingFlags, Binder, Object[], CultureInfo)
+2026-04-29 09:41:54.417 20269 26435 Info Unity System.Reflection.MethodBase:Invoke(Object, Object[])
+2026-04-29 09:41:54.417 20269 26435 Info Unity System.Delegate:DynamicInvokeImpl(Object[])
+2026-04-29 09:41:54.417 20269 26435 Info Unity System.MulticastDelegate:DynamicInvokeImpl(Object[])
+2026-04-29 09:41:54.417 20269 26435 Info Unity System
+2026-04-29 09:41:54.420 20269 26435 Info AR Creating ImageTargetObserver...
+2026-04-29 09:41:54.435 20269 26435 Info AR Created new observer with ID '3'
+2026-04-29 09:41:54.435 20269 26435 Info AR Creating ImageTargetObserver...SUCCESS
+2026-04-29 09:41:54.439 20269 26435 Info AR Activating observer...
+2026-04-29 09:41:54.441 20269 26435 Info AR Activated observer with ID '3'
+2026-04-29 09:41:54.441 20269 26435 Info AR Activating observer...SUCCESS
+2026-04-29 09:41:54.457 20269 26435 Info Unity SetGameState: isLoading: false, mode: UNKNOWN, label: 0, quality: 2
+2026-04-29 09:41:54.527 20269 26435 Debug Unity Using Java Choreographer.
+2026-04-29 09:41:54.560 20269 26435 Debug Unity Stopping Unity systrace
+2026-04-29 09:41:54.631 20269 26435 Info Unity Starting model loader with default model remove this in production...
+2026-04-29 09:41:54.631 20269 26435 Info Unity UnityEngine.DebugLogHandler:Internal_Log_Injected(LogType, LogOption, ManagedSpanWrapper&, IntPtr)
+2026-04-29 09:41:54.631 20269 26435 Info Unity UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+2026-04-29 09:41:54.631 20269 26435 Info Unity UnityEngine.DebugLogHandler:LogFormat(LogType, Object, String, Object[])
+2026-04-29 09:41:54.631 20269 26435 Info Unity UnityEngine.Logger:Log(LogType, Object)
+2026-04-29 09:41:54.631 20269 26435 Info Unity UnityEngine.Debug:Log(Object)
+2026-04-29 09:41:54.631 20269 26435 Info Unity ModelLoader:Start()
+2026-04-29 09:41:54.631 20269 26435 Info Unity 
+2026-04-29 09:41:54.647 20269 26435 Info Unity Loading model from cache...
+2026-04-29 09:41:54.647 20269 26435 Info Unity UnityEngine.DebugLogHandler:Internal_Log_Injected(LogType, LogOption, ManagedSpanWrapper&, IntPtr)
+2026-04-29 09:41:54.647 20269 26435 Info Unity UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+2026-04-29 09:41:54.647 20269 26435 Info Unity UnityEngine.DebugLogHandler:LogFormat(LogType, Object, String, Object[])
+2026-04-29 09:41:54.647 20269 26435 Info Unity UnityEngine.Logger:Log(LogType, Object)
+2026-04-29 09:41:54.647 20269 26435 Info Unity UnityEngine.Debug:Log(Object)
+2026-04-29 09:41:54.647 20269 26435 Info Unity ModelLoader:LoadModel(String)
+2026-04-29 09:41:54.647 20269 26435 Info Unity ModelLoader:Start()
+2026-04-29 09:41:54.647 20269 26435 Info Unity 
+2026-04-29 09:41:54.683 20269 26435 Info Unity SetGameState: isLoading: true, mode: UNKNOWN, label: -4, quality: 2
+2026-04-29 09:41:54.716 20269 26435 Info Unity Target status: logo-black NO_POSE -- NOT_OBSERVED
+2026-04-29 09:41:54.716 20269 26435 Info Unity UnityEngine.DebugLogHandler:Internal_Log_Injected(LogType, LogOption, ManagedSpanWrapper&, IntPtr)
+2026-04-29 09:41:54.716 20269 26435 Info Unity UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+2026-04-29 09:41:54.716 20269 26435 Info Unity UnityEngine.DebugLogHandler:LogFormat(LogType, Object, String, Object[])
+2026-04-29 09:41:54.716 20269 26435 Info Unity UnityEngine.Logger:Log(LogType, Object)
+2026-04-29 09:41:54.716 20269 26435 Info Unity UnityEngine.Debug:Log(Object)
+2026-04-29 09:41:54.716 20269 26435 Info Unity DefaultObserverEventHandler:OnObserverStatusChanged(ObserverBehaviour, TargetStatus)
+2026-04-29 09:41:54.716 20269 26435 Info Unity DefaultObserverEventHandler:Start()
+2026-04-29 09:41:54.716 20269 26435 Info Unity 
+2026-04-29 09:41:55.335 20269 26399 Warn e.heritage_lens userfaultfd: MOVE ioctl seems unsupported: Connection timed out
+2026-04-29 09:41:55.373 20269 20269 Warn FinalizerDaemon type=1400 audit(0.0:5014099): avc:  denied  { getopt } for  path="/dev/socket/usap_pool_primary" scontext=u:r:untrusted_app:s0:c197,c257,c512,c768 tcontext=u:r:zygote:s0 tclass=unix_stream_socket permissive=0 app=com.example.heritage_lens
+2026-04-29 09:41:55.374 20269 26399 Info e.heritage_lens Background concurrent mark compact GC freed 17MB AllocSpace bytes, 10(1024KB) LOS objects, 49% free, 2808KB/5617KB, paused 740us,19.016ms total 89.121ms
+2026-04-29 09:41:56.699 20269 26435 Info Unity SetGameState: isLoading: false, mode: UNKNOWN, label: 0, quality: 2
+2026-04-29 09:41:56.753 20269 26435 Info Unity ConfigureVideoBackground
+2026-04-29 09:41:56.753 20269 26435 Info Unity UnityEngine.DebugLogHandler:Internal_Log_Injected(LogType, LogOption, ManagedSpanWrapper&, IntPtr)
+2026-04-29 09:41:56.753 20269 26435 Info Unity UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+2026-04-29 09:41:56.753 20269 26435 Info Unity UnityEngine.DebugLogHandler:LogFormat(LogType, Object, String, Object[])
+2026-04-29 09:41:56.753 20269 26435 Info Unity UnityEngine.Logger:Log(LogType, Object)
+2026-04-29 09:41:56.753 20269 26435 Info Unity UnityEngine.Debug:Log(Object)
+2026-04-29 09:41:56.753 20269 26435 Info Unity Vuforia.Internal.Utility.UnityLogger:LogInfo(String)
+2026-04-29 09:41:56.753 20269 26435 Info Unity Vuforia.Internal.Utility.Log:Info(String)
+2026-04-29 09:41:56.753 20269 26435 Info Unity Vuforia.MonoCameraConfiguration:ConfigureVideoBackground(Matrix4x4)
+2026-04-29 09:41:56.753 20269 26435 Info Unity Vuforia.MonoCameraConfiguration:CheckForSurfaceChanges(Matrix4x4)
+2026-04-29 09:41:56.753 20269 26435 Info Unity Vuforia.CameraController:UpdateCamera(Matrix4x4)
+2026-04-29 09:41:56.753 20269 26435 Info Unity Vuforia.Internal.Core.StateProcessor:ProcessState(IVuState, IDictionary`2, IVideoBackgroundRenderer, ICameraController, IWorldOriginProvider, DeviceObserver)
+2026-04-29 09:41:56.753 20269 26435 Info Unity Vuforia.Internal.Core.Engine:UpdateState()
+2026-04-29 09:41:56.753 20269 26435 Info Unity Vuforia.Internal.Core.Engine:OnUnityUpdate()
+2026-04-29 09:41:56.753 20269 26435 Info Unity System.Reflection.RuntimeMethodInfo:InternalInvoke(Object, Object[], Exception&)
+2026-04-29 09:41:56.753 20269 26435 Info Unity System.Reflection.RuntimeMethodInfo:Invoke(Object, BindingFlags, Binder, O
+2026-04-29 09:41:57.171 20269 26435 Debug nativeloader Load /data/app/~~ILaEEDLTY0UzbXTDdSv1FA==/com.example.heritage_lens-JrpCRyR8IDKm17t4oMygcQ==/lib/arm64/lib_burst_generated.so using class loader ns clns-4 (caller=/data/app/~~ILaEEDLTY0UzbXTDdSv1FA==/com.example.heritage_lens-JrpCRyR8IDKm17t4oMygcQ==/base.apk): ok
+2026-04-29 09:41:57.175 20269 26435 Debug nativeloader Load liblib_burst_0_0.so using class loader ns clns-4 (caller=/data/app/~~ILaEEDLTY0UzbXTDdSv1FA==/com.example.heritage_lens-JrpCRyR8IDKm17t4oMygcQ==/base.apk): dlopen failed: library "liblib_burst_0_0.so" not found
+2026-04-29 09:41:57.175 20269 26435 Debug Unity Failed to load native plugin: Unable to lookup library path for '_burst_0_0'.
+2026-04-29 09:41:57.176 20269 26435 Debug nativeloader Load lib_burst_0_0.so using class loader ns clns-4 (caller=/data/app/~~ILaEEDLTY0UzbXTDdSv1FA==/com.example.heritage_lens-JrpCRyR8IDKm17t4oMygcQ==/base.apk): dlopen failed: library "lib_burst_0_0.so" not found
+2026-04-29 09:41:57.316 20269 26435 Info Unity Normalized model scale. Original local max: 1.654784, world max: 1.654784, scale factor: 1.208617
+2026-04-29 09:41:57.316 20269 26435 Info Unity UnityEngine.DebugLogHandler:Internal_Log_Injected(LogType, LogOption, ManagedSpanWrapper&, IntPtr)
+2026-04-29 09:41:57.316 20269 26435 Info Unity UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+2026-04-29 09:41:57.316 20269 26435 Info Unity UnityEngine.DebugLogHandler:LogFormat(LogType, Object, String, Object[])
+2026-04-29 09:41:57.316 20269 26435 Info Unity UnityEngine.Logger:Log(LogType, Object)
+2026-04-29 09:41:57.316 20269 26435 Info Unity UnityEngine.Debug:Log(Object)
+2026-04-29 09:41:57.316 20269 26435 Info Unity ModelLoader:NormalizeScale(GameObject)
+2026-04-29 09:41:57.316 20269 26435 Info Unity <LoadFromDisk>d__6:MoveNext()
+2026-04-29 09:41:57.316 20269 26435 Info Unity System.Runtime.CompilerServices.MoveNextRunner:InvokeMoveNext(Object)
+2026-04-29 09:41:57.316 20269 26435 Info Unity System.Threading.WorkStealingQueue:.ctor()
+2026-04-29 09:41:57.316 20269 26435 Info Unity System.Threading.ExecutionContext:RunInternal(ExecutionContext, ContextCallback, Object, Boolean)
+2026-04-29 09:41:57.316 20269 26435 Info Unity System.Threading.ExecutionContext:Run(ExecutionContext, ContextCallback, Object, Boolean)
+2026-04-29 09:41:57.316 20269 26435 Info Unity System.Runtime.CompilerServices.MoveNextRunner:Run()
+2026-04-29 09:41:57.316 20269 26435 Info Unity Unity.Collections.FixedString:Format(FixedString512Bytes, Int32, String, T1, Single)
+2026-04-29 09:41:57.316 20269 26435 Info Unity System.Threading.Tasks.AwaitTaskContinuation:InvokeAction(Object)
+2026-04-29 09:41:57.316 20269 26435 Info Unity System.Threading.WorkStealingQue
+2026-04-29 09:42:11.290 20269 26399 Info e.heritage_lens Background young concurrent mark compact GC freed 2458KB AllocSpace bytes, 0(0B) LOS objects, 43% free, 3168KB/5617KB, paused 504us,7.771ms total 55.457ms
+2026-04-29 09:43:20.723 20269 26435 Debug Unity Changing screen orientation to Portrait.
+2026-04-29 09:43:25.198 20269 26435 Info Unity Target status: logo-black TRACKED -- NORMAL
+2026-04-29 09:43:25.198 20269 26435 Info Unity UnityEngine.DebugLogHandler:Internal_Log_Injected(LogType, LogOption, ManagedSpanWrapper&, IntPtr)
+2026-04-29 09:43:25.198 20269 26435 Info Unity UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+2026-04-29 09:43:25.198 20269 26435 Info Unity UnityEngine.DebugLogHandler:LogFormat(LogType, Object, String, Object[])
+2026-04-29 09:43:25.198 20269 26435 Info Unity UnityEngine.Logger:Log(LogType, Object)
+2026-04-29 09:43:25.198 20269 26435 Info Unity UnityEngine.Debug:Log(Object)
+2026-04-29 09:43:25.198 20269 26435 Info Unity DefaultObserverEventHandler:OnObserverStatusChanged(ObserverBehaviour, TargetStatus)
+2026-04-29 09:43:25.198 20269 26435 Info Unity System.Reflection.RuntimeMethodInfo:InternalInvoke(Object, Object[], Exception&)
+2026-04-29 09:43:25.198 20269 26435 Info Unity System.Reflection.RuntimeMethodInfo:Invoke(Object, BindingFlags, Binder, Object[], CultureInfo)
+2026-04-29 09:43:25.198 20269 26435 Info Unity System.Reflection.MethodBase:Invoke(Object, Object[])
+2026-04-29 09:43:25.198 20269 26435 Info Unity System.Delegate:DynamicInvokeImpl(Object[])
+2026-04-29 09:43:25.198 20269 26435 Info Unity System.MulticastDelegate:DynamicInvokeImpl(Object[])
+2026-04-29 09:43:25.198 20269 26435 Info Unity System.Delegate:DynamicInvoke(Object[])
+2026-04-29 09:43:25.198 20269 26435 Info Unity Vuforia.Utility.ExtensionMethods.DelegateHelper:InvokeDelegate(Delegate, Object[])
+2026-04-29 09:43:25.198 20269 26435 Info Unity Vuforia.Utility.ExtensionMethods.DelegateHelper:InvokeWithExceptionHandling(Action`2, T1, T2)
+2026-04-29 09:43:25.198 20269 26435 Info Unity Vuforia.ObserverBehaviour:SetT
+2026-04-29 09:43:25.361 20269 26435 Info Unity Target status: logo-black NO_POSE -- NOT_OBSERVED
+2026-04-29 09:43:25.361 20269 26435 Info Unity UnityEngine.DebugLogHandler:Internal_Log_Injected(LogType, LogOption, ManagedSpanWrapper&, IntPtr)
+2026-04-29 09:43:25.361 20269 26435 Info Unity UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+2026-04-29 09:43:25.361 20269 26435 Info Unity UnityEngine.DebugLogHandler:LogFormat(LogType, Object, String, Object[])
+2026-04-29 09:43:25.361 20269 26435 Info Unity UnityEngine.Logger:Log(LogType, Object)
+2026-04-29 09:43:25.361 20269 26435 Info Unity UnityEngine.Debug:Log(Object)
+2026-04-29 09:43:25.361 20269 26435 Info Unity DefaultObserverEventHandler:OnObserverStatusChanged(ObserverBehaviour, TargetStatus)
+2026-04-29 09:43:25.361 20269 26435 Info Unity System.Reflection.RuntimeMethodInfo:InternalInvoke(Object, Object[], Exception&)
+2026-04-29 09:43:25.361 20269 26435 Info Unity System.Reflection.RuntimeMethodInfo:Invoke(Object, BindingFlags, Binder, Object[], CultureInfo)
+2026-04-29 09:43:25.361 20269 26435 Info Unity System.Reflection.MethodBase:Invoke(Object, Object[])
+2026-04-29 09:43:25.361 20269 26435 Info Unity System.Delegate:DynamicInvokeImpl(Object[])
+2026-04-29 09:43:25.361 20269 26435 Info Unity System.MulticastDelegate:DynamicInvokeImpl(Object[])
+2026-04-29 09:43:25.361 20269 26435 Info Unity System.Delegate:DynamicInvoke(Object[])
+2026-04-29 09:43:25.361 20269 26435 Info Unity Vuforia.Utility.ExtensionMethods.DelegateHelper:InvokeDelegate(Delegate, Object[])
+2026-04-29 09:43:25.361 20269 26435 Info Unity Vuforia.Utility.ExtensionMethods.DelegateHelper:InvokeWithExceptionHandling(Action`2, T1, T2)
+2026-04-29 09:43:25.361 20269 26435 Info Unity Vuforia.ObserverBehaviou
+2026-04-29 09:43:25.395 20269 26435 Info Unity Target status: logo-black TRACKED -- NORMAL
+2026-04-29 09:43:25.395 20269 26435 Info Unity UnityEngine.DebugLogHandler:Internal_Log_Injected(LogType, LogOption, ManagedSpanWrapper&, IntPtr)
+2026-04-29 09:43:25.395 20269 26435 Info Unity UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+2026-04-29 09:43:25.395 20269 26435 Info Unity UnityEngine.DebugLogHandler:LogFormat(LogType, Object, String, Object[])
+2026-04-29 09:43:25.395 20269 26435 Info Unity UnityEngine.Logger:Log(LogType, Object)
+2026-04-29 09:43:25.395 20269 26435 Info Unity UnityEngine.Debug:Log(Object)
+2026-04-29 09:43:25.395 20269 26435 Info Unity DefaultObserverEventHandler:OnObserverStatusChanged(ObserverBehaviour, TargetStatus)
+2026-04-29 09:43:25.395 20269 26435 Info Unity System.Reflection.RuntimeMethodInfo:InternalInvoke(Object, Object[], Exception&)
+2026-04-29 09:43:25.395 20269 26435 Info Unity System.Reflection.RuntimeMethodInfo:Invoke(Object, BindingFlags, Binder, Object[], CultureInfo)
+2026-04-29 09:43:25.395 20269 26435 Info Unity System.Reflection.MethodBase:Invoke(Object, Object[])
+2026-04-29 09:43:25.395 20269 26435 Info Unity System.Delegate:DynamicInvokeImpl(Object[])
+2026-04-29 09:43:25.395 20269 26435 Info Unity System.MulticastDelegate:DynamicInvokeImpl(Object[])
+2026-04-29 09:43:25.395 20269 26435 Info Unity System.Delegate:DynamicInvoke(Object[])
+2026-04-29 09:43:25.395 20269 26435 Info Unity Vuforia.Utility.ExtensionMethods.DelegateHelper:InvokeDelegate(Delegate, Object[])
+2026-04-29 09:43:25.395 20269 26435 Info Unity Vuforia.Utility.ExtensionMethods.DelegateHelper:InvokeWithExceptionHandling(Action`2, T1, T2)
+2026-04-29 09:43:25.395 20269 26435 Info Unity Vuforia.ObserverBehaviour:SetT
+2026-04-29 09:43:32.114 20269 26399 Info e.heritage_lens Background concurrent mark compact GC freed 3106KB AllocSpace bytes, 0(0B) LOS objects, 49% free, 3420KB/6841KB, paused 565us,7.032ms total 57.014ms
+2026-04-29 09:43:46.296 20269 26435 Info Unity Target status: logo-black NO_POSE -- NOT_OBSERVED
+2026-04-29 09:43:46.296 20269 26435 Info Unity UnityEngine.DebugLogHandler:Internal_Log_Injected(LogType, LogOption, ManagedSpanWrapper&, IntPtr)
+2026-04-29 09:43:46.296 20269 26435 Info Unity UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+2026-04-29 09:43:46.296 20269 26435 Info Unity UnityEngine.DebugLogHandler:LogFormat(LogType, Object, String, Object[])
+2026-04-29 09:43:46.296 20269 26435 Info Unity UnityEngine.Logger:Log(LogType, Object)
+2026-04-29 09:43:46.296 20269 26435 Info Unity UnityEngine.Debug:Log(Object)
+2026-04-29 09:43:46.296 20269 26435 Info Unity DefaultObserverEventHandler:OnObserverStatusChanged(ObserverBehaviour, TargetStatus)
+2026-04-29 09:43:46.296 20269 26435 Info Unity System.Reflection.RuntimeMethodInfo:InternalInvoke(Object, Object[], Exception&)
+2026-04-29 09:43:46.296 20269 26435 Info Unity System.Reflection.RuntimeMethodInfo:Invoke(Object, BindingFlags, Binder, Object[], CultureInfo)
+2026-04-29 09:43:46.296 20269 26435 Info Unity System.Reflection.MethodBase:Invoke(Object, Object[])
+2026-04-29 09:43:46.296 20269 26435 Info Unity System.Delegate:DynamicInvokeImpl(Object[])
+2026-04-29 09:43:46.296 20269 26435 Info Unity System.MulticastDelegate:DynamicInvokeImpl(Object[])
+2026-04-29 09:43:46.296 20269 26435 Info Unity System.Delegate:DynamicInvoke(Object[])
+2026-04-29 09:43:46.296 20269 26435 Info Unity Vuforia.Utility.ExtensionMethods.DelegateHelper:InvokeDelegate(Delegate, Object[])
+2026-04-29 09:43:46.296 20269 26435 Info Unity Vuforia.Utility.ExtensionMethods.DelegateHelper:InvokeWithExceptionHandling(Action`2, T1, T2)
+2026-04-29 09:43:46.296 20269 26435 Info Unity Vuforia.ObserverBehaviou
+2026-04-29 09:43:46.324 20269 26435 Info Unity Target status: logo-black TRACKED -- NORMAL
+2026-04-29 09:43:46.324 20269 26435 Info Unity UnityEngine.DebugLogHandler:Internal_Log_Injected(LogType, LogOption, ManagedSpanWrapper&, IntPtr)
+2026-04-29 09:43:46.324 20269 26435 Info Unity UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+2026-04-29 09:43:46.324 20269 26435 Info Unity UnityEngine.DebugLogHandler:LogFormat(LogType, Object, String, Object[])
+2026-04-29 09:43:46.324 20269 26435 Info Unity UnityEngine.Logger:Log(LogType, Object)
+2026-04-29 09:43:46.324 20269 26435 Info Unity UnityEngine.Debug:Log(Object)
+2026-04-29 09:43:46.324 20269 26435 Info Unity DefaultObserverEventHandler:OnObserverStatusChanged(ObserverBehaviour, TargetStatus)
+2026-04-29 09:43:46.324 20269 26435 Info Unity System.Reflection.RuntimeMethodInfo:InternalInvoke(Object, Object[], Exception&)
+2026-04-29 09:43:46.324 20269 26435 Info Unity System.Reflection.RuntimeMethodInfo:Invoke(Object, BindingFlags, Binder, Object[], CultureInfo)
+2026-04-29 09:43:46.324 20269 26435 Info Unity System.Reflection.MethodBase:Invoke(Object, Object[])
+2026-04-29 09:43:46.324 20269 26435 Info Unity System.Delegate:DynamicInvokeImpl(Object[])
+2026-04-29 09:43:46.324 20269 26435 Info Unity System.MulticastDelegate:DynamicInvokeImpl(Object[])
+2026-04-29 09:43:46.324 20269 26435 Info Unity System.Delegate:DynamicInvoke(Object[])
+2026-04-29 09:43:46.324 20269 26435 Info Unity Vuforia.Utility.ExtensionMethods.DelegateHelper:InvokeDelegate(Delegate, Object[])
+2026-04-29 09:43:46.324 20269 26435 Info Unity Vuforia.Utility.ExtensionMethods.DelegateHelper:InvokeWithExceptionHandling(Action`2, T1, T2)
+2026-04-29 09:43:46.324 20269 26435 Info Unity Vuforia.ObserverBehaviour:SetT
+2026-04-29 09:43:46.361 20269 26435 Info Unity Target status: logo-black NO_POSE -- NOT_OBSERVED
+2026-04-29 09:43:46.361 20269 26435 Info Unity UnityEngine.DebugLogHandler:Internal_Log_Injected(LogType, LogOption, ManagedSpanWrapper&, IntPtr)
+2026-04-29 09:43:46.361 20269 26435 Info Unity UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+2026-04-29 09:43:46.361 20269 26435 Info Unity UnityEngine.DebugLogHandler:LogFormat(LogType, Object, String, Object[])
+2026-04-29 09:43:46.361 20269 26435 Info Unity UnityEngine.Logger:Log(LogType, Object)
+2026-04-29 09:43:46.361 20269 26435 Info Unity UnityEngine.Debug:Log(Object)
+2026-04-29 09:43:46.361 20269 26435 Info Unity DefaultObserverEventHandler:OnObserverStatusChanged(ObserverBehaviour, TargetStatus)
+2026-04-29 09:43:46.361 20269 26435 Info Unity System.Reflection.RuntimeMethodInfo:InternalInvoke(Object, Object[], Exception&)
+2026-04-29 09:43:46.361 20269 26435 Info Unity System.Reflection.RuntimeMethodInfo:Invoke(Object, BindingFlags, Binder, Object[], CultureInfo)
+2026-04-29 09:43:46.361 20269 26435 Info Unity System.Reflection.MethodBase:Invoke(Object, Object[])
+2026-04-29 09:43:46.361 20269 26435 Info Unity System.Delegate:DynamicInvokeImpl(Object[])
+2026-04-29 09:43:46.361 20269 26435 Info Unity System.MulticastDelegate:DynamicInvokeImpl(Object[])
+2026-04-29 09:43:46.361 20269 26435 Info Unity System.Delegate:DynamicInvoke(Object[])
+2026-04-29 09:43:46.361 20269 26435 Info Unity Vuforia.Utility.ExtensionMethods.DelegateHelper:InvokeDelegate(Delegate, Object[])
+2026-04-29 09:43:46.361 20269 26435 Info Unity Vuforia.Utility.ExtensionMethods.DelegateHelper:InvokeWithExceptionHandling(Action`2, T1, T2)
+2026-04-29 09:43:46.361 20269 26435 Info Unity Vuforia.ObserverBehaviou
+2026-04-29 09:43:46.391 20269 26435 Info Unity Target status: logo-black TRACKED -- NORMAL
+2026-04-29 09:43:46.391 20269 26435 Info Unity UnityEngine.DebugLogHandler:Internal_Log_Injected(LogType, LogOption, ManagedSpanWrapper&, IntPtr)
+2026-04-29 09:43:46.391 20269 26435 Info Unity UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+2026-04-29 09:43:46.391 20269 26435 Info Unity UnityEngine.DebugLogHandler:LogFormat(LogType, Object, String, Object[])
+2026-04-29 09:43:46.391 20269 26435 Info Unity UnityEngine.Logger:Log(LogType, Object)
+2026-04-29 09:43:46.391 20269 26435 Info Unity UnityEngine.Debug:Log(Object)
+2026-04-29 09:43:46.391 20269 26435 Info Unity DefaultObserverEventHandler:OnObserverStatusChanged(ObserverBehaviour, TargetStatus)
+2026-04-29 09:43:46.391 20269 26435 Info Unity System.Reflection.RuntimeMethodInfo:InternalInvoke(Object, Object[], Exception&)
+2026-04-29 09:43:46.391 20269 26435 Info Unity System.Reflection.RuntimeMethodInfo:Invoke(Object, BindingFlags, Binder, Object[], CultureInfo)
+2026-04-29 09:43:46.391 20269 26435 Info Unity System.Reflection.MethodBase:Invoke(Object, Object[])
+2026-04-29 09:43:46.391 20269 26435 Info Unity System.Delegate:DynamicInvokeImpl(Object[])
+2026-04-29 09:43:46.391 20269 26435 Info Unity System.MulticastDelegate:DynamicInvokeImpl(Object[])
+2026-04-29 09:43:46.391 20269 26435 Info Unity System.Delegate:DynamicInvoke(Object[])
+2026-04-29 09:43:46.391 20269 26435 Info Unity Vuforia.Utility.ExtensionMethods.DelegateHelper:InvokeDelegate(Delegate, Object[])
+2026-04-29 09:43:46.391 20269 26435 Info Unity Vuforia.Utility.ExtensionMethods.DelegateHelper:InvokeWithExceptionHandling(Action`2, T1, T2)
+2026-04-29 09:43:46.391 20269 26435 Info Unity Vuforia.ObserverBehaviour:SetT
+2026-04-29 09:43:52.272 20269 26435 Info Unity Target status: logo-black NO_POSE -- NOT_OBSERVED
+2026-04-29 09:43:52.272 20269 26435 Info Unity UnityEngine.DebugLogHandler:Internal_Log_Injected(LogType, LogOption, ManagedSpanWrapper&, IntPtr)
+2026-04-29 09:43:52.272 20269 26435 Info Unity UnityEngine.DebugLogHandler:Internal_Log(LogType, LogOption, String, Object)
+2026-04-29 09:43:52.272 20269 26435 Info Unity UnityEngine.DebugLogHandler:LogFormat(LogType, Object, String, Object[])
+2026-04-29 09:43:52.272 20269 26435 Info Unity UnityEngine.Logger:Log(LogType, Object)
+2026-04-29 09:43:52.272 20269 26435 Info Unity UnityEngine.Debug:Log(Object)
+2026-04-29 09:43:52.272 20269 26435 Info Unity DefaultObserverEventHandler:OnObserverStatusChanged(ObserverBehaviour, TargetStatus)
+2026-04-29 09:43:52.272 20269 26435 Info Unity System.Reflection.RuntimeMethodInfo:InternalInvoke(Object, Object[], Exception&)
+2026-04-29 09:43:52.272 20269 26435 Info Unity System.Reflection.RuntimeMethodInfo:Invoke(Object, BindingFlags, Binder, Object[], CultureInfo)
+2026-04-29 09:43:52.272 20269 26435 Info Unity System.Reflection.MethodBase:Invoke(Object, Object[])
+2026-04-29 09:43:52.272 20269 26435 Info Unity System.Delegate:DynamicInvokeImpl(Object[])
+2026-04-29 09:43:52.272 20269 26435 Info Unity System.MulticastDelegate:DynamicInvokeImpl(Object[])
+2026-04-29 09:43:52.272 20269 26435 Info Unity System.Delegate:DynamicInvoke(Object[])
+2026-04-29 09:43:52.272 20269 26435 Info Unity Vuforia.Utility.ExtensionMethods.DelegateHelper:InvokeDelegate(Delegate, Object[])
+2026-04-29 09:43:52.272 20269 26435 Info Unity Vuforia.Utility.ExtensionMethods.DelegateHelper:InvokeWithExceptionHandling(Action`2, T1, T2)
+2026-04-29 09:43:52.272 20269 26435 Info Unity Vuforia.ObserverBehaviou
