@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:heritage_lens/services/auth_service.dart';
+import 'package:heritage_lens/views/auth/login_screen.dart';
 import 'package:heritage_lens/views/pages/discover_screen.dart';
 import 'package:heritage_lens/views/pages/profile_screen.dart';
 import 'package:heritage_lens/views/pages/space_screen.dart';
@@ -118,6 +120,16 @@ class _HomeState extends ConsumerState<Home> with SingleTickerProviderStateMixin
   }
 
   void _updateIndex(int index) {
+    if(index == 2) {
+      final user = ref.read(currentUserProvider).value;
+      if (user == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Veuillez vous connecter')),
+        );
+        Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen()));
+        return;
+      } 
+    }
     ref.read(homeTabProvider.notifier).state = index;
     _saveIndex(index);
   }

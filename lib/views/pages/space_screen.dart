@@ -42,7 +42,7 @@ class _SpaceScreenState extends ConsumerState<SpaceScreen> {
               StandardButton(
                 width: 50,
                 child: Text('Rejoindre'), 
-                onPressed: () {} //TODO: Implementer la logique de rejoindre un espace
+                onPressed: () {} //TODO: Implementer la logique de rejoindre un espace - Lionel : Ca c'est pour l'an prochain
               ),
               const SizedBox(height: 64),
               Text(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:heritage_lens/services/auth_service.dart';
+import 'package:heritage_lens/views/pages/discover_screen.dart';
 import 'package:heritage_lens/views/widgets/standard_toast.dart';
 import 'package:heritage_lens/views/widgets/standard_button.dart';
 import 'package:heritage_lens/views/widgets/standard_text_field.dart';
@@ -45,7 +46,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(height: spacing * 8),
-                  Icon(Icons.arrow_back),
+                  GestureDetector(
+                    onTap: () => {Navigator.push(context, MaterialPageRoute(builder: (context) => DiscoverScreen()))},
+                    child: Icon(Icons.arrow_back)
+                  ),
                   SizedBox(height: spacing * 10),
                   Text("Se Connecter", style: AppText.titleL()),
                   SizedBox(height: spacing),

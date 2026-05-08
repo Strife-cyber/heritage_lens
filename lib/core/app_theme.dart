@@ -68,7 +68,7 @@ import 'package:flutter/material.dart';
 ///
 enum FontFamily {
   alike("Alike"),
-  inriaSerif("InriaSerif");
+  inriaSerif("Inria Serif");
 
   final String font;
   const FontFamily(this.font);

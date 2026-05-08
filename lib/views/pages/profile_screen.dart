@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:heritage_lens/services/model_service.dart';
@@ -18,7 +19,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   List<ARModel> _userModels = [];
   bool _isLoadingFavorites = true;
   bool _isLoadingUserModels = true;
-  final _searchController = TextEditingController();
   final _username = "Lionel";
 
 
@@ -29,7 +29,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     _loadUserModels();
   }
 
-  Future<void> _loadFavoriteModels() async {
+  Future<void> _loadFavoriteModels() async { // TODO : Change to actual get of favourites models of current user
     _isLoadingFavorites = true;
     try {
       final query = await ref.read(arModelServiceProvider).getDocuments( limit: 20 );
@@ -52,7 +52,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     }
   }
 
-  Future<void> _loadUserModels() async {
+  Future<void> _loadUserModels() async { //TODO : Change to actual get of user added models
     _isLoadingFavorites = true;
     try {
       final query = await ref.read(arModelServiceProvider).getDocuments( limit: 20 );
@@ -85,171 +85,168 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
     return Scaffold(
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(
-                'Bonjour $_username',
-                style: AppText.titleXL()
-              ),
-              const SizedBox(height: 8),
-              Text(
-                "Alors, Qu’allons nous faire aujourd'hui ?",
-                style: AppText.bodyMG()
-              ),
-              const SizedBox(height: 32),
-
-              Container(
-                decoration: BoxDecoration(
-                  border: BoxBorder.all(color: Color(0x11000000)),
-                  borderRadius: BorderRadius.all(Radius.circular(10.0))
-                ),
-                padding: EdgeInsets.only(top: 16.0, bottom: 16.0),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border(right: BorderSide(color: Color(0x22000000)))
-                        ),
-                        child: Column(
-                          children: [
-                            Text(
-                              "${_favoriteModels.length}",
-                              style: AppText.bodyM(),
+        child: DefaultTabController(
+          length: 2,
+          child: NestedScrollView(
+            headerSliverBuilder: (context, innerBoxIsScrolled) {
+              return <Widget>[
+                SliverAppBar(
+                  floating: true,
+                  expandedHeight: 400.0,
+                  backgroundColor: Colors.white,
+                  elevation: 0,
+                  flexibleSpace: FlexibleSpaceBar(
+                    background: Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Text(
+                            'Bonjour $_username',
+                            style: AppText.titleXL()
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            "Alors, Qu’allons nous faire aujourd'hui ?",
+                            style: AppText.bodyMG()
+                          ),
+                          const SizedBox(height: 32),
+                    
+                          Container(
+                            decoration: BoxDecoration(
+                              border: BoxBorder.all(color: Color(0x11000000)),
+                              borderRadius: const BorderRadius.all(Radius.circular(10.0))
                             ),
-                            SizedBox(height: 8),
-                            Text(
-                              "Favoris",
-                              style: AppText.bodyM(),
+                            padding: const EdgeInsets.only(top: 16.0, bottom: 16.0),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      border: Border(right: BorderSide(color: Color(0x22000000)))
+                                    ),
+                                    child: Column(
+                                      children: [
+                                        Text(
+                                          '0',
+                                          // "${_favoriteModels.length}", TODO : Fake favoriteModels function to be removed
+                                          style: AppText.bodyM(),
+                                        ),
+                                        SizedBox(height: 8),
+                                        Text(
+                                          "Favoris",
+                                          style: AppText.bodyM(),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Container(
+                                    child: Column(
+                                      children: [
+                                        Text(
+                                          '0',
+                                          // "${_userModels.length}", TODO : Fake userModels function to be removed
+                                          style: AppText.bodyM(),
+                                        ),
+                                        SizedBox(height: 8),
+                                        Text(
+                                          "Modèles",
+                                          style: AppText.bodyM(),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
+                          ),
+                          SizedBox(height: 32),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: StandardButton(
+                                  child: Text("Ajouter un Modèle",style: AppText.bodySW()),
+                                  onPressed: () => {}),
+                              ),
+                                SizedBox(width: 16),
+                                Expanded(
+                                  child: StandardButton(
+                                  child: Text("Créer un Espace",style: AppText.bodySW()),
+                                  onPressed: () => {}),
+                                )
+                            ],
+                          ),
+                        ],
                       ),
                     ),
-                    Expanded(
-                      child: Container(
-                        child: Column(
-                          children: [
-                            Text(
-                              "${_userModels.length}",
-                              style: AppText.bodyM(),
-                            ),
-                            SizedBox(height: 8),
-                            Text(
-                              "Modèles",
-                              style: AppText.bodyM(),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 32),
-              Row(
-                children: [
-                  Expanded(
-                    child: StandardButton(
-                      child: Text("Ajouter un Modèle",style: AppText.bodySW()),
-                      onPressed: () => {}),
                   ),
-                    SizedBox(width: 16),
-                    Expanded(
-                      child: StandardButton(
-                      child: Text("Créer un Espace",style: AppText.bodySW()),
-                      onPressed: () => {}),
-                    )
-                ],
-              ),
-              // Container(
-              //   child: DefaultTabController(
-              //     length: 2, 
-              //     child: Column(
-              //       children: [
-              //         TabBar(tabs: [
-              //           Tab(icon: Icon(Icons.star)),
-              //           Tab(icon: Icon(Icons.window)),
-              //         ]),
-              //         TabBarView(children: [
-              //           DiscoverScreen(),
-              //           SpaceScreen()
-              //         ])
-              //       ],
-              //     )
-              //   ),
-              // )
-
-            //   StandardTextField(
-            //     controller: TextEditingController(),
-            //     icon: Icons.search,
-            //     placeholder: 'Recherche...',
-            //   ),
-              
-            //   const SizedBox(height: 24),
-
-            //   Text(
-            //     'Que cherchez-vous ?',
-            //     style: AppText.titleM(),
-            //   ),
-            //   const SizedBox(height: 12),
-            //   SizedBox(
-            //     height: 40,
-            //     child: ListView(
-            //       scrollDirection: Axis.horizontal,
-            //       children: [
-            //         _buildCategoryChip('Tous', isSelected: _selectedCategory == 'Tous'),
-            //         const SizedBox(width: 12),
-            //         _buildCategoryChip('Technologie', isSelected: _selectedCategory == 'Technologie'),
-            //         const SizedBox(width: 12),
-            //         _buildCategoryChip('Peinture', isSelected: _selectedCategory == 'Peinture'),
-            //         const SizedBox(width: 12),
-            //         _buildCategoryChip('Monument', isSelected: _selectedCategory == 'Monument'),
-            //       ],
-            //     ),
-            //   ),
-            //   const SizedBox(height: 32),
-
-            //   // Liste / Grille des modèles
-            //   Expanded(
-            //     child: _publicModels.isEmpty
-            //         ? _buildEmptyState()
-            //         : _buildModelsGrid(),
-            //   )
-            ],
+                ),
+                SliverPersistentHeader(
+                  pinned: true,
+                  delegate: _StickyTabBarDelegate (
+                    tabBar: TabBar(
+                      tabs: [Tab(icon: Icon(Icons.star)), Tab(icon: Icon(Icons.window))],
+                    ),
+                  ),
+                ),
+              ];
+            },
+            body: TabBarView(
+              children: [
+                _buildGrid(_favoriteModels, _isLoadingFavorites),
+                _buildGrid(_userModels, _isLoadingUserModels),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-
-  // Widget _buildCategoryChip(String label, {bool isSelected = false}) {
-  //   return GestureDetector(
-  //     onTap: () {
-  //       setState(() {
-  //         _selectedCategory = isSelected ? 'Tous' : label;
-  //         // TODO: filtrer _publicModels selon catégorie si implémenté
-  //       });
-  //     },
-  //     child: Container(
-  //       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-  //       decoration: BoxDecoration(
-  //         color: isSelected ? Colors.black : Colors.grey[200],
-  //         borderRadius: BorderRadius.circular(30),
-  //       ),
-  //       child: Text(
-  //         label,
-  //         style: AppText.bodySW().copyWith(
-  //           color: isSelected ? Colors.white : Colors.black87
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
+ Widget _buildGrid(List<ARModel> models, bool isLoading) {
+    if (isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    if (models.isEmpty) {
+      return _buildEmptyState();
+    }
+    return GridView.builder(
+      // Fix: These two lines are critical for grids inside NestedScrollView
+      physics: const ClampingScrollPhysics(),
+      padding: EdgeInsets.zero,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        crossAxisSpacing: 2,
+        mainAxisSpacing: 2,
+      ),
+      itemCount: models.length,
+      itemBuilder: (context, index) => models[index].thumbnailUrl.isNotEmpty
+                      ? CachedNetworkImage(
+                          //Images in 1080p so it is better to append /preview to get something lighter
+                          imageUrl: models[index].thumbnailUrl,
+                          width: double.infinity,
+                          height: double.infinity,
+                          fit: BoxFit.cover,
+                          // Un placeholder propre pendant le chargement (évite le vide blanc)
+                          placeholder: (context, url) => Container(
+                            color: Colors.grey[200],
+                            child: const Center(
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
+                          ),
+                          // Gestion des erreurs (image corrompue ou lien mort)
+                          errorWidget: (context, url, error) => Container(
+                            color: Colors.grey[200],
+                            child: const Icon(Icons.broken_image, color: Colors.grey),
+                          ),
+                          // Durée de l'animation d'apparition
+                          fadeInDuration: const Duration(milliseconds: 500),
+                        )
+                      : Container(color: Colors.grey[200]),
+    );
+  }
 
   Widget _buildEmptyState() {
     return Center(
@@ -279,85 +276,27 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       ),
     );
   }
+}
 
-  // Widget _buildModelsGrid() {
-  //   return GridView.builder(
-  //     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-  //       crossAxisCount: 2,
-  //       crossAxisSpacing: 16,
-  //       mainAxisSpacing: 16,
-  //       childAspectRatio: 0.78, // un peu plus haut que large
-  //     ),
-  //     itemCount: _publicModels.length,
-  //     itemBuilder: (context, index) {
-  //       final model = _publicModels[index];
-  //       return GestureDetector(
-  //         onTap: () {
-  //           // TODO: navigation vers détail du modèle
-  //           ScaffoldMessenger.of(context).showSnackBar(
-  //             SnackBar(content: Text('Ouvrir ${model.name}')),
-  //           );
-  //         },
-  //         child: Container(
-  //           decoration: BoxDecoration(
-  //             color: Colors.white,
-  //             borderRadius: BorderRadius.circular(12),
-  //             boxShadow: [
-  //               BoxShadow(
-  //                 color: Colors.grey.withValues(alpha: 0.15),
-  //                 blurRadius: 10,
-  //                 offset: const Offset(0, 4),
-  //               ),
-  //             ],
-  //           ),
-  //           child: Column(
-  //             crossAxisAlignment: CrossAxisAlignment.stretch,
-  //             children: [
-  //               Expanded(
-  //                 child: ClipRRect(
-  //                   borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-  //                   child: Container(
-  //                     color: Colors.grey[100],
-  //                     child: Center(
-  //                       child: Icon(
-  //                         Icons.view_in_ar_outlined,
-  //                         size: 48,
-  //                         color: Colors.grey[500],
-  //                       ),
-  //                     ), // ← Remplacer par Image.network(model.thumbnailUrl) quand disponible
-  //                   ),
-  //                 ),
-  //               ),
-  //               Padding(
-  //                 padding: const EdgeInsets.all(12),
-  //                 child: Column(
-  //                   crossAxisAlignment: CrossAxisAlignment.start,
-  //                   children: [
-  //                     Text(
-  //                       model.name,
-  //                       style: const TextStyle(
-  //                         fontWeight: FontWeight.w600,
-  //                         fontSize: 15,
-  //                       ),
-  //                       maxLines: 1,
-  //                       overflow: TextOverflow.ellipsis,
-  //                     ),
-  //                     const SizedBox(height: 4),
-  //                     Text(
-  //                       model.formatType,
-  //                       style: TextStyle(
-  //                         fontSize: 12,
-  //                         color: Colors.grey[600],
-  //                       ),
-  //                     ),
-  //                   ],
-  //                 ),
-  //               ),
-  //             ],
-  //           ),
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
+class _StickyTabBarDelegate extends SliverPersistentHeaderDelegate {
+  final TabBar tabBar;
+
+  const _StickyTabBarDelegate({required this.tabBar});
+
+  @override
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return Container(
+      color: Colors.white, // Prevents content showing through when pinned
+      child: tabBar,
+    );
+  }
+
+  @override
+  double get maxExtent => tabBar.preferredSize.height;
+
+  @override
+  double get minExtent => tabBar.preferredSize.height;
+
+  @override
+  bool shouldRebuild(_StickyTabBarDelegate oldDelegate) => false;
 }
