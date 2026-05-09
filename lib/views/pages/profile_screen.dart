@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:heritage_lens/services/auth_service.dart';
 import 'package:heritage_lens/services/model_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:heritage_lens/views/pages/details_screen.dart';
+import 'package:heritage_lens/views/widgets/coming_soon_modal.dart';
 import 'package:heritage_lens/views/widgets/standard_button.dart';
 import 'package:heritage_lens/views/widgets/standard_text_helpers.dart';
 
@@ -19,16 +22,18 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   List<ARModel> _userModels = [];
   bool _isLoadingFavorites = true;
   bool _isLoadingUserModels = true;
-  final _username = "Lionel";
+  bool _isLoadingUserName = true;
+  String _username = "";
 
   @override
   void initState() {
     super.initState();
+    _loadUserName();
     _loadFavoriteModels();
     _loadUserModels();
   }
 
-  Future<void> _loadFavoriteModels() async {
+  Future<void> _loadFavoriteModels() async { // TODO : THIS SHOULD RETURN ACTUAL FAVORITES
     _isLoadingFavorites = true;
     try {
       final query = await ref
@@ -51,7 +56,24 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     }
   }
 
-  Future<void> _loadUserModels() async {
+  Future<void> _loadUserName()  async {
+    _isLoadingUserName = true;
+    try {
+      final user = ref.read(currentUserProvider).value;
+
+      if (mounted) {
+        setState(() {
+          _username = user!.displayName ?? "";
+          _isLoadingUserName = false;
+        });
+      }
+
+    } catch (e) {
+      debugPrint('Erreur chargement utilisateur: $e');
+    }
+  }
+
+  Future<void> _loadUserModels() async { // TODO : THIS SHOULD RETURN ACTUAL USER MODELS SO EMPTY FOR V1
     _isLoadingUserModels = true;
     try {
       final query = await ref
@@ -76,11 +98,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // if (_isLoading) {
-    //   return const Scaffold(
-    //     body: Center(child: CircularProgressIndicator()),
-    //   );
-    // }
+    if (_isLoadingFavorites || _isLoadingUserModels || _isLoadingFavorites) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
 
     return Scaffold(
       body: SafeArea(
@@ -163,10 +185,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                               Expanded(
                                 child: StandardButton(
                                   child: Text(
-                                    "Ajouter un Modèle",
+                                    "Ajouter un Modèle", // TODO : This button shows strangely on widths below 365... Dunamis suggest smth or we leave it like that.
                                     style: AppText.bodySW(),
                                   ),
-                                  onPressed: () => {},
+                                  onPressed: () => showComingSoonModal(context),
                                 ),
                               ),
                               SizedBox(width: 16),
@@ -176,7 +198,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                     "Créer un Espace",
                                     style: AppText.bodySW(),
                                   ),
-                                  onPressed: () => {},
+                                  onPressed: () => showComingSoonModal(context),
                                 ),
                               ),
                             ],
@@ -218,7 +240,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     if (models.isEmpty) {
       return _buildEmptyState();
     }
-    return GridView.builder(
+    return GridView.builder( 
+      // Added : clicking on any of them leads to detailpage
       // Fix: These two lines are critical for grids inside NestedScrollView
       physics: const ClampingScrollPhysics(),
       padding: EdgeInsets.zero,
@@ -229,27 +252,35 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       ),
       itemCount: models.length,
       itemBuilder: (context, index) => models[index].thumbnailUrl.isNotEmpty
-          ? CachedNetworkImage(
-              //Images in 1080p so it is better to append /preview to get something lighter
-              imageUrl: models[index].thumbnailUrl,
-              width: double.infinity,
-              height: double.infinity,
-              fit: BoxFit.cover,
-              // Un placeholder propre pendant le chargement (évite le vide blanc)
-              placeholder: (context, url) => Container(
-                color: Colors.grey[200],
-                child: const Center(
-                  child: CircularProgressIndicator(strokeWidth: 2),
+          ? GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => DetailScreen(model: models[index])),
+              );
+            },
+            child: CachedNetworkImage(
+                //Images in 1080p so it is better to append /preview to get something lighter
+                imageUrl: models[index].thumbnailUrl,
+                width: double.infinity,
+                height: double.infinity,
+                fit: BoxFit.cover,
+                // Un placeholder propre pendant le chargement (évite le vide blanc)
+                placeholder: (context, url) => Container(
+                  color: Colors.grey[200],
+                  child: const Center(
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
                 ),
+                // Gestion des erreurs (image corrompue ou lien mort)
+                errorWidget: (context, url, error) => Container(
+                  color: Colors.grey[200],
+                  child: const Icon(Icons.broken_image, color: Colors.grey),
+                ),
+                // Durée de l'animation d'apparition
+                fadeInDuration: const Duration(milliseconds: 500),
               ),
-              // Gestion des erreurs (image corrompue ou lien mort)
-              errorWidget: (context, url, error) => Container(
-                color: Colors.grey[200],
-                child: const Icon(Icons.broken_image, color: Colors.grey),
-              ),
-              // Durée de l'animation d'apparition
-              fadeInDuration: const Duration(milliseconds: 500),
-            )
+          )
           : Container(color: Colors.grey[200]),
     );
   }
@@ -264,7 +295,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           Text('Aucun modèle trouvé', style: AppText.bodyM()),
           const SizedBox(height: 12),
           Text(
-            'Essayez une autre recherche ou ajoutez votre premier modèle',
+            'Ajoutez votre premier modèle',
             style: AppText.bodyS().copyWith(
               fontSize: 12,
               color: Colors.grey[600],

@@ -49,8 +49,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
       final matchesCategory =
           _selectedCategory == 'Tous' ||
           model.category == _selectedCategory ||
-          model.era == _selectedCategory ||
-          model.originLocation == _selectedCategory;
+          model.era == _selectedCategory;
 
       return matchesSearch && matchesCategory;
     }).toList();
@@ -61,7 +60,6 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
     for (final model in _publicModels) {
       if (model.category.isNotEmpty) categories.add(model.category);
       if (model.era.isNotEmpty) categories.add(model.era);
-      if (model.originLocation.isNotEmpty) categories.add(model.originLocation);
     }
     return categories.toList();
   }
@@ -92,96 +90,98 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
     }
 
     return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          // AppBar dynamique avec Titre et Recherche
-          SliverAppBar(
-            floating: true,
-            expandedHeight: 190.0,
-            backgroundColor: Colors.white,
-            elevation: 0,
-            flexibleSpace: FlexibleSpaceBar(
-              background: Padding(
-                padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
+      body: SafeArea(
+        child: CustomScrollView(
+          slivers: [
+            // AppBar dynamique avec Titre et Recherche
+            SliverAppBar(
+              floating: true,
+              expandedHeight: 190.0,
+              backgroundColor: Colors.white,
+              elevation: 0,
+              flexibleSpace: FlexibleSpaceBar(
+                background: Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('HeritageLens', style: AppText.titleXL()),
+                      Text(
+                        'Histoire et culture à travers la RA',
+                        style: AppText.bodyMG(),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              bottom: PreferredSize(
+                preferredSize: const Size.fromHeight(60),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 12,
+                  ),
+                  child: TextFormField(
+                    controller: _searchController,
+                    decoration: InputDecoration(
+                      hintText: 'Rechercher un artéfact...',
+                      suffixIcon: const Icon(Icons.search),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide.none,
+                      ),
+                      filled: true,
+                      fillColor: Colors.grey[100],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+        
+            // Section "Que cherchez-vous" en Sliver
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(24, 16, 24, 16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('HeritageLens', style: AppText.titleXL()),
-                    Text(
-                      'Histoire et culture à travers la RA',
-                      style: AppText.bodyMG(),
+                    Text('Que cherchez-vous ?', style: AppText.titleM()),
+                    const SizedBox(height: 18),
+                    SizedBox(
+                      height: 40,
+                      child: ListView(
+                        scrollDirection: Axis.horizontal,
+                        children: _availableCategories
+                            .map(_buildCategoryChip)
+                            .toList(),
+                      ),
                     ),
+                    const SizedBox(height: 18),
                   ],
                 ),
               ),
             ),
-            bottom: PreferredSize(
-              preferredSize: const Size.fromHeight(60),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 12,
-                ),
-                child: TextFormField(
-                  controller: _searchController,
-                  decoration: InputDecoration(
-                    hintText: 'Rechercher un artéfact...',
-                    suffixIcon: const Icon(Icons.search),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none,
-                    ),
-                    filled: true,
-                    fillColor: Colors.grey[100],
-                  ),
-                ),
-              ),
-            ),
-          ),
-
-          // Section "Que cherchez-vous" en Sliver
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(24, 16, 24, 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Que cherchez-vous ?', style: AppText.titleM()),
-                  const SizedBox(height: 18),
-                  SizedBox(
-                    height: 40,
-                    child: ListView(
-                      scrollDirection: Axis.horizontal,
-                      children: _availableCategories
-                          .map(_buildCategoryChip)
-                          .toList(),
-                    ),
-                  ),
-                  const SizedBox(height: 18),
-                ],
-              ),
-            ),
-          ),
-
-          // Liste des modèles en pleine largeur
-          SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
-            sliver: _filteredModels.isEmpty
-                ? SliverFillRemaining(child: _buildEmptyState())
-                : SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) => Padding(
-                        padding: const EdgeInsets.only(bottom: 24),
-                        child: _ModelCard(
-                          key: ValueKey(_filteredModels[index].documentId),
-                          model: _filteredModels[index],
+        
+            // Liste des modèles en pleine largeur
+            SliverPadding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              sliver: _filteredModels.isEmpty
+                  ? SliverFillRemaining(child: _buildEmptyState())
+                  : SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                        (context, index) => Padding(
+                          padding: const EdgeInsets.only(bottom: 24),
+                          child: _ModelCard(
+                            key: ValueKey(_filteredModels[index].documentId),
+                            model: _filteredModels[index],
+                          ),
                         ),
+                        childCount: _filteredModels.length,
                       ),
-                      childCount: _filteredModels.length,
                     ),
-                  ),
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }

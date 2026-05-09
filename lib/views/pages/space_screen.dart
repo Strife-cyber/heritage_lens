@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:heritage_lens/views/widgets/standard_button.dart';
+import 'package:heritage_lens/views/widgets/coming_soon_modal.dart';
 import 'package:heritage_lens/views/widgets/standard_text_field.dart';
 import 'package:heritage_lens/views/widgets/standard_text_helpers.dart';
 
@@ -39,10 +40,12 @@ class _SpaceScreenState extends ConsumerState<SpaceScreen> {
                 controller: TextEditingController()
               ),
               const SizedBox(height: 24),
-              StandardButton(
-                width: 50,
-                child: Text('Rejoindre'), 
-                onPressed: () {},
+              Align(
+                alignment: Alignment.centerLeft,
+                child: StandardButton(
+                  onPressed: () => showComingSoonModal(context),
+                  child: const Text("Rejoindre"),
+                ),
               ),
               const SizedBox(height: 64),
               Text(
@@ -61,3 +64,5 @@ class _SpaceScreenState extends ConsumerState<SpaceScreen> {
     );
   }
 }
+
+

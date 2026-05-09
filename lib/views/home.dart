@@ -68,7 +68,7 @@ class _HomeState extends ConsumerState<Home> with SingleTickerProviderStateMixin
       // Use TabBarView to allow swiping between pages
       body: TabBarView(
         controller: _tabController,
-        physics: const BouncingScrollPhysics(),
+        physics: const NeverScrollableScrollPhysics(), //No swiping
         children: _pages,
       ),
       

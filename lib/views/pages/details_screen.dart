@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:heritage_lens/core/app_theme.dart';
+import 'package:heritage_lens/views/auth/login_screen.dart';
+import 'package:heritage_lens/views/widgets/ar_not_compatible.dart';
 import 'package:heritage_lens/views/widgets/standard_button.dart';
 import 'package:heritage_lens/views/widgets/standard_text_helpers.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -126,6 +127,7 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Veuillez vous connecter pour liker')),
         );
+        Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen()));
         return;
       }
 
@@ -178,6 +180,7 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Veuillez vous connecter pour commenter')),
       );
+      Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen()));
       return;
     }
 
@@ -204,7 +207,8 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
     }
   }
 
-  Future<void> _viewInAR() async {
+  Future<void> _viewInAR(BuildContext dialogContext) async {
+    Navigator.of(dialogContext).pop();
     if (widget.model.modelUrl == null ||
         widget.model.modelUrl!.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -248,223 +252,234 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
           children: [
             Positioned.fill(
               child: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(24, 24, 24, 120),
-                  child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    IconButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      icon: const Icon(Icons.arrow_back),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        IconButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          icon: const Icon(Icons.arrow_back),
+                        ),
+                        GestureDetector(
+                          onTap: _toggleLike,
+                          child: Icon(
+                            _isLikedByUser
+                                ? Icons.bookmark
+                                : Icons.bookmark_outline,
+                            color: _isLikedByUser ? Colors.yellow : Colors.black,
+                          ),
+                        ),
+                      ],
                     ),
-                    Icon(Icons.bookmark_outline)
-                  ],
-                ),
+                  ),
 
-                const SizedBox(height: 16),
+                  const SizedBox(height: 16),
 
-                // Large image (>= half screen height)
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.55,
-                  width: double.infinity,
-                  child: _shouldShowVideo && _betterPlayerController != null
-                      ? BetterPlayer(controller: _betterPlayerController!)
-                      : Stack(
-                          children: [
-                            Positioned.fill(
-                              child: widget.model.thumbnailUrl.isNotEmpty
-                                  ? CachedNetworkImage(
-                                      imageUrl: widget.model.thumbnailUrl,
-                                      fit: BoxFit.cover,
-                                      placeholder: (context, url) =>
-                                          Container(
-                                        color: Colors.grey[200],
-                                        child: const Center(
-                                          child:
-                                              CircularProgressIndicator(
-                                            strokeWidth: 2,
-                                          ),
-                                        ),
-                                      ),
-                                      errorWidget: (context, url, error) =>
-                                          Container(
-                                        color: Colors.grey[200],
-                                        child: const Icon(Icons.broken_image),
-                                      ),
-                                    )
-                                  : Container(color: Colors.grey[200]),
-                            ),
-                            if (widget.model.videoUrl.trim().isNotEmpty)
+                  // Large image (>= half screen height)
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.55,
+                    width: double.infinity,
+                    child: _shouldShowVideo && _betterPlayerController != null
+                        ? BetterPlayer(controller: _betterPlayerController!)
+                        : Stack(
+                            children: [
                               Positioned.fill(
-                                child: Align(
-                                  alignment: Alignment.center,
-                                  child: InkWell(
-                                    borderRadius: BorderRadius.circular(18),
-                                    onTap: _onPlayVideo,
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 18,
-                                        vertical: 12,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: Colors.black.withValues(
-                                          alpha: 0.45,
-                                        ),
-                                        borderRadius:
-                                            BorderRadius.circular(999),
-                                      ),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: const [
-                                          Icon(Icons.play_arrow,
-                                              color: Colors.white),
-                                          SizedBox(width: 10),
-                                          Text(
-                                            'Lire la vidéo',
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.w600,
+                                child: widget.model.thumbnailUrl.isNotEmpty
+                                    ? CachedNetworkImage(
+                                        imageUrl: widget.model.thumbnailUrl,
+                                        fit: BoxFit.cover,
+                                        placeholder: (context, url) =>
+                                            Container(
+                                          color: Colors.grey[200],
+                                          child: const Center(
+                                            child:
+                                                CircularProgressIndicator(
+                                              strokeWidth: 2,
                                             ),
                                           ),
-                                        ],
+                                        ),
+                                        errorWidget: (context, url, error) =>
+                                            Container(
+                                          color: Colors.grey[200],
+                                          child: const Icon(Icons.broken_image),
+                                        ),
+                                      )
+                                    : Container(color: Colors.grey[200]),
+                              ),
+                              if (widget.model.videoUrl.trim().isNotEmpty)
+                                Positioned.fill(
+                                  child: Align(
+                                    alignment: Alignment.center,
+                                    child: InkWell(
+                                      borderRadius: BorderRadius.circular(18),
+                                      onTap: _onPlayVideo,
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 18,
+                                          vertical: 12,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: Colors.black.withValues(
+                                            alpha: 0.45,
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(999),
+                                        ),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: const [
+                                            Icon(Icons.play_arrow,
+                                                color: Colors.white),
+                                            SizedBox(width: 10),
+                                            Text(
+                                              'Lire la vidéo',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   ),
                                 ),
-                              ),
+                            ],
+                          ),
+                  ),
+
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 24, 24, 120),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 20),
+                        Text(widget.model.title, style: AppText.titleM()),
+                        const SizedBox(height: 8),
+                        Text(
+                          "${widget.model.originLocation} - ${widget.model.era}",
+                          style: AppText.bodyMG(),
+                        ),
+
+                        const SizedBox(height: 12),
+
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Icon(
+                            _isLikedByUser
+                                ? Icons.favorite
+                                : Icons.favorite_outline,
+                            color: _isLikedByUser ? Colors.red : Colors.grey[500]),
+                            const SizedBox(width: 8),
+                            Text(_likeCount.toString(), style: AppText.bodySNB().copyWith(color: Colors.grey[500])),
+                            const SizedBox(width: 16),
+                            Icon(Icons.comment_outlined, color: Colors.grey[500]),
+                            const SizedBox(width: 8),
+                            Text(_commentCount.toString(), style: AppText.bodySNB().copyWith(color: Colors.grey[500])),
                           ],
                         ),
-                ),
 
-                const SizedBox(height: 20),
-                Text(widget.model.title, style: AppText.titleM()),
-                const SizedBox(height: 8),
-                Text(
-                  "${widget.model.originLocation} - ${widget.model.era}",
-                  style: AppText.bodyS(),
-                ),
-
-                const SizedBox(height: 12),
-
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    GestureDetector(
-                      onTap: _toggleLike,
-                      child: Icon(
-                        _isLikedByUser
-                            ? Icons.favorite
-                            : Icons.favorite_outline,
-                        color: _isLikedByUser ? Colors.red : Colors.black,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Text(_likeCount.toString(), style: AppText.bodySNB()),
-                    const SizedBox(width: 16),
-                    const Icon(Icons.comment_outlined),
-                    const SizedBox(width: 8),
-                    Text(_commentCount.toString(), style: AppText.bodySNB()),
-                  ],
-                ),
-
-                const SizedBox(height: 16),
-                Text("Description", style: AppText.emphasis()),
-                const SizedBox(height: 8),
-                Text(
-                  widget.model.description.replaceAll("\n\n", "\n"),
-                  style: AppText.bodySNB(),
-                ),
-
-                const SizedBox(height: 24),
-                Text("Commentaires", style: AppText.emphasis()),
-                
-                const SizedBox(height: 8),
-
-                // Add comment input
-                TextField(
-                  controller: _commentController,
-                  style: AppText.bodySNB(),
-                  maxLines: 3,
-                  minLines: 1,
-                  decoration: InputDecoration(
-                    hintText: "Écrivez un commentaire...",
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: AppTheme.grey, width: 1),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    focusedBorder: const OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.black, width: 2),
-                      borderRadius: BorderRadius.all(Radius.circular(12)),
-                    ),
-                    filled: true,
-                    fillColor: Colors.white,
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 12),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: StandardButton(
-                    onPressed: _addComment,
-                    child: const Text("Envoyer"),
-                  ),
-                ),
-
-                const SizedBox(height: 12),
-
-                // Comments list
-                Consumer(
-                  builder: (context, ref, child) {
-                    final commentsState = ref.watch(
-                      modelCommentsProvider(widget.model.documentId),
-                    );
-                    return commentsState.when(
-                      data: (comments) {
-                        if (comments.isEmpty) {
-                          return const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 16.0),
-                            child: Text("Soyez le premier à commenter !"),
-                          );
-                        }
-                        return Column(
-                          children: comments
-                              .map((c) => _buildCommentItem(c))
-                              .toList(),
-                        );
-                      },
-                      loading: () => const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 16.0),
-                        child: Center(
-                          child: CircularProgressIndicator(strokeWidth: 2),
+                        const SizedBox(height: 16),
+                        Text("Description", style: AppText.emphasis()),
+                        const SizedBox(height: 8),
+                        Text(
+                          widget.model.description.replaceAll("\n\n", "\n"),
+                          style: AppText.bodySNB().copyWith(color: Colors.grey[500], fontSize: 14),
                         ),
-                      ),
-                      error: (e, stack) => const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 16.0),
-                        child: Text(
-                          "Erreur lors du chargement des commentaires",
+
+                        const SizedBox(height: 24),
+                        Text("Commentaires", style: AppText.emphasis()),
+                        
+                        const SizedBox(height: 8),
+
+                        // Add comment input
+                        TextField(
+                          controller: _commentController,
+                          style: AppText.bodySNB().copyWith(color: Colors.grey[500], fontSize: 14),
+                          maxLines: 3,
+                          minLines: 1,
+                          decoration: InputDecoration(
+                            hintText: "Écrivez un commentaire...",
+                            enabledBorder: UnderlineInputBorder(      
+                              borderSide: BorderSide(color: Colors.grey, width: 1),   
+                            ),  
+                            focusedBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: Colors.black, width: 2),
+                            ),
+                            filled: true,
+                            fillColor: Colors.white,
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal : 1,
+                              vertical: 1,
+                            ),
+                          ),
                         ),
-                      ),
-                    );
-                  },
-                ),
-              ],
-            ),
-          ),
+
+                        const SizedBox(height: 12),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: StandardButton(
+                            onPressed: _addComment,
+                            child: const Text("Envoyer"),
+                          ),
+                        ),
+
+                        const SizedBox(height: 12),
+
+                        // Comments list
+                        Consumer(
+                          builder: (context, ref, child) {
+                            final commentsState = ref.watch(
+                              modelCommentsProvider(widget.model.documentId),
+                            );
+                            return commentsState.when(
+                              data: (comments) {
+                                if (comments.isEmpty) {
+                                  return const Padding(
+                                    padding: EdgeInsets.symmetric(vertical: 16.0),
+                                    child: Text("Soyez le premier à commenter !"),
+                                  );
+                                }
+                                return Column(
+                                  children: comments
+                                      .map((c) => _buildCommentItem(c))
+                                      .toList(),
+                                );
+                              },
+                              loading: () => const Padding(
+                                padding: EdgeInsets.symmetric(vertical: 16.0),
+                                child: Center(
+                                  child: CircularProgressIndicator(strokeWidth: 2),
+                                ),
+                              ),
+                              error: (e, stack) => const Padding(
+                                padding: EdgeInsets.symmetric(vertical: 16.0),
+                                child: Text(
+                                  "Erreur lors du chargement des commentaires",
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  )
+        
+                ],
               ),
             ),
+          ),
             Positioned(
               left: 24,
               right: 24,
               bottom: 16,
               child: StandardButton(
-                onPressed: _viewInAR,
+                onPressed: () => arNotCompatibleModal(context, _viewInAR),
                 child: const Text("Voir en RA"),
               ),
             ),

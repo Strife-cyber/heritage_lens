@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:heritage_lens/services/auth_service.dart';
-import 'package:heritage_lens/views/pages/discover_screen.dart';
+import 'package:heritage_lens/views/home.dart';
 import 'package:heritage_lens/views/widgets/standard_toast.dart';
 import 'package:heritage_lens/views/widgets/standard_button.dart';
 import 'package:heritage_lens/views/widgets/standard_text_field.dart';
@@ -47,7 +47,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 children: [
                   SizedBox(height: spacing * 8),
                   GestureDetector(
-                    onTap: () => {Navigator.push(context, MaterialPageRoute(builder: (context) => DiscoverScreen()))},
+                    onTap: () => {Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => Home()),(Route<dynamic> route) => false)},
                     child: Icon(Icons.arrow_back)
                   ),
                   SizedBox(height: spacing * 10),
@@ -114,7 +114,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   SizedBox(height: spacing * 8),
                   Row(
                     children: [
-                      Text("Vous n'avez pas de compte ?", style: AppText.bodyS()),
+                      Text("Vous n'avez pas de compte ?", style: AppText.bodyS().copyWith(color: Colors.grey[500])),
                       const SizedBox(width: 8),
                       GestureDetector(
                         onTap: () => Navigator.pushReplacement(
@@ -156,7 +156,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       
       if (mounted) {
          StandardToast.show(context, "Connexion réussie", type: ToastType.success);
-         // Navigate to Home
+         Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => Home()),(Route<dynamic> route) => false);
       }
     } catch (e) {
       // C. Handle Errors (Wrong password, No internet, etc.)
