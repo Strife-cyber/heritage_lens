@@ -21,6 +21,7 @@ class LoginScreen extends ConsumerStatefulWidget {
 class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final List<TextEditingController> controllers = List.generate(2, (_) => TextEditingController());
+  bool _isSubmitting = false;
 
   @override
   void dispose() {
@@ -110,7 +111,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     ],
                   ),
                   SizedBox(height: spacing * 3),
-                  ConnectWithGoogleButton(onPressed: _handleGoogleSignIn),
+                  ConnectWithGoogleButton(
+                    onPressed: _isSubmitting ? null : _handleGoogleSignIn,
+                  ),
                   SizedBox(height: spacing * 8),
                   Row(
                     children: [
@@ -128,8 +131,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   SizedBox(height: spacing * 4),
                   StandardButton(
                     width: double.infinity,
-                    onPressed: _handleLogin,
-                    child: Text("Soumettre")
+                    onPressed: _isSubmitting ? () {} : _handleLogin,
+                    child: _isSubmitting
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Text("Soumettre"),
                   )
                 ],
               ),
@@ -147,6 +156,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       return; // Stop if regex fails
     }
 
+    if (!_isSubmitting) setState(() => _isSubmitting = true);
     try {
       // B. Attempt Login
       await ref.read(authServiceProvider).signInWithEmailAndPassword(
@@ -163,17 +173,22 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       if (mounted) {
         StandardToast.show(context, e.toString(), type: ToastType.error);
       }
+    } finally {
+      if (mounted) setState(() => _isSubmitting = false);
     }
   }
 
   Future<void> _handleGoogleSignIn() async {
     try {
+      if (!_isSubmitting) setState(() => _isSubmitting = true);
       await ref.read(authServiceProvider).signInWithGoogle();
       // Navigation happens in the auth state listener usually
     } catch (e) {
       if (mounted) {
         StandardToast.show(context, "Erreur Google: ${e.toString()}", type: ToastType.error);
       }
+    } finally {
+      if (mounted) setState(() => _isSubmitting = false);
     }
   }
 }

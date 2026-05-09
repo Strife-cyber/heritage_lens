@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:heritage_lens/services/auth_service.dart';
 import 'package:heritage_lens/services/model_service.dart';
+import 'package:heritage_lens/services/firestore_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:heritage_lens/views/pages/details_screen.dart';
 import 'package:heritage_lens/views/widgets/coming_soon_modal.dart';
 import 'package:heritage_lens/views/widgets/standard_button.dart';
@@ -33,14 +35,43 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     _loadUserModels();
   }
 
-  Future<void> _loadFavoriteModels() async { // TODO : THIS SHOULD RETURN ACTUAL FAVORITES
+  Future<void> _loadFavoriteModels() async {
     _isLoadingFavorites = true;
     try {
-      final query = await ref
-          .read(arModelServiceProvider)
-          .getDocuments(limit: 20);
+      final user = ref.read(currentUserProvider).value;
+      if (user == null) {
+        if (mounted) {
+          setState(() {
+            _favoriteModels = [];
+            _isLoadingFavorites = false;
+          });
+        }
+        return;
+      }
 
-      final models = query.docs.map((doc) => doc.data()).toList();
+      // Query likes for this user:
+      // `artifacts/{artifactId}/likes/{userId}` where `{userId}` == current user uid
+      final likesSnapshot = await FirebaseFirestore.instance
+          .collectionGroup('likes')
+          .where(FieldPath.documentId, isEqualTo: user.uid)
+          .get();
+
+      final artifactService = ref.read(arModelServiceProvider);
+
+      final artifactIds = likesSnapshot.docs
+          .map((d) => d.reference.parent.parent?.id)
+          .whereType<String>()
+          .toSet()
+          .toList();
+
+      final artifactDocs = await Future.wait(
+        artifactIds.map((artifactId) => artifactService.document(artifactId).get()),
+      );
+
+      final models = artifactDocs
+          .map((doc) => doc.data())
+          .whereType<ARModel>()
+          .toList();
 
       if (mounted) {
         setState(() {
@@ -63,7 +94,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
       if (mounted) {
         setState(() {
-          _username = user!.displayName ?? "";
+          _username = user?.displayName ?? "";
           _isLoadingUserName = false;
         });
       }
@@ -73,12 +104,28 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     }
   }
 
-  Future<void> _loadUserModels() async { // TODO : THIS SHOULD RETURN ACTUAL USER MODELS SO EMPTY FOR V1
+  Future<void> _loadUserModels() async {
     _isLoadingUserModels = true;
     try {
-      final query = await ref
-          .read(arModelServiceProvider)
-          .getDocuments(limit: 20);
+      final user = ref.read(currentUserProvider).value;
+      if (user == null) {
+        if (mounted) {
+          setState(() {
+            _userModels = [];
+            _isLoadingUserModels = false;
+          });
+        }
+        return;
+      }
+
+      // User-owned artifacts:
+      // `artifacts.ownerId == current user uid`
+      final query = await ref.read(arModelServiceProvider).getDocuments(
+            limit: 20,
+            where: [
+              WhereCondition(field: 'ownerId', isEqualTo: user.uid),
+            ],
+          );
 
       final models = query.docs.map((doc) => doc.data()).toList();
 
@@ -98,7 +145,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoadingFavorites || _isLoadingUserModels || _isLoadingFavorites) {
+    if (_isLoadingFavorites || _isLoadingUserModels || _isLoadingUserName) {
       return const Scaffold(
         body: Center(child: CircularProgressIndicator()),
       );
@@ -185,7 +232,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                               Expanded(
                                 child: StandardButton(
                                   child: Text(
-                                    "Ajouter un Modèle", // TODO : This button shows strangely on widths below 365... Dunamis suggest smth or we leave it like that.
+                                    "Ajouter un Modèle",
                                     style: AppText.bodySW(),
                                   ),
                                   onPressed: () => showComingSoonModal(context),

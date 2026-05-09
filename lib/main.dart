@@ -46,18 +46,6 @@ class HeritageLens extends ConsumerWidget {
       title: 'Heritage Lens',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
-      // home: authState.when( // TODO : REMIND once more DUNAMIS that THE USER DOES NOT NEED TO LOGIN ON LAUNCH as discussed on the FIRST DAY OF PROJECT
-      //   data: (user) {
-      //     if (user != null) {
-      //       return const Home();
-      //     }
-      //     return const LoginScreen();
-      //   },
-      //   loading: () => const Scaffold(
-      //     body: Center(child: CircularProgressIndicator(color: Colors.black)),
-      //   ),
-      //   error: (e, trace) => const LoginScreen(),
-      // ),
       home: const Home(),
     );
   }
