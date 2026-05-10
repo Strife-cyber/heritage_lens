@@ -1,17 +1,27 @@
 // lib/main.dart
+import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
+import 'package:heritage_lens/views/home.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:heritage_lens/core/app_theme.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:heritage_lens/firebase_options.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:heritage_lens/views/home.dart';
-import 'package:heritage_lens/services/auth_service.dart';
-import 'package:heritage_lens/views/auth/login_screen.dart';
+import 'package:permission_handler/permission_handler.dart';
+
+Future<void> _requestCameraPermissionOnStartup() async {
+  if (!Platform.isAndroid) return;
+
+  final status = await Permission.camera.status;
+  if (status.isGranted) return;
+
+  // Requests permission early so Unity's first camera init doesn't fail.
+  await Permission.camera.request();
+}
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Initialize Firebase
   try {
     await Firebase.initializeApp(
@@ -20,7 +30,7 @@ Future<void> main() async {
   } catch (e) {
     debugPrint('Warning: Could not initialize Firebase: $e');
   }
-  
+
   // Load environment variables
   try {
     await dotenv.load(fileName: '.env');
@@ -28,12 +38,10 @@ Future<void> main() async {
     // .env file is optional, but log the warning
     debugPrint('Warning: Could not load .env file: $e');
   }
-  
-  runApp(
-    const ProviderScope(
-      child: HeritageLens(),
-    ),
-  );
+
+  await _requestCameraPermissionOnStartup();
+
+  runApp(const ProviderScope(child: HeritageLens()));
 }
 
 class HeritageLens extends ConsumerWidget {
@@ -41,19 +49,11 @@ class HeritageLens extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final authState = ref.watch(currentUserProvider);
-
     return MaterialApp(
       title: 'Heritage Lens',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
-      home: authState.when(
-        loading: () => const Scaffold(
-          body: Center(child: CircularProgressIndicator()),
-        ),
-        error: (e, _) => const LoginScreen(),
-        data: (user) => user == null ? const LoginScreen() : const Home(),
-      ),
+      home: const Home(),
     );
   }
 }

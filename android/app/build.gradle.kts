@@ -22,6 +22,18 @@ android {
         jvmTarget = JavaVersion.VERSION_11.toString()
     }
 
+    // Unity ships prebuilt .so for multiple ABIs inside `unityLibrary/libs`.
+    // Without explicit excludes, Gradle packages them all, increasing APK size
+    // (your analysis shows x86_64 is ~35MB).
+    packagingOptions {
+        jniLibs {
+            excludes += setOf(
+                "**/x86_64/**",
+                "**/armeabi-v7a/**"
+            )
+        }
+    }
+
     defaultConfig {
         // Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.example.heritage_lens"
@@ -31,6 +43,12 @@ android {
         targetSdk = 34
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+
+        // Size optimization: ship only what you need.
+        // Your APK analysis shows `x86_64` was still included, costing ~35MB.
+        ndk {
+            abiFilters.add("arm64-v8a")
+        }
     }
 
     buildTypes {

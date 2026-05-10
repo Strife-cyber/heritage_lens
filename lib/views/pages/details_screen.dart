@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_3d_controller/flutter_3d_controller.dart';
+import 'package:heritage_lens/core/app_theme.dart';
 import 'package:heritage_lens/views/auth/login_screen.dart';
 import 'package:heritage_lens/views/widgets/ar_not_compatible.dart';
 import 'package:heritage_lens/views/widgets/standard_button.dart';
@@ -10,8 +11,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:heritage_lens/services/auth_service.dart';
 import 'package:heritage_lens/services/unity_service.dart';
-import 'package:better_player_plus/better_player_plus.dart';
 import 'package:heritage_lens/services/comment_service.dart';
+import 'package:heritage_lens/services/model_cache_service.dart';
 
 import '../../models/ar_model.dart';
 import '../../models/comment_model.dart';
@@ -32,13 +33,19 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
   bool _isLikedByUser = false;
   bool _isTogglingLike = false;
 
-  BetterPlayerController? _betterPlayerController;
-  bool _shouldShowVideo = false;
+  final Flutter3DController _modelController = Flutter3DController();
+  bool _isModelExpanded = false;
   final TextEditingController _commentController = TextEditingController();
+  late final ModelCacheService _modelCacheService;
+  late final Future<String?> _cachedModelSrcFuture;
 
   @override
   void initState() {
     super.initState();
+    _modelCacheService = ModelCacheService();
+    _cachedModelSrcFuture = _modelCacheService.getCachedModelFileUrl(
+      widget.model.modelUrl,
+    );
     _likeCount = widget.model.likeCount;
     _commentCount = widget.model.commentCount;
     _initLikeState();
@@ -47,57 +54,7 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
   @override
   void dispose() {
     _commentController.dispose();
-    _betterPlayerController?.dispose();
     super.dispose();
-  }
-
-  void _initializePlayer() {
-    if (widget.model.videoUrl.trim().isEmpty) {
-      return;
-    }
-
-    final dataSource = BetterPlayerDataSource(
-      BetterPlayerDataSourceType.network,
-      widget.model.videoUrl,
-      videoFormat: BetterPlayerVideoFormat.other,
-      videoExtension: "mp4",
-      cacheConfiguration: const BetterPlayerCacheConfiguration(useCache: true),
-    );
-
-    _betterPlayerController = BetterPlayerController(
-      const BetterPlayerConfiguration(
-        aspectRatio: 16 / 9,
-        autoPlay: true,
-        looping: true,
-        fit: BoxFit.contain,
-        controlsConfiguration: BetterPlayerControlsConfiguration(
-          enableSkips: false,
-          enableFullscreen: true,
-          enableMute: true,
-          progressBarPlayedColor: Colors.black,
-          progressBarHandleColor: Colors.black,
-          controlBarColor: Colors.black45,
-        ),
-      ),
-      betterPlayerDataSource: dataSource,
-    );
-  }
-
-  Future<void> _onPlayVideo() async {
-    if (widget.model.videoUrl.trim().isEmpty) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Vidéo indisponible pour cet objet.')),
-      );
-      return;
-    }
-
-    if (_betterPlayerController == null) {
-      _initializePlayer();
-    }
-
-    if (!mounted) return;
-    setState(() => _shouldShowVideo = true);
   }
 
   Future<void> _initLikeState() async {
@@ -129,7 +86,10 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Veuillez vous connecter pour liker')),
         );
-        Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen()));
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => LoginScreen()),
+        );
         return;
       }
 
@@ -183,7 +143,9 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(_isLikedByUser ? 'Ajouté aux favoris' : 'Retiré des favoris'),
+          content: Text(
+            _isLikedByUser ? 'Ajouté aux favoris' : 'Retiré des favoris',
+          ),
         ),
       );
     }
@@ -197,7 +159,10 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Veuillez vous connecter pour commenter')),
       );
-      Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen()));
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => LoginScreen()),
+      );
       return;
     }
 
@@ -261,6 +226,70 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
     );
   }
 
+  Widget _buildModelViewer({
+    required double height,
+    required String modelSrc,
+  }) {
+    if (modelSrc.trim().isEmpty) {
+      return Container(
+        color: Colors.grey[200],
+        child: const Center(
+          child: Text(
+            "Modèle 3D indisponible",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.black54,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+      );
+    }
+
+    return SizedBox(
+      height: height,
+      width: double.infinity,
+      child: Flutter3DViewer(
+        src: modelSrc,
+        controller: _modelController,
+        enableTouch: true,
+        activeGestureInterceptor: true,
+        progressBarColor: AppTheme.grey,
+        onProgress: (double progressValue) {
+          debugPrint('3D model loading progress : $progressValue');
+        },
+        onError: (String error) {
+          debugPrint('3D model failed to load : $error');
+        },
+      ),
+    );
+  }
+
+  Widget _buildExpandSquareButton({required bool expanded}) {
+    return Material(
+      color: Colors.black.withValues(alpha: 0.35),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(10)),
+      ),
+      child: InkWell(
+        borderRadius: const BorderRadius.all(Radius.circular(10)),
+        onTap: () {
+          setState(() {
+            _isModelExpanded = !expanded;
+          });
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(10),
+          child: Icon(
+            expanded ? Icons.fullscreen_exit : Icons.fullscreen,
+            size: 22,
+            color: Colors.white,
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -269,253 +298,292 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
           children: [
             Positioned.fill(
               child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        IconButton(
-                          onPressed: () => Navigator.of(context).pop(),
-                          icon: const Icon(Icons.arrow_back),
-                        ),
-                        GestureDetector(
-                          onTap: _isTogglingLike ? null : _toggleLike,
-                          child: _isTogglingLike
-                              ? const SizedBox(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          IconButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            icon: const Icon(Icons.arrow_back),
+                          ),
+                          GestureDetector(
+                            onTap: _isTogglingLike ? null : _toggleLike,
+                            child: _isTogglingLike
+                                ? const SizedBox(
+                                    width: 24,
+                                    height: 24,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                : Icon(
+                                    _isLikedByUser
+                                        ? Icons.bookmark
+                                        : Icons.bookmark_outline,
+                                    color: _isLikedByUser
+                                        ? Colors.yellow
+                                        : Colors.black,
+                                  ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.55,
+                      width: double.infinity,
+                      child: Stack(
+                        children: [
+                          // When fullscreen is active, hide the preview viewer to
+                          // avoid having two Flutter3DViewer widgets sharing one
+                          // controller (can result in a black fullscreen).
+                          if (!_isModelExpanded)
+                            Positioned.fill(
+                              child: FutureBuilder<String?>(
+                                future: _cachedModelSrcFuture,
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return const Center(
+                                      child: CircularProgressIndicator(),
+                                    );
+                                  }
+
+                                  return _buildModelViewer(
+                                    height: MediaQuery.of(context).size.height *
+                                        0.55,
+                                    modelSrc: snapshot.data ?? '',
+                                  );
+                                },
+                              ),
+                            ),
+                          if (!_isModelExpanded)
+                            Positioned(
+                              top: 12,
+                              right: 12,
+                              child: _buildExpandSquareButton(expanded: false),
+                            ),
+                        ],
+                      ),
+                    ),
+
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(24, 24, 24, 120),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 20),
+                          Text(widget.model.title, style: AppText.titleM()),
+                          const SizedBox(height: 8),
+                          Text(
+                            "${widget.model.originLocation} - ${widget.model.era}",
+                            style: AppText.bodyMG(),
+                          ),
+
+                          const SizedBox(height: 12),
+
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              if (_isTogglingLike)
+                                const SizedBox(
                                   width: 24,
                                   height: 24,
-                                  child: CircularProgressIndicator(strokeWidth: 2),
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
                                 )
-                              : Icon(
+                              else
+                                Icon(
                                   _isLikedByUser
-                                      ? Icons.bookmark
-                                      : Icons.bookmark_outline,
+                                      ? Icons.favorite
+                                      : Icons.favorite_outline,
                                   color: _isLikedByUser
-                                      ? Colors.yellow
-                                      : Colors.black,
+                                      ? Colors.red
+                                      : Colors.grey[500],
                                 ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  // Large image (>= half screen height)
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.55,
-                    width: double.infinity,
-                    child: _shouldShowVideo && _betterPlayerController != null
-                        ? BetterPlayer(controller: _betterPlayerController!)
-                        : Stack(
-                            children: [
-                              Positioned.fill(
-                                child: widget.model.thumbnailUrl.isNotEmpty
-                                    ? CachedNetworkImage(
-                                        imageUrl: widget.model.thumbnailUrl,
-                                        fit: BoxFit.cover,
-                                        placeholder: (context, url) =>
-                                            Container(
-                                          color: Colors.grey[200],
-                                          child: const Center(
-                                            child:
-                                                CircularProgressIndicator(
-                                              strokeWidth: 2,
-                                            ),
-                                          ),
-                                        ),
-                                        errorWidget: (context, url, error) =>
-                                            Container(
-                                          color: Colors.grey[200],
-                                          child: const Icon(Icons.broken_image),
-                                        ),
-                                      )
-                                    : Container(color: Colors.grey[200]),
+                              const SizedBox(width: 8),
+                              Text(
+                                _likeCount.toString(),
+                                style: AppText.bodySNB().copyWith(
+                                  color: Colors.grey[500],
+                                ),
                               ),
-                              if (widget.model.videoUrl.trim().isNotEmpty)
-                                Positioned.fill(
-                                  child: Align(
-                                    alignment: Alignment.center,
-                                    child: InkWell(
-                                      borderRadius: BorderRadius.circular(18),
-                                      onTap: _onPlayVideo,
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 18,
-                                          vertical: 12,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: Colors.black.withValues(
-                                            alpha: 0.45,
-                                          ),
-                                          borderRadius:
-                                              BorderRadius.circular(999),
-                                        ),
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: const [
-                                            Icon(Icons.play_arrow,
-                                                color: Colors.white),
-                                            SizedBox(width: 10),
-                                            Text(
-                                              'Lire la vidéo',
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
+                              const SizedBox(width: 16),
+                              Icon(
+                                Icons.comment_outlined,
+                                color: Colors.grey[500],
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                _commentCount.toString(),
+                                style: AppText.bodySNB().copyWith(
+                                  color: Colors.grey[500],
+                                ),
+                              ),
+                            ],
+                          ),
+
+                          const SizedBox(height: 16),
+                          Text("Description", style: AppText.emphasis()),
+                          const SizedBox(height: 8),
+                          Text(
+                            widget.model.description.replaceAll("\n\n", "\n"),
+                            style: AppText.bodySNB().copyWith(
+                              color: Colors.grey[500],
+                              fontSize: 14,
+                            ),
+                          ),
+
+                          const SizedBox(height: 24),
+                          Text("Commentaires", style: AppText.emphasis()),
+
+                          const SizedBox(height: 8),
+
+                          // Add comment input
+                          TextField(
+                            controller: _commentController,
+                            style: AppText.bodySNB().copyWith(
+                              color: Colors.grey[500],
+                              fontSize: 14,
+                            ),
+                            maxLines: 3,
+                            minLines: 1,
+                            decoration: InputDecoration(
+                              hintText: "Écrivez un commentaire...",
+                              enabledBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Colors.grey,
+                                  width: 1,
+                                ),
+                              ),
+                              focusedBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Colors.black,
+                                  width: 2,
+                                ),
+                              ),
+                              filled: true,
+                              fillColor: Colors.white,
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 1,
+                                vertical: 1,
+                              ),
+                            ),
+                          ),
+
+                          const SizedBox(height: 12),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: StandardButton(
+                              onPressed: _addComment,
+                              child: const Text("Envoyer"),
+                            ),
+                          ),
+
+                          const SizedBox(height: 12),
+
+                          // Comments list
+                          Consumer(
+                            builder: (context, ref, child) {
+                              final commentsState = ref.watch(
+                                modelCommentsProvider(widget.model.documentId),
+                              );
+                              return commentsState.when(
+                                data: (comments) {
+                                  if (comments.isEmpty) {
+                                    return const Padding(
+                                      padding: EdgeInsets.symmetric(
+                                        vertical: 16.0,
                                       ),
+                                      child: Text(
+                                        "Soyez le premier à commenter !",
+                                      ),
+                                    );
+                                  }
+                                  return Column(
+                                    children: comments
+                                        .map((c) => _buildCommentItem(c))
+                                        .toList(),
+                                  );
+                                },
+                                loading: () => const Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 16.0),
+                                  child: Center(
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
                                     ),
                                   ),
                                 ),
-                            ],
-                          ),
-                  ),
-
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(24, 24, 24, 120),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 20),
-                        Text(widget.model.title, style: AppText.titleM()),
-                        const SizedBox(height: 8),
-                        Text(
-                          "${widget.model.originLocation} - ${widget.model.era}",
-                          style: AppText.bodyMG(),
-                        ),
-
-                        const SizedBox(height: 12),
-
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            if (_isTogglingLike)
-                              const SizedBox(
-                                width: 24,
-                                height: 24,
-                                child: CircularProgressIndicator(strokeWidth: 2),
-                              )
-                            else
-                              Icon(
-                                _isLikedByUser
-                                    ? Icons.favorite
-                                    : Icons.favorite_outline,
-                                color: _isLikedByUser ? Colors.red : Colors.grey[500],
-                              ),
-                            const SizedBox(width: 8),
-                            Text(_likeCount.toString(), style: AppText.bodySNB().copyWith(color: Colors.grey[500])),
-                            const SizedBox(width: 16),
-                            Icon(Icons.comment_outlined, color: Colors.grey[500]),
-                            const SizedBox(width: 8),
-                            Text(_commentCount.toString(), style: AppText.bodySNB().copyWith(color: Colors.grey[500])),
-                          ],
-                        ),
-
-                        const SizedBox(height: 16),
-                        Text("Description", style: AppText.emphasis()),
-                        const SizedBox(height: 8),
-                        Text(
-                          widget.model.description.replaceAll("\n\n", "\n"),
-                          style: AppText.bodySNB().copyWith(color: Colors.grey[500], fontSize: 14),
-                        ),
-
-                        const SizedBox(height: 24),
-                        Text("Commentaires", style: AppText.emphasis()),
-                        
-                        const SizedBox(height: 8),
-
-                        // Add comment input
-                        TextField(
-                          controller: _commentController,
-                          style: AppText.bodySNB().copyWith(color: Colors.grey[500], fontSize: 14),
-                          maxLines: 3,
-                          minLines: 1,
-                          decoration: InputDecoration(
-                            hintText: "Écrivez un commentaire...",
-                            enabledBorder: UnderlineInputBorder(      
-                              borderSide: BorderSide(color: Colors.grey, width: 1),   
-                            ),  
-                            focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Colors.black, width: 2),
-                            ),
-                            filled: true,
-                            fillColor: Colors.white,
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal : 1,
-                              vertical: 1,
-                            ),
-                          ),
-                        ),
-
-                        const SizedBox(height: 12),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: StandardButton(
-                            onPressed: _addComment,
-                            child: const Text("Envoyer"),
-                          ),
-                        ),
-
-                        const SizedBox(height: 12),
-
-                        // Comments list
-                        Consumer(
-                          builder: (context, ref, child) {
-                            final commentsState = ref.watch(
-                              modelCommentsProvider(widget.model.documentId),
-                            );
-                            return commentsState.when(
-                              data: (comments) {
-                                if (comments.isEmpty) {
-                                  return const Padding(
-                                    padding: EdgeInsets.symmetric(vertical: 16.0),
-                                    child: Text("Soyez le premier à commenter !"),
-                                  );
-                                }
-                                return Column(
-                                  children: comments
-                                      .map((c) => _buildCommentItem(c))
-                                      .toList(),
-                                );
-                              },
-                              loading: () => const Padding(
-                                padding: EdgeInsets.symmetric(vertical: 16.0),
-                                child: Center(
-                                  child: CircularProgressIndicator(strokeWidth: 2),
+                                error: (e, stack) => const Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 16.0),
+                                  child: Text(
+                                    "Erreur lors du chargement des commentaires",
+                                  ),
                                 ),
-                              ),
-                              error: (e, stack) => const Padding(
-                                padding: EdgeInsets.symmetric(vertical: 16.0),
-                                child: Text(
-                                  "Erreur lors du chargement des commentaires",
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            if (!_isModelExpanded)
+              Positioned(
+                left: 24,
+                right: 24,
+                bottom: 16,
+                child: StandardButton(
+                  onPressed: () => arNotCompatibleModal(context, _viewInAR),
+                  child: const Text("Voir en RA"),
+                ),
+              ),
+
+            if (_isModelExpanded)
+              Positioned.fill(
+                child: Container(
+                  color: Colors.black.withValues(alpha: 0.88),
+                  child: Stack(
+                    children: [
+                      Positioned.fill(
+                        child: FutureBuilder<String?>(
+                          future: _cachedModelSrcFuture,
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
                                 ),
-                              ),
+                              );
+                            }
+                            return _buildModelViewer(
+                              height: MediaQuery.of(context).size.height,
+                              modelSrc: snapshot.data ?? '',
                             );
                           },
                         ),
-                      ],
-                    ),
-                  )
-        
-                ],
+                      ),
+                      SafeArea(
+                        child: Positioned(
+                          top: 12,
+                          right: 12,
+                          child: _buildExpandSquareButton(expanded: true),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ),
-          ),
-            Positioned(
-              left: 24,
-              right: 24,
-              bottom: 16,
-              child: StandardButton(
-                onPressed: () => arNotCompatibleModal(context, _viewInAR),
-                child: const Text("Voir en RA"),
-              ),
-            ),
           ],
         ),
       ),

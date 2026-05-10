@@ -25,6 +25,24 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   bool _isSubmitting = false;
 
   @override
+  void initState() {
+    super.initState();
+
+    // If the user is already logged in, skip login and go to Profile.
+    final currentUser = ref.read(authServiceProvider).currentUser;
+    if (currentUser != null) {
+      ref.read(homeTabProvider.notifier).state = 2; // Profile tab
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const Home()),
+          (Route<dynamic> route) => false,
+        );
+      });
+    }
+  }
+
+  @override
   void dispose() {
     for (var controller in controllers) {
       controller.dispose();
