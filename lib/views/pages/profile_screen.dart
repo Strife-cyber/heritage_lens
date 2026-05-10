@@ -53,12 +53,20 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       // `artifacts/{artifactId}/likes/{userId}` where `{userId}` == current user uid
       final likesSnapshot = await FirebaseFirestore.instance
           .collectionGroup('likes')
-          .where(FieldPath.documentId, isEqualTo: user.uid)
+          .where('userId', isEqualTo: user.uid)
           .get();
 
       final artifactService = ref.read(arModelServiceProvider);
 
-      final artifactIds = likesSnapshot.docs
+      // Fallback for older like documents that don't contain `userId`.
+      final likeDocs = likesSnapshot.docs.isEmpty
+          ? (await FirebaseFirestore.instance.collectionGroup('likes').get())
+              .docs
+              .where((d) => d.id == user.uid)
+              .toList()
+          : likesSnapshot.docs;
+
+      final artifactIds = likeDocs
           .map((d) => d.reference.parent.parent?.id)
           .whereType<String>()
           .toSet()

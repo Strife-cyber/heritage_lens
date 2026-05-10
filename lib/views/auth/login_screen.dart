@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:heritage_lens/services/auth_service.dart';
 import 'package:heritage_lens/views/home.dart';
@@ -166,7 +167,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       
       if (mounted) {
          StandardToast.show(context, "Connexion réussie", type: ToastType.success);
-         Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => Home()),(Route<dynamic> route) => false);
+        // Make sure next Home render lands on Profile tab.
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setInt('home_tab_index', 2);
       }
     } catch (e) {
       // C. Handle Errors (Wrong password, No internet, etc.)
@@ -182,7 +185,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     try {
       if (!_isSubmitting) setState(() => _isSubmitting = true);
       await ref.read(authServiceProvider).signInWithGoogle();
-      // Navigation happens in the auth state listener usually
+      if (mounted) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setInt('home_tab_index', 2);
+      }
     } catch (e) {
       if (mounted) {
         StandardToast.show(context, "Erreur Google: ${e.toString()}", type: ToastType.error);

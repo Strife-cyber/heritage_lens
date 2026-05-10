@@ -30,6 +30,7 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
   late int _likeCount;
   late int _commentCount;
   bool _isLikedByUser = false;
+  bool _isTogglingLike = false;
 
   BetterPlayerController? _betterPlayerController;
   bool _shouldShowVideo = false;
@@ -122,6 +123,7 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
 
   Future<void> _toggleLike() async {
     try {
+      if (_isTogglingLike) return;
       final user = ref.read(currentUserProvider).value;
       if (user == null) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -131,12 +133,19 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
         return;
       }
 
+      // Optimistic UI: update immediately so the UI feels responsive.
+      final previousLiked = _isLikedByUser;
+      setState(() {
+        _isTogglingLike = true;
+        _isLikedByUser = !previousLiked;
+        _likeCount += _isLikedByUser ? 1 : -1;
+      });
+
       final artifactRef = FirebaseFirestore.instance
           .collection('artifacts')
           .doc(widget.model.documentId);
       final likeRef = artifactRef.collection('likes').doc(user.uid);
 
-      final previousLiked = _isLikedByUser;
       await FirebaseFirestore.instance.runTransaction((tx) async {
         final likeSnap = await tx.get(likeRef);
         final currentlyLiked = likeSnap.exists;
@@ -146,27 +155,35 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
           tx.update(artifactRef, {'likeCount': FieldValue.increment(-1)});
         } else {
           tx.set(likeRef, <String, dynamic>{
+            // Used by ProfileScreen to query likes for the current user.
+            'userId': user.uid,
             'createdAt': FieldValue.serverTimestamp(),
           });
           tx.update(artifactRef, {'likeCount': FieldValue.increment(1)});
         }
       });
 
+      // Transaction succeeded; keep optimistic state.
       if (!mounted) return;
-      setState(() {
-        _isLikedByUser = !previousLiked;
-        _likeCount += _isLikedByUser ? 1 : -1;
-      });
     } catch (e) {
+      // Revert optimistic update if Firestore fails.
+      if (mounted) {
+        setState(() {
+          _isLikedByUser = !_isLikedByUser;
+          _likeCount += _isLikedByUser ? 1 : -1;
+        });
+      }
       debugPrint("Le like n'a pas pu être enregistré : $e");
+    } finally {
+      if (mounted) {
+        setState(() => _isTogglingLike = false);
+      }
     }
 
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            _isLikedByUser ? 'Ajouté aux favoris' : 'Retiré des favoris',
-          ),
+          content: Text(_isLikedByUser ? 'Ajouté aux favoris' : 'Retiré des favoris'),
         ),
       );
     }
@@ -265,13 +282,21 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
                           icon: const Icon(Icons.arrow_back),
                         ),
                         GestureDetector(
-                          onTap: _toggleLike,
-                          child: Icon(
-                            _isLikedByUser
-                                ? Icons.bookmark
-                                : Icons.bookmark_outline,
-                            color: _isLikedByUser ? Colors.yellow : Colors.black,
-                          ),
+                          onTap: _isTogglingLike ? null : _toggleLike,
+                          child: _isTogglingLike
+                              ? const SizedBox(
+                                  width: 24,
+                                  height: 24,
+                                  child: CircularProgressIndicator(strokeWidth: 2),
+                                )
+                              : Icon(
+                                  _isLikedByUser
+                                      ? Icons.bookmark
+                                      : Icons.bookmark_outline,
+                                  color: _isLikedByUser
+                                      ? Colors.yellow
+                                      : Colors.black,
+                                ),
                         ),
                       ],
                     ),
@@ -370,11 +395,19 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            Icon(
-                            _isLikedByUser
-                                ? Icons.favorite
-                                : Icons.favorite_outline,
-                            color: _isLikedByUser ? Colors.red : Colors.grey[500]),
+                            if (_isTogglingLike)
+                              const SizedBox(
+                                width: 24,
+                                height: 24,
+                                child: CircularProgressIndicator(strokeWidth: 2),
+                              )
+                            else
+                              Icon(
+                                _isLikedByUser
+                                    ? Icons.favorite
+                                    : Icons.favorite_outline,
+                                color: _isLikedByUser ? Colors.red : Colors.grey[500],
+                              ),
                             const SizedBox(width: 8),
                             Text(_likeCount.toString(), style: AppText.bodySNB().copyWith(color: Colors.grey[500])),
                             const SizedBox(width: 16),
