@@ -7,6 +7,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:heritage_lens/views/pages/details_screen.dart';
 import 'package:heritage_lens/views/widgets/coming_soon_modal.dart';
+import 'package:heritage_lens/views/widgets/logout_modal.dart';
 import 'package:heritage_lens/views/widgets/standard_button.dart';
 import 'package:heritage_lens/views/widgets/standard_text_helpers.dart';
 
@@ -177,7 +178,19 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          Text('Bonjour $_username', style: AppText.titleXL()),
+                          Row(
+                            children: [
+                              Text('Bonjour $_username', style: AppText.titleXL()),
+                              GestureDetector(
+                                onTap: () => showLogoutModal(context, ref, mounted),
+                                child: Icon(
+                                  Icons.logout,
+                                  color: Colors.grey[500],
+                                ),
+                              ),
+                            ]
+                          ),
+                          
                           const SizedBox(height: 8),
                           Text(
                             "Alors, Qu’allons nous faire aujourd'hui ?",
